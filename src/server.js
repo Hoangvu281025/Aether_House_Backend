@@ -1,12 +1,16 @@
 const express = require('express');
 const app = express();
+const connectDB = require('./db');
+connectDB();
 const Port = 3000;
 app.use(express.json());
+app.use(express.urlencoded({ extended: true}));
+
 
 const UserRouter = require('./Router/User')
 
 
-app.use('/', UserRouter);
+app.use('/api/users', UserRouter);
 
 
 
