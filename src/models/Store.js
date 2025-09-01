@@ -8,8 +8,12 @@ const storeSchema = new mongoose.Schema({
     address: { type: String, required: true },
     information: { type: String, required: true },
     description: { type: String, required: true },
-    imageList: { type: String, required: false  },   
-    imageDetail: { type: String, required: false  }, 
+    images: [
+    {
+      url: { type: String, required: true },
+      public_id: { type: String, required: true }
+    }
+  ]  
 }, {
     timestamps: true
 });
