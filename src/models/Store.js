@@ -8,6 +8,7 @@ const storeSchema = new mongoose.Schema({
     address: { type: String, required: true },
     information: { type: String, required: true },
     description: { type: String, required: true },
+    hehe:{type: string, required: true},
     images: [
     {
       url: { type: String, required: true },
