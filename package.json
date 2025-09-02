@@ -1,33 +1,19 @@
 {
-  "name": "aether_house_backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "aether-be",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Hoangvu281025/Aether_House_Backend.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Hoangvu281025/Aether_House_Backend/issues"
-  },
-  "homepage": "https://github.com/Hoangvu281025/Aether_House_Backend#readme",
   "dependencies": {
-    "cloudinary": "^1.41.3",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^5.1.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "hbs": "~4.0.4",
+    "http-errors": "~1.6.3",
     "mongoose": "^8.18.0",
-    "multer": "^2.0.2",
-    "multer-storage-cloudinary": "^4.0.0"
-  },
-  "devDependencies": {
+    "morgan": "~1.9.1",
     "nodemon": "^3.1.10"
   }
 }
