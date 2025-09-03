@@ -11,7 +11,7 @@ const ProductSchema = new mongoose.Schema({
     images: [{type: String, required: true}],
     is_hidden: {type: Boolean, default: false},
     category_id: [{
-        categoryId: {type: mongoose.Schema.Types.ObjectId , ref: "Category"},
+        type: mongoose.Schema.Types.ObjectId , ref: "category" , required: true
     }],
 },{
     timestamps: true

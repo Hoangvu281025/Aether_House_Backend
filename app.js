@@ -4,10 +4,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require("mongoose");
+const dotenv = require('dotenv');
+dotenv.config();
 
 
 
 var indexRouter = require('./routes/index');
+var categoriesRouter = require('./routes/category');
 var usersRouter = require('./routes/users');
 var productsRouter = require('./routes/product');
 
@@ -24,15 +27,16 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/products', productsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/categories', categoriesRouter);
+app.use('/api/products', productsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 mongoose
-  .connect("mongodb://localhost:27017/test_DB")
+  .connect(process.env.MONGO_URI_1)
   .then(() => console.log("Kết nối Database thành công"))
   .catch((err) => console.log(err));
 // error handler
