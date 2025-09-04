@@ -21,7 +21,7 @@ const getAllProducts = async (req , res) => {
 }
 const getByProductID = async (req , res) => {
     try {
-        const category_id = req.params.id;
+        const product_id = req.params.id;
         const categories = await Category.findById({ _id:category_id , status: "active"});
         if(!categories) return res.status(404).json({ success: false , errer: "Category not found or hidden"});
         res.status(200).json({

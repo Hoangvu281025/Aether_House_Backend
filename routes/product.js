@@ -7,7 +7,7 @@ const upload = multer({ storage });
 
 router.get('/', ProductControllers.getAllProducts);
 router.get('/:id', ProductControllers.getByProductID);
-router.post('/',upload.array('images' , 2), ProductControllers.addProduct);
+router.post('/', upload.array('images' , 2), ProductControllers.addProduct);
 router.put('/:id', ProductControllers.updateProduct);
 router.delete('/:id', ProductControllers.deleteProduct);
 
