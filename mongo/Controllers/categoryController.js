@@ -6,7 +6,7 @@ const getAllCategorys = async (req , res) => {
         const categories = await Category.find({ status: "active"});
         res.status(200).json({
             success: true,
-            categories : categories
+            categories
         })
     } catch (err) {
         console.log(err)
@@ -22,7 +22,7 @@ const getByCategoryID = async (req , res) => {
         if(!categories) return res.status(404).json({ success: false , errer: "Category not found or hidden"});
         res.status(200).json({
             success: true,
-            categories: categories
+            categories
         })
     } catch (err) {
         console.log(err)

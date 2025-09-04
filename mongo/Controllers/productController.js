@@ -9,7 +9,7 @@ const getAllProducts = async (req , res) => {
         const products = await Product.find({ is_hidden: false}).populate('category_id' , 'name slug');
         res.status(200).json({
             success: true,
-            products : products
+            products
         })
     } catch (err) {
         console.log(err)
@@ -49,7 +49,8 @@ const addProduct = async (req , res) => {
         if (slugExists) return res.status(400).json({ error: "Category slug already exists" });
 
 
-        const image_url = [];
+        const images = [];
+        let index = 0;
         for(let file of req.files){
             const result = await new Promise((resole , reject) => {
                 const stream = cloudinary.uploader.upload_stream(
@@ -61,7 +62,12 @@ const addProduct = async (req , res) => {
                 );
                 streamifier.createReadStream(file.buffer).pipe(stream)
             })
-            image_url.push(result)
+            images.push({
+                url: result,
+                is_main: index === 0 // ✅ ảnh đầu tiên làm ảnh chính
+            });
+
+            index++;
         }
 
         const newProduct = await Product.create({ 
@@ -71,12 +77,12 @@ const addProduct = async (req , res) => {
             description, 
             quantity, 
             colspan ,
-            images: image_url, 
+            images, 
             category_id: category_id ? JSON.parse(category_id) : [] // categories là mảng ID từ client
         })
         res.status(200).json({
             success: true,
-            Products : newProduct
+            newProduct
         })
     } catch (error) {
         console.log(error)

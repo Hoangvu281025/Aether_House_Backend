@@ -8,7 +8,10 @@ const ProductSchema = new mongoose.Schema({
     description: {type: String, required: true},
     quantity: {type: Number, required: true},
     colspan: {type: String, required: true},
-    images: [{type: String, required: true}],
+    images: [{
+        url: {type: String, required: true},
+        is_main: {type: Boolean , required:false }
+    }],
     is_hidden: {type: Boolean, default: false},
     category_id: [{
         type: mongoose.Schema.Types.ObjectId , ref: "Category" , required: true
