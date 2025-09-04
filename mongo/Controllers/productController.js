@@ -1,4 +1,3 @@
-const { cloudinary_js_config } = require('../config/cloudinary');
 const Category = require('../Models/categoryModel');
 const Product = require('../Models/productModel');
 const cloudinary = require('../config/cloudinary');
@@ -7,7 +6,7 @@ const streamifier = require('streamifier')
 
 const getAllProducts = async (req , res) => {
     try {
-        const products = await Product.find({ is_hidden: false});
+        const products = await Product.find({ is_hidden: false}).populate('category_id' , 'name slug');
         res.status(200).json({
             success: true,
             products : products
@@ -38,7 +37,7 @@ const getByProductID = async (req , res) => {
 //success
 const addProduct = async (req , res) => {
     try {
-        const { name, slug, price, description, quantity, colspan ,categories } = req.body;
+        const { name, slug, price, description, quantity, colspan , category_id } = req.body;
         if(!name || !slug ) return res.status(400).json({ error: "name and slug requied"})
 
             // Check trùng name
@@ -73,7 +72,7 @@ const addProduct = async (req , res) => {
             quantity, 
             colspan ,
             images: image_url, 
-            category_id: categories ? JSON.parse(categories) : [] // categories là mảng ID từ client
+            category_id: category_id ? JSON.parse(category_id) : [] // categories là mảng ID từ client
         })
         res.status(200).json({
             success: true,
