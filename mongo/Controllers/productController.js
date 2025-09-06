@@ -1,6 +1,6 @@
 const Category = require('../Models/categoryModel');
 const Product = require('../Models/productModel');
-
+const { toSlug } = require('../utils/slugify');
 const getAllProducts = async (req , res) => {
     try {
         const products = await Product.find({ is_hidden: false}).populate('category_id' , 'name slug');
@@ -31,22 +31,27 @@ const getByProductID = async (req , res) => {
         })
     }
 }
-//success
+const getByProductSlug = async (req , res) => {
+    try {
+        const {slug} = req.params;
+        const categories = await Category.findById({ _id:category_id , status: "active"});
+        if(!categories) return res.status(404).json({ success: false , errer: "Category not found or hidden"});
+        res.status(200).json({
+            success: true,
+            categories: categories
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            error : 'Internal server error'
+        })
+    }
+}
+
 const addProduct = async (req , res) => {
     try {
-
-        const { name, slug, price, description, quantity, colspan , category_id } = req.body;
-        
-        if(!name || !slug ) return res.status(400).json({ error: "name and slug requied"})
-
-            // Check trùng name
-        const nameExists = await Product.findOne({ name });
-        if (nameExists) return res.status(400).json({ error: "Category name already exists" });
-
-            // Check trùng slug
-        const slugExists = await Product.findOne({ slug });
-        if (slugExists) return res.status(400).json({ error: "Category slug already exists" });
-
+        const { name,  price, description, quantity, colspan , category_id } = req.body;
+        const slug = toSlug(name);
 
         const newProduct = await Product.create({ 
             name, 
@@ -129,6 +134,7 @@ const deleteProduct  = async (req , res) => {
 module.exports = {
     getAllProducts,
     getByProductID,
+    getByProductSlug,
     addProduct,
     updateProduct,
     deleteProduct

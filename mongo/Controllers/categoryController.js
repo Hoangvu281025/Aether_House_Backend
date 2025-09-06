@@ -1,5 +1,6 @@
 const Category = require('../Models/categoryModel');
 const Product = require('../Models/productModel');
+const { toSlug } = require('../utils/slugify');
 
 const getAllCategorys = async (req , res) => {
     try {
@@ -20,7 +21,7 @@ const getCategoryTree = async (req, res) => {
     const all = await Category
       .find({ status: 'active' })
       .select('name slug parentId')
-      .sort({ name: 1 })
+    //   .sort({ name: 1 })
       .lean();
 
     const parents = all.filter(c => !c.parentId);
@@ -62,7 +63,8 @@ const getByCategoryID = async (req , res) => {
 //success
 const addCategory = async (req , res) => {
     try {
-        const { name , slug , parentId } = req.body;
+        const { name , parentId } = req.body;
+        const slug = toSlug(name);
         if(!name || !slug ) return res.status(400).json({ error: "name and slug requied"})
 
             // Check trùng name
