@@ -19,7 +19,7 @@ const getCategoryTree = async (req, res) => {
   try {
     const all = await Category
       .find({ status: 'active' })
-      .select('name slug parentId')   // chỉ field cần
+      .select('name slug parentId')
       .sort({ name: 1 })
       .lean();
 
