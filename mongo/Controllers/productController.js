@@ -1,8 +1,5 @@
 const Category = require('../Models/categoryModel');
 const Product = require('../Models/productModel');
-const cloudinary = require('../config/cloudinary');
-const streamifier = require('streamifier')
-
 
 const getAllProducts = async (req , res) => {
     try {
@@ -37,7 +34,9 @@ const getByProductID = async (req , res) => {
 //success
 const addProduct = async (req , res) => {
     try {
+
         const { name, slug, price, description, quantity, colspan , category_id } = req.body;
+        
         if(!name || !slug ) return res.status(400).json({ error: "name and slug requied"})
 
             // Check trùng name
@@ -49,27 +48,6 @@ const addProduct = async (req , res) => {
         if (slugExists) return res.status(400).json({ error: "Category slug already exists" });
 
 
-        const images = [];
-        let index = 0;
-        for(let file of req.files){
-            const result = await new Promise((resole , reject) => {
-                const stream = cloudinary.uploader.upload_stream(
-                    {folder: 'product'},
-                    (err , result) =>{
-                        if(err) reject(err);
-                        else resole(result.secure_url)
-                    }
-                );
-                streamifier.createReadStream(file.buffer).pipe(stream)
-            })
-            images.push({
-                url: result,
-                is_main: index === 0 // ✅ ảnh đầu tiên làm ảnh chính
-            });
-
-            index++;
-        }
-
         const newProduct = await Product.create({ 
             name, 
             slug, 
@@ -77,12 +55,11 @@ const addProduct = async (req , res) => {
             description, 
             quantity, 
             colspan ,
-            images, 
-            category_id: category_id ? JSON.parse(category_id) : [] // categories là mảng ID từ client
+            category_id: category_id
         })
         res.status(200).json({
-            success: true,
-            newProduct
+            success_true: true,
+            id: newProduct._id
         })
     } catch (error) {
         console.log(error)

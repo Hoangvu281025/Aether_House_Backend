@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 
-const ProductSchema = new mongoose.Schema({
+const ProductSchema = new Schema({
     name: {type: String, required: true},
     slug: {type: String, required: true},
     price: {type: Number, required: true},
@@ -10,12 +11,12 @@ const ProductSchema = new mongoose.Schema({
     colspan: {type: String, required: true},
     images: [{
         url: {type: String, required: true},
+        public_id: {type: String, required: true},
+        localPath: {type: String, required: true},
         is_main: {type: Boolean , required:false }
     }],
     is_hidden: {type: Boolean, default: false},
-    category_id: [{
-        type: mongoose.Schema.Types.ObjectId , ref: "Category" , required: true
-    }],
+    category_id: {type: mongoose.Schema.Types.ObjectId , ref: "Category" , required: true},
 },{
     timestamps: true
 })

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 
-const voucherSchema = new mongoose.Schema({
+const voucherSchema = new Schema({
     value: {type: Number, required: true},
     voucher_code: {type: String, required: true},
     quantity: {type: Number, required: true},

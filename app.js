@@ -10,10 +10,12 @@ dotenv.config();
 
 
 
+
 var indexRouter = require('./routes/index');
 var categoriesRouter = require('./routes/category');
 var usersRouter = require('./routes/users');
 var productsRouter = require('./routes/product');
+var uploadRouter = require('./routes/upload');
 
 var app = express();
 
@@ -31,6 +33,10 @@ app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/products', productsRouter);
+app.use('/api/uploads', uploadRouter);
+
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

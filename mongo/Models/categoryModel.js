@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
+const ObjectId = Schema.ObjectId;
 
-
-const CategorySchema = new mongoose.Schema({
+const CategorySchema = new Schema({
     name: {type: String, required: true},
     slug: {type: String, required: true},
-    status: { type: String, enum: ['active', 'inactive'], default: 'active' }
+    parentId: { type: ObjectId, default: null },
+    status: { type: String, enum: ['active', 'unactive'], default: 'active' }
 },{
     timestamps: true
 })

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 
-const ProductVariantSchema = new mongoose.Schema({
+const ProductVariantSchema = new Schema({
     Variation: [{
         color: {type: String, required: true},
         imagers: [{type: String, required: true}]

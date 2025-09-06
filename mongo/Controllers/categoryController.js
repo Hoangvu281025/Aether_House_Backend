@@ -15,6 +15,34 @@ const getAllCategorys = async (req , res) => {
         })
     }
 }
+const getCategoryTree = async (req, res) => {
+  try {
+    const all = await Category
+      .find({ status: 'active' })
+      .select('name slug parentId')   // chỉ field cần
+      .sort({ name: 1 })
+      .lean();
+
+    const parents = all.filter(c => !c.parentId);
+    const byParent = new Map();
+    for (const c of all) {
+      if (!c.parentId) continue;
+      const key = String(c.parentId);
+      if (!byParent.has(key)) byParent.set(key, []);
+      byParent.get(key).push(c);
+    }
+
+    const tree = parents.map(p => ({
+      ...p,
+      children: byParent.get(String(p._id)) || []
+    }));
+
+    return res.status(200).json({ success: true, tree });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
 const getByCategoryID = async (req , res) => {
     try {
         const category_id = req.params.id;
@@ -34,7 +62,7 @@ const getByCategoryID = async (req , res) => {
 //success
 const addCategory = async (req , res) => {
     try {
-        const { name ,slug } = req.body;
+        const { name , slug , parentId } = req.body;
         if(!name || !slug ) return res.status(400).json({ error: "name and slug requied"})
 
             // Check trùng name
@@ -46,10 +74,11 @@ const addCategory = async (req , res) => {
         if (slugExists) return res.status(400).json({ error: "Category slug already exists" });
 
 
-        const newCategory = await Category.create({ name ,slug })
+        const newCategory = await Category.create({ name , slug , parentId: parentId || null })
         res.status(200).json({
             success: true,
             categories : newCategory
+            
         })
     } catch (error) {
         res.status(500).json({
@@ -97,7 +126,7 @@ const toggleCategoryStatus  = async (req , res) => {
         const category = await Category.findById(category_id);
         if(!category) return res.status(400).json({ error: " requied"})
 
-        category.status = (category.status == "active") ? 'inactive' : 'active';
+        category.status = (category.status == "active") ? 'unactive' : 'active';
 
         await category.save();
         await Product.updateMany({ category: category_id }, { is_hidden: category.status === 'inactive' });
@@ -117,6 +146,7 @@ const toggleCategoryStatus  = async (req , res) => {
 
 module.exports = {
     getAllCategorys,
+    getCategoryTree,
     getByCategoryID,
     addCategory,
     updateCategory,

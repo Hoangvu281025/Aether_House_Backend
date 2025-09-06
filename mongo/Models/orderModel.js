@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 
-const orderSchema = new mongoose.Schema({
+const orderSchema = new Schema({
     total_amount: {type: Number, required: true},
     address_id: {type: mongoose.Types.ObjectId , ref : "Address" , required: true},
     voucher_id: {type: mongoose.Types.ObjectId , ref : "Voucher" , required: false},
