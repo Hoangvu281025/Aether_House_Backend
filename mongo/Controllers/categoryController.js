@@ -1,7 +1,47 @@
-const Category = require('../Models/categoryModel');
+const CategoryModel = require('../Models/categoryModel');
 const Product = require('../Models/productModel');
 const { toSlug } = require('../utils/slugify');
+const RoomModel = require('../Models/roomModel');
 
+
+const getMenu = async (req , res) => {
+    try {
+    // Lấy tất cả category cha
+    const parents = await CategoryModel.find({ parentId: null }).select('_id name slug').lean();
+
+    // Lấy tất cả category con
+    const children = await CategoryModel.find({ parentId: { $ne: null } }).select('name slug parentId').lean();
+
+    // Lấy tất cả room
+    const rooms = await RoomModel.find().select('name slug').lean();
+
+    // Gom con vào đúng cha
+    const menu = parents.map(parent => {
+        const childOfParent = children
+            .filter(c => String(c.parentId) === String(parent._id))
+            .map(c => ({ name: c.name, slug: c.slug }));
+
+        // Không gán rooms nếu slug là 'whats-new'
+        const roomsForParent = (parent.slug === 'whats-new' || parent.slug === 'explore' || parent.slug === 'gifts')
+            ? [] // ← bỏ qua room
+            : rooms
+            .map(r => ({ name: r.name, slug: r.slug }));
+
+        // Trả về object
+        return {
+            parent: { name: parent.name, slug: parent.slug },
+            children: childOfParent,
+            ...(roomsForParent.length > 0 && { rooms: roomsForParent }) 
+        };
+    });
+
+
+    res.json(menu);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
 const getAllCategorys = async (req , res) => {
     try {
         const categories = await Category.find({ status: "active"});
@@ -68,12 +108,9 @@ const addCategory = async (req , res) => {
         if(!name || !slug ) return res.status(400).json({ error: "name and slug requied"})
 
             // Check trùng name
-        const nameExists = await Category.findOne({ name });
+        const nameExists = await CategoryModel.findOne({ name });
         if (nameExists) return res.status(400).json({ error: "Category name already exists" });
 
-            // Check trùng slug
-        const slugExists = await Category.findOne({ slug });
-        if (slugExists) return res.status(400).json({ error: "Category slug already exists" });
 
 
         const newCategory = await Category.create({ name , slug , parentId: parentId || null })
@@ -147,6 +184,7 @@ const toggleCategoryStatus  = async (req , res) => {
 
 
 module.exports = {
+    getMenu,
     getAllCategorys,
     getCategoryTree,
     getByCategoryID,
