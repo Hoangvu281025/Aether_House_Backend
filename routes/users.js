@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
-
+const UserControllers = require('../mongo/Controllers/userController')
+const upload = require('../mongo/middlewares/uploadMiddleware');
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+router.get('/', UserControllers.login);
+router.post('/registerUser',upload.single('image'), UserControllers.registerUser);
+router.post('/registerAdmin',upload.single('image'), UserControllers.registerAdmin);
 
 module.exports = router;

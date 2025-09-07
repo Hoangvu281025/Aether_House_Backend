@@ -14,8 +14,10 @@ dotenv.config();
 var indexRouter = require('./routes/index');
 var categoriesRouter = require('./routes/category');
 var usersRouter = require('./routes/users');
+var rolesRouter = require('./routes/role');
 var productsRouter = require('./routes/product');
 var uploadRouter = require('./routes/upload');
+
 
 var app = express();
 
@@ -31,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/roles', rolesRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/uploads', uploadRouter);

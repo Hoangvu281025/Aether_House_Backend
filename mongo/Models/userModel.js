@@ -6,9 +6,18 @@ const UserSchema = new Schema({
     name: {type: String, required: true},
     email: {type: String, required: true},
     password: {type: String, required: true},
-    avatar: {type: String, required: true},
+    avatar: {
+        url: {type: String, required: true},
+        public_id: {type: String, required: true},
+        localPath: {type: String, required: true},
+    },
     isActive: {type: Boolean, default: true}, // true hoạt động bth || false bị khóa
-    roles: {type: String, enum: ["0" , "1"] , default: "0"}, // 0 user  || 1 admin
+    roles: {type: mongoose.Schema.Types.ObjectId , ref: "Role" , required: true }, // 0 user  || 1 admin
+    approvalStatus: {
+        type: String,
+        enum: ['pending', 'approved'],
+        default: 'pending'
+    }
 },{
     timestamps: true
 })

@@ -6,6 +6,7 @@ const CategorySchema = new Schema({
     name: {type: String, required: true},
     slug: {type: String, required: true},
     parentId: { type: ObjectId, default: null },
+    type: { type: String, enum: ['category', 'room'], default: 'category' },
     status: { type: String, enum: ['active', 'unactive'], default: 'active' }
 },{
     timestamps: true
