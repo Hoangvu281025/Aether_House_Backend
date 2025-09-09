@@ -7,7 +7,7 @@ const RoomModel = require('../Models/roomModel');
 const getMenu = async (req , res) => {
     try {
     // Lấy tất cả category cha
-    const parents = await CategoryModel.find({ parentId: null }).select('_id name slug').lean();
+    const parents = await CategoryModel.find({ parentId: null , status: "active" }).select('_id name slug').lean();
 
     // Lấy tất cả category con
     const children = await CategoryModel.find({ parentId: { $ne: null } }).select('name slug parentId').lean();
@@ -42,9 +42,10 @@ const getMenu = async (req , res) => {
     res.status(500).json({ error: 'Server error' });
   }
 }
+
 const getAllCategorys = async (req , res) => {
     try {
-        const categories = await Category.find({ status: "active"});
+        const categories = await CategoryModel.find({ status: "active"});
         res.status(200).json({
             success: true,
             categories
@@ -56,38 +57,13 @@ const getAllCategorys = async (req , res) => {
         })
     }
 }
-const getCategoryTree = async (req, res) => {
-  try {
-    const all = await Category
-      .find({ status: 'active' })
-      .select('name slug parentId')
-    //   .sort({ name: 1 })
-      .lean();
 
-    const parents = all.filter(c => !c.parentId);
-    const byParent = new Map();
-    for (const c of all) {
-      if (!c.parentId) continue;
-      const key = String(c.parentId);
-      if (!byParent.has(key)) byParent.set(key, []);
-      byParent.get(key).push(c);
-    }
 
-    const tree = parents.map(p => ({
-      ...p,
-      children: byParent.get(String(p._id)) || []
-    }));
 
-    return res.status(200).json({ success: true, tree });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
-};
 const getByCategoryID = async (req , res) => {
     try {
         const category_id = req.params.id;
-        const categories = await Category.findById({ _id:category_id , status: "active"});
+        const categories = await CategoryModel.findById({ _id:category_id , status: "active"});
         if(!categories) return res.status(404).json({ success: false , errer: "Category not found or hidden"});
         res.status(200).json({
             success: true,
@@ -100,7 +76,7 @@ const getByCategoryID = async (req , res) => {
         })
     }
 }
-//success
+
 const addCategory = async (req , res) => {
     try {
         const { name , parentId } = req.body;
@@ -130,19 +106,19 @@ const updateCategory = async (req , res) => {
     try {
         const { name ,slug } = req.body;
         const category_id = req.params.id;
-        const category = await Category.findOne({ _id:category_id , status: "active"});
+        const category = await CategoryModel.findOne({ _id:category_id , status: "active"});
         if(!category) return res.status(400).json({ error: "name and slug requied"})
 
         // Kiểm tra trùng name
         if (name) {
-            const nameExists = await Category.findOne({ name, _id: { $ne: category_id } });
+            const nameExists = await CategoryModel.findOne({ name, _id: { $ne: category_id } });
             if (nameExists) return res.status(400).json({ error: "Category name already exists" });
             category.name = name;
         }
 
         // Kiểm tra trùng slug
         if (slug) {
-            const slugExists = await Category.findOne({ slug, _id: { $ne: category_id } });
+            const slugExists = await CategoryModel.findOne({ slug, _id: { $ne: category_id } });
             if (slugExists) return res.status(400).json({ error: "Category slug already exists" });
             category.slug = slug;
         }
@@ -158,11 +134,12 @@ const updateCategory = async (req , res) => {
         })
     }
 }
+
 const toggleCategoryStatus  = async (req , res) => {
     try {
         const category_id = req.params.id;
 
-        const category = await Category.findById(category_id);
+        const category = await CategoryModel.findById(category_id);
         if(!category) return res.status(400).json({ error: " requied"})
 
         category.status = (category.status == "active") ? 'unactive' : 'active';
@@ -186,7 +163,6 @@ const toggleCategoryStatus  = async (req , res) => {
 module.exports = {
     getMenu,
     getAllCategorys,
-    getCategoryTree,
     getByCategoryID,
     addCategory,
     updateCategory,

@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
+const upload = require('../mongo/middlewares/uploadMiddleware');
 const ProductControllers = require('../mongo/Controllers/productController')
-const validateProduct = require('../mongo/middlewares/validateProduct');
 
-router.get('/', ProductControllers.getAllProducts);
-router.get('/:id', ProductControllers.getByProductID);
-router.get('/:slug', ProductControllers.getByProductSlug);
-router.post('/', validateProduct, ProductControllers.addProduct);
+router.get('/:parentSlug', ProductControllers.getProductsByParentSlug);
+
+
+router.post('/',upload.array('images' , 2), ProductControllers.addProduct);
 router.put('/:id', ProductControllers.updateProduct);
 router.delete('/:id', ProductControllers.deleteProduct);
 

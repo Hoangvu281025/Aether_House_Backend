@@ -4,7 +4,6 @@ const CategoryControllers = require('../mongo/Controllers/categoryController')
 /* GET users listing. */
 router.get('/menu', CategoryControllers.getMenu);
 router.get('/', CategoryControllers.getAllCategorys);
-router.get('/tree', CategoryControllers.getCategoryTree);
 router.get('/:id', CategoryControllers.getByCategoryID);
 router.post('/', CategoryControllers.addCategory);
 router.put('/:id', CategoryControllers.updateCategory);

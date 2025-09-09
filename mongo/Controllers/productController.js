@@ -1,58 +1,53 @@
+const cloudinary = require('../config/cloudinary');
 const Category = require('../Models/categoryModel');
 const Product = require('../Models/productModel');
 const { toSlug } = require('../utils/slugify');
-const getAllProducts = async (req , res) => {
-    try {
-        const products = await Product.find({ is_hidden: false}).populate('category_id' , 'name slug');
-        res.status(200).json({
-            success: true,
-            products
-        })
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({
-            error : 'Internal server error'
-        })
+
+const getProductsByParentSlug = async (req, res) => {
+  try {
+    const { parentSlug } = req.params;
+
+    // Tìm category cha theo slug
+    const parent = await Category.findOne({ slug: parentSlug });
+    if (!parent) {
+      return res.status(404).json({ success: false, message: "Parent category not found" });
     }
-}
-const getByProductID = async (req , res) => {
-    try {
-        const category_id = req.params.id;
-        const categories = await Category.findById({ _id:category_id , status: "active"});
-        if(!categories) return res.status(404).json({ success: false , errer: "Category not found or hidden"});
-        res.status(200).json({
-            success: true,
-            categories: categories
-        })
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({
-            error : 'Internal server error'
-        })
-    }
-}
-const getByProductSlug = async (req , res) => {
-    try {
-        const {slug} = req.params;
-        const categories = await Category.findById({ _id:category_id , status: "active"});
-        if(!categories) return res.status(404).json({ success: false , errer: "Category not found or hidden"});
-        res.status(200).json({
-            success: true,
-            categories: categories
-        })
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({
-            error : 'Internal server error'
-        })
-    }
-}
+
+    // Lấy con trực tiếp của cha
+    const children = await Category.find({ parentId: parent._id });
+    const categoryIds = [parent._id, ...children.map(c => c._id)];
+
+    // Query sản phẩm thuộc cha + con
+    const products = await Product.find({ category_id: { $in: categoryIds } })
+      .populate("category_id")
+      .populate("room_id");
+
+    res.json({ success: true, parent, products });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 
 const addProduct = async (req , res) => {
     try {
-        const { name,  price, description, quantity, colspan , category_id } = req.body;
+        const { name,  price, description, quantity, colspan , category_id , room_id } = req.body;
         const slug = toSlug(name);
-
+        const files = req.files || [];
+        if (files.length === 0) return res.status(400).json({ error: 'No files uploaded' });
+        const uploadedImages = [];
+            for (let i= 0; i < files.length; i++) {
+                const file = files[i];
+                const localPath = file.path;
+                const results = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse' });
+                uploadedImages.push({
+                    url: results.secure_url,
+                    public_id: results.public_id,
+                    localPath: localPath,
+                    is_main: i === 0
+                });
+            }
         const newProduct = await Product.create({ 
             name, 
             slug, 
@@ -60,7 +55,9 @@ const addProduct = async (req , res) => {
             description, 
             quantity, 
             colspan ,
-            category_id: category_id
+            images: uploadedImages,
+            category_id: category_id,
+            room_id: room_id,
         })
         res.status(200).json({
             success_true: true,
@@ -132,9 +129,8 @@ const deleteProduct  = async (req , res) => {
 
 
 module.exports = {
-    getAllProducts,
-    getByProductID,
-    getByProductSlug,
+    getProductsByParentSlug,
+    
     addProduct,
     updateProduct,
     deleteProduct

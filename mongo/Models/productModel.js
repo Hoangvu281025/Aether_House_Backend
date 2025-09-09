@@ -8,7 +8,7 @@ const ProductSchema = new Schema({
     price: {type: Number, required: true},
     description: {type: String, required: true},
     quantity: {type: Number, required: true},
-    colspan: {type: String, required: true},
+    colspan: {type: Number, enum: [1, 2],default: 1, required: true},
     images: [{
         url: {type: String, required: true},
         public_id: {type: String, required: true},
@@ -17,6 +17,7 @@ const ProductSchema = new Schema({
     }],
     is_hidden: {type: Boolean, default: false},
     category_id: {type: mongoose.Schema.Types.ObjectId , ref: "Category" , required: true},
+    room_id: {type: mongoose.Schema.Types.ObjectId , ref: "Room" , required: true},
 },{
     timestamps: true
 })
