@@ -17,10 +17,11 @@ const ProductSchema = new Schema({
     }],
     is_hidden: {type: Boolean, default: false},
     category_id: {type: mongoose.Schema.Types.ObjectId , ref: "Category" , required: true},
-    room_id: {type: mongoose.Schema.Types.ObjectId , ref: "Room" , required: true},
+    
 },{
-    timestamps: true
-})
+timestamps: true
+}
+)
 
 
 module.exports = mongoose.model("Product" , ProductSchema)

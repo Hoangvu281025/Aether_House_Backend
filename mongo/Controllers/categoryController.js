@@ -1,7 +1,6 @@
 const CategoryModel = require('../Models/categoryModel');
 const Product = require('../Models/productModel');
 const { toSlug } = require('../utils/slugify');
-const RoomModel = require('../Models/roomModel');
 
 
 const getMenu = async (req , res) => {
@@ -12,8 +11,7 @@ const getMenu = async (req , res) => {
     // Lấy tất cả category con
     const children = await CategoryModel.find({ parentId: { $ne: null } }).select('name slug parentId').lean();
 
-    // Lấy tất cả room
-    const rooms = await RoomModel.find().select('name slug').lean();
+
 
     // Gom con vào đúng cha
     const menu = parents.map(parent => {
@@ -21,17 +19,11 @@ const getMenu = async (req , res) => {
             .filter(c => String(c.parentId) === String(parent._id))
             .map(c => ({ name: c.name, slug: c.slug }));
 
-        // Không gán rooms nếu slug là 'whats-new'
-        const roomsForParent = (parent.slug === 'whats-new' || parent.slug === 'explore' || parent.slug === 'gifts')
-            ? [] // ← bỏ qua room
-            : rooms
-            .map(r => ({ name: r.name, slug: r.slug }));
 
         // Trả về object
         return {
             parent: { name: parent.name, slug: parent.slug },
             children: childOfParent,
-            ...(roomsForParent.length > 0 && { rooms: roomsForParent }) 
         };
     });
 

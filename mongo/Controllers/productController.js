@@ -20,19 +20,43 @@ const getProductsByParentSlug = async (req, res) => {
     // Query sản phẩm thuộc cha + con
     const products = await Product.find({ category_id: { $in: categoryIds } })
       .populate("category_id")
-      .populate("room_id");
 
-    res.json({ success: true, parent, products });
+    res.json({ success: true, products });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
+const getProductsByChildSlug = async (req, res) => {
+  try {
+    const { parentSlug, childSlug } = req.params;
 
+    // Tìm cha
+    const parent = await Category.findOne({ slug: parentSlug });
+    if (!parent) {
+      return res.status(404).json({ success: false, message: "Parent category not found" });
+    }
+
+    // Tìm con trực tiếp thuộc cha
+    const child = await Category.findOne({ slug: childSlug, parentId: parent._id });
+    if (!child) {
+      return res.status(404).json({ success: false, message: "Child category not found under this parent" });
+    }
+
+    // Query sản phẩm theo con
+    const products = await Product.find({ category_id: child._id })
+      .populate("category_id")
+
+    res.json({ success: true, parent, child, products });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 const addProduct = async (req , res) => {
     try {
-        const { name,  price, description, quantity, colspan , category_id , room_id } = req.body;
+        const { name,  price, description, quantity, colspan , category_id } = req.body;
         const slug = toSlug(name);
         const files = req.files || [];
         if (files.length === 0) return res.status(400).json({ error: 'No files uploaded' });
@@ -57,7 +81,6 @@ const addProduct = async (req , res) => {
             colspan ,
             images: uploadedImages,
             category_id: category_id,
-            room_id: room_id,
         })
         res.status(200).json({
             success_true: true,
@@ -130,7 +153,7 @@ const deleteProduct  = async (req , res) => {
 
 module.exports = {
     getProductsByParentSlug,
-    
+    getProductsByChildSlug,
     addProduct,
     updateProduct,
     deleteProduct

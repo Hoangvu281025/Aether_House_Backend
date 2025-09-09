@@ -13,7 +13,6 @@ dotenv.config();
 
 var indexRouter = require('./routes/index');
 var categoriesRouter = require('./routes/category');
-var roomsRouter = require('./routes/room');
 var usersRouter = require('./routes/users');
 var rolesRouter = require('./routes/role');
 var productsRouter = require('./routes/product');
@@ -36,7 +35,6 @@ app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/roles', rolesRouter);
 app.use('/api/categories', categoriesRouter);
-app.use('/api/rooms', roomsRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/uploads', uploadRouter);
 
