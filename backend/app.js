@@ -46,7 +46,7 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 mongoose
-  .connect(process.env.MONGO_URI_1)
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("Kết nối Database thành công"))
   .catch((err) => console.log(err));
 // error handler

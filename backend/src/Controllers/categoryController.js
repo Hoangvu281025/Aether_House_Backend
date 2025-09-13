@@ -81,7 +81,7 @@ const addCategory = async (req , res) => {
 
 
 
-        const newCategory = await Category.create({ name , slug , parentId: parentId || null })
+        const newCategory = await CategoryModel.create({ name , slug , parentId: parentId || null })
         res.status(200).json({
             success: true,
             categories : newCategory
