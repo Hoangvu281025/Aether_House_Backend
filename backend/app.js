@@ -30,6 +30,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/roles', rolesRouter);
@@ -37,7 +38,8 @@ app.use('/api/categories', categoriesRouter);
 app.use('/api/products', productsRouter);
 
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

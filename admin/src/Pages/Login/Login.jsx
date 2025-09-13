@@ -1,9 +1,14 @@
-// import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./Login.css";
 
 const AdminLogin = () => {
-
+  const [isActive, setIsActive] = useState(false);
+  
+  const handleInputChange = (e) => {
+    const { value } = e.target;
+    setIsActive(value.trim() !== "");
+  };
   return (
     <div className="signup-container">
       <div className="signup-container">

@@ -8,8 +8,8 @@ const UserSchema = new Schema({
     password: {type: String, required: true},
     avatar: {
         url: {type: String, required: true},
-        public_id: {type: String, required: true},
-        localPath: {type: String, required: true},
+        public_id: {type: String},
+        localPath: {type: String},
     },
     isActive: {type: Boolean, default: true}, // true hoạt động bth || false bị khóa
     roles: {type: mongoose.Schema.Types.ObjectId , ref: "Role" , required: true }, // 0 user  || 1 admin

@@ -34,24 +34,31 @@ const login = async (req, res) => {
 const registerUser = async (req, res) => {
     try {
         const {name , email , password }  = req.body;
-        if(!name || !email ||!password) return res.status(400).json({ error: 'name email password requied' });
-        const userRole = await RoleModel.findOne({ name: 'user' });
-        const hashpass = await bcrypt.hash(password, 10);
-        const file = req.file;
-        if (!file) {
-            return res.status(400).json({ error: 'Image file is required' });
-        }
-        const localPath = file.path;
+        if(!name || !email || !password) return res.status(400).json({ error: 'name email password requied' });
 
-        const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse' });
+        const checkName = await UserModel.findOne({ name });
+        if(checkName) return res.status(400).json({ error: 'name already exists' });
+
+
+        const checkEmail = await UserModel.findOne({ email });
+        if(checkEmail) return res.status(400).json({ error: 'email already exists' });
+
+        const userRole = await RoleModel.findOne({ name: 'user' });
+        if (!userRole) {
+            return res.status(500).json({ error: 'User role not found' });
+        }
+        const hashpass = await bcrypt.hash(password, 10);
+
+        const Image_url = 'https://res.cloudinary.com/depbw3f5t/image/upload/v1757741610/AetherHouse/users/default/ovecwbz3xb68pltutyjt.jpg';   
+
         await UserModel.create({ 
             name ,
             email ,
             password: hashpass,
             avatar:{
-                url: Uploadresults.secure_url,
-                public_id: Uploadresults.public_id,
-                localPath: localPath,
+                url: Image_url,
+                public_id: null,
+                localPath: null,
             } ,
             roles: userRole._id,
             approvalStatus: 'approved'
@@ -61,28 +68,53 @@ const registerUser = async (req, res) => {
             message: 'account registration successfully' ,
         });
     } catch (error) {
+        console.log(error);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
 const registerAdmin = async (req, res) => {
     try {
         const {name , email , password }  = req.body;
-        if(!name || !email ||!password) return res.status(400).json({ error: 'name email password requied' });
+        if(!name || !email || !password) return res.status(400).json({ error: 'name email password requied' });
+        const approvalStatus = 'pending'; // Mặc định trạng thái là 'pending'
+
+        // const checkName = await UserModel.findOne({ name });
+        // if(checkName) return res.status(400).json({ error: 'name already exists' });
+
+
+        const checkEmail = await UserModel.findOne({ email });
+        if(checkEmail) return res.status(400).json({ error: 'email already exists' });
+
+
         const userRole = await RoleModel.findOne({ name: 'user' });
-        const hash = await bcrypt.hash(password, 10);
-        const newUser = await UserModel.create({ 
+        const hashpass = await bcrypt.hash(password, 10);
+        const Image_url = 'https://res.cloudinary.com/depbw3f5t/image/upload/v1757743780/86d6847a8b6f618b418dad34b931b048_hxwffu.jpg'
+
+        // const file = req.file;
+        // if (!file) {
+        //     return res.status(400).json({ error: 'Image file is required' });
+        // }
+        // const localPath = file.path;
+
+        // const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse/users/admin' });
+        const newadmin = await UserModel.create({ 
             name ,
             email ,
-            password,
-            avatar:image, 
+            password: hashpass,
+            avatar:{
+                url: Image_url ,
+                public_id: null,
+                localPath: null,
+            }, 
             roles: userRole._id,
+            approvalStatus
         });
         return res.status(200).json({ 
             success: true,
-            message: 'user add successfully' ,
-            newUser
+            message: 'user register successfully'
         });
     } catch (error) {
+        console.error(error);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
