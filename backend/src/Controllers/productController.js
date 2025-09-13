@@ -54,6 +54,24 @@ const getProductsByChildSlug = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+const getByIDpro = async (req , res) => {
+    try {
+        const product_id = req.params.id;
+
+        const product = await Product.findOne({ _id: product_id , is_hidden: false}).populate('category_id');
+        if(!product) return res.status(404).json({ success: false , errer: "Product not found or hidden"});
+        res.status(200).json({
+            success: true,
+            product
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            error : 'Internal server error'
+        })
+    }   
+}
 const addProduct = async (req , res) => {
     try {
         const { name,  price, description, quantity, colspan , category_id } = req.body;
@@ -154,6 +172,7 @@ const deleteProduct  = async (req , res) => {
 module.exports = {
     getProductsByParentSlug,
     getProductsByChildSlug,
+    getByIDpro,
     addProduct,
     updateProduct,
     deleteProduct

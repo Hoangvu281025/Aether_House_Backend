@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const CategoryControllers = require('../mongo/Controllers/categoryController')
+const CategoryControllers = require('../Controllers/categoryController');
 /* GET users listing. */
 router.get('/menu', CategoryControllers.getMenu);
 router.get('/', CategoryControllers.getAllCategorys);

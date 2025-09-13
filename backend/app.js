@@ -11,12 +11,11 @@ dotenv.config();
 
 
 
-var indexRouter = require('./routes/index');
-var categoriesRouter = require('./routes/category');
-var usersRouter = require('./routes/users');
-var rolesRouter = require('./routes/role');
-var productsRouter = require('./routes/product');
-var uploadRouter = require('./routes/upload');
+var indexRouter = require('./src/routes/index');
+var categoriesRouter = require('./src/routes/category');
+var usersRouter = require('./src/routes/users');
+var rolesRouter = require('./src/routes/role');
+var productsRouter = require('./src/routes/product');
 
 
 var app = express();
@@ -36,7 +35,6 @@ app.use('/api/users', usersRouter);
 app.use('/api/roles', rolesRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/products', productsRouter);
-app.use('/api/uploads', uploadRouter);
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
