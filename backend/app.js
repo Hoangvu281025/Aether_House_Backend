@@ -17,6 +17,7 @@ var usersRouter = require('./src/routes/users');
 var authRouter = require('./src/routes/auth');
 var rolesRouter = require('./src/routes/role');
 var productsRouter = require('./src/routes/product');
+var storeRouter = require('./src/routes/store');
 
 
 var app = express();
@@ -38,7 +39,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/roles', rolesRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/products', productsRouter);
-
+app.use('/api/stores', storeRouter);
 
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
@@ -48,7 +49,7 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 mongoose
-  .connect(process.env.MONGO_URI_1)
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("Kết nối Database thành công"))
   .catch((err) => console.log(err));
 // error handler
