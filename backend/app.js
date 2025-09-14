@@ -14,6 +14,7 @@ dotenv.config();
 var indexRouter = require('./src/routes/index');
 var categoriesRouter = require('./src/routes/category');
 var usersRouter = require('./src/routes/users');
+var authRouter = require('./src/routes/auth');
 var rolesRouter = require('./src/routes/role');
 var productsRouter = require('./src/routes/product');
 
@@ -33,6 +34,7 @@ app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/roles', rolesRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/products', productsRouter);
@@ -46,7 +48,7 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI_1)
   .then(() => console.log("Kết nối Database thành công"))
   .catch((err) => console.log(err));
 // error handler

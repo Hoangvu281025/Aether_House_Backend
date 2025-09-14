@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import {  EyeCloseIcon, EyeIcon } from "../../icons";//ChevronLeftIcon
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  // const [isChecked, setIsChecked] = useState(false);
   return (
     <div className="flex flex-col flex-1">
-      <div className="w-full max-w-md pt-10 mx-auto">
+      {/* <div className="w-full max-w-md pt-10 mx-auto">
         <Link
           to="/"
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
@@ -19,7 +18,7 @@ export default function SignInForm() {
           <ChevronLeftIcon className="size-5" />
           Back to dashboard
         </Link>
-      </div>
+      </div> */}
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
@@ -31,7 +30,7 @@ export default function SignInForm() {
             </p>
           </div>
           <div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
+            {/* <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
               <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                 <svg
                   width="20"
@@ -82,7 +81,7 @@ export default function SignInForm() {
                   Or
                 </span>
               </div>
-            </div>
+            </div> */}
             <form>
               <div className="space-y-6">
                 <div>
@@ -112,22 +111,16 @@ export default function SignInForm() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Checkbox checked={isChecked} onChange={setIsChecked} />
-                    <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                      Keep me logged in
-                    </span>
-                  </div>
+                <div className="flex items-center justify-end">
                   <Link
                     to="/reset-password"
-                    className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                    className="text-sm text-orange-500"
                   >
                     Forgot password?
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" size="sm">
+                  <Button className="w-full bg-black" size="sm">
                     Sign in
                   </Button>
                 </div>
@@ -139,7 +132,7 @@ export default function SignInForm() {
                 Don&apos;t have an account? {""}
                 <Link
                   to="/signup"
-                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                  className="text-orange-500"
                 >
                   Sign Up
                 </Link>

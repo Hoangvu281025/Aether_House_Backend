@@ -12,7 +12,7 @@ const UserSchema = new Schema({
         localPath: {type: String},
     },
     isActive: {type: Boolean, default: true}, // true hoạt động bth || false bị khóa
-    roles: {type: mongoose.Schema.Types.ObjectId , ref: "Role" , required: true }, // 0 user  || 1 admin
+    role_id: {type: mongoose.Schema.Types.ObjectId , ref: "Role" , required: true }, // 0 user  || 1 admin
     approvalStatus: {
         type: String,
         enum: ['pending', 'approved'],
