@@ -1,0 +1,137 @@
+.page-content {
+  width: 74rem;
+  margin-top: 100px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.form-title {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #111827;
+}
+
+/* Grid 2 cột */
+.product-form .form-grid {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.form-column {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79,70,229,0.2);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  .product-form .form-grid {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+/* Container upload */
+.end {
+  margin-top: 30px;
+}
+
+.form-group.upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #d1d5db;
+  padding: 40px;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.form-group.upload:hover {
+  border-color: #4f46e5;
+  background-color: #f3f4fd;
+}
+
+.form-group.upload input[type="file"] {
+  display: none;
+}
+
+/* Thông tin trong upload */
+.form-group.upload label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.form-group.upload label span {
+  margin-top: 8px;
+}
+
+/* Nút Save căn phải */
+.submit-btn {
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  background-color: #4f46e5;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 20px;
+  align-self: flex-end; /* căn phải */
+}
+
+.submit-btn:hover {
+  background-color: #4338ca;
+}
+
+/* Nếu muốn form upload nằm ngang */
+.upload-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+

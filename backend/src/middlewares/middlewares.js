@@ -14,7 +14,7 @@ const middlewares = {
                     res.status(403).json('Token is not valid')
                 }
                 res.user = user;
-                // return next();
+                return next();
             })
         }else{
             res.status(401).json("you're not login")
@@ -24,12 +24,12 @@ const middlewares = {
     verifyTokenDelete: (req,res,next) => {
         middlewares.verifyToken(req,res, async () =>{
             try {
-                const roleName = req.user.role_name;
-                console.log(roleName);
-            //     if(!roleID) return res.status(403).json({error: 'no role in token'});
+                // const roleName = req.user.role_name;
+                // console.log(roleName);
+                // // if(!roleID) return res.status(403).json({error: 'no role in token'});
 
-            //     const role = await RoleModel.findById(roleID).select('name')
-            //     console.log(role);
+                // const role = await RoleModel.findById(roleID).select('name')
+                // console.log(role);
             } catch (error) {
                 return res.status(500).json({error: 'Auth check failed'})
             }

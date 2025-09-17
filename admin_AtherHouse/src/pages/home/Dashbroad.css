@@ -1,0 +1,68 @@
+.dashboard {
+  padding: 70px;
+  font-family: "Inter", sans-serif;
+}
+
+.cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 1;
+  min-width:500px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-icon {
+  background: #f3f4f6;
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-info h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  color: #555;
+}
+
+.card-info .number {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 5px 0;
+  color: #111;
+}
+
+.percent {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+
+.percent.up {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.percent.down {
+  background: #fef2f2;
+  color: #dc2626;
+}

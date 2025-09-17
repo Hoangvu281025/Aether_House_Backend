@@ -12,6 +12,10 @@ const authController = {
         try {
             const user = await UserModel.findOne({ email: req.body.email})
             if(!user) return res.status(404).json('woring email')
+            
+            // Check trạng thái duyệt
+            if (user.approvalStatus === "pending") return res.status(403).json("Account not approved");
+            
 
             const valipass = await bcrypt.compare(
                 req.body.password,
@@ -94,7 +98,7 @@ const authController = {
             if(checkEmail) return res.status(400).json({ error: 'email already exists' });
 
 
-            const userRole = await RoleModel.findOne({ name: 'user' });
+            const userRole = await RoleModel.findOne({ name: 'admin' });
             const hashpass = await bcrypt.hash(password, 10);
             const Image_url = 'https://res.cloudinary.com/depbw3f5t/image/upload/v1757743780/86d6847a8b6f618b418dad34b931b048_hxwffu.jpg'
 

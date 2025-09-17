@@ -1,0 +1,236 @@
+/* Container tổng */
+.signup-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+
+
+/* Left Side */
+.signup-left {
+  flex: 0.4;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 80px;
+}
+.back-link {
+  font-size: 14px;
+  color: #4b5563;
+  text-decoration: none;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.signup-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #111827;
+}
+
+.signup-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+/* Social Login */
+/* .social-login {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+} */
+
+/* .google-btn,
+.x-btn {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+} */
+
+/* .google-btn:hover,
+.x-btn:hover {
+  background: #f3f4f6;
+} */
+
+/* Divider */
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  height: 1px;
+  background: #e5e7eb;
+  position: absolute;
+  top: 50%;
+  width: 40%;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.divider span {
+  font-size: 14px;
+  color: #6b7280;
+  background: #fff;
+  padding: 0 10px;
+  position: relative;
+}
+
+/* Form */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.signup-form label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.signup-form input {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+  background-color: #ffffff; 
+  color: #111827;              /* text đen */
+}
+.signup-form input:focus {
+  border: 1px solid black;
+}
+
+.signup-form input::placeholder {
+  color: #9ca3af; /* placeholder xám */
+}
+
+
+/* Checkbox */
+/* .checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.checkbox-row input {
+  width: 16px;
+  height: 16px;
+} */
+
+/* Button */
+.signup-btn {
+  margin-top: 10px;
+  color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.signup-btn:hover {
+  border: 1px solid black;
+
+  color: black;
+  background: white;
+}
+
+/* Text */
+.login-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.login-text a {
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Right Side */
+.signup-right {
+  position: relative;
+  flex: 1;
+  color: #fff;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; */
+  /* padding: 40px; */
+  text-align: center;
+}
+
+
+.logo{
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+.logo img{
+  width: 150px;
+}
+.image_banner{
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* fill full, không méo ảnh */
+  display: block;
+}
+
+
+.success{
+  text-align: right;
+  color: green;
+}
+
+.success{
+  text-align: right;
+  color: red;
+}
+
+
+
+
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #ccc;
+  border-top: 3px solid #16a34a; /* màu xanh đẹp */
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
