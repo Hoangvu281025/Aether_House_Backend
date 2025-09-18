@@ -4,10 +4,12 @@ import MainLayout from "./Layout/MainLayout";
 import Signin from "./pages/Auth/Signin";
 import Signup from "./pages/Auth/Signup";
 import Dashboard from "./pages/home/Dashboard";
-import Addproduct from "./pages/ecommerce/Addproduct";  
-import FormProductUpdate from "./pages/ecommerce/Updateproduct"
-import Products from "./pages/ecommerce/Products";
+import Addproduct from "./pages/forms/Addproduct";  
+import FormProductUpdate from "./pages/forms/Updateproduct"
+import Products from "./pages/products/Products";
+import AddStore from "./pages/forms/AddStore";
 import Users from "./pages/users/Users";
+import Stores from "./pages/Stores/Stores";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css"
 import AuthRedirect from "./components/AuthRedirect";
@@ -19,10 +21,12 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Dashboard />} />
-            <Route path="/ecommerce/products" element={<Products />} />
-            <Route path="/ecommerce/add-product" element={<Addproduct />} /> 
-            <Route path="/ecommerce/update-product/" element={<FormProductUpdate />} /> 
+            <Route path="/tables/products" element={<Products />} />
+            <Route path="/forms/add-product" element={<Addproduct />} /> 
+            <Route path="/forms/update-product/" element={<FormProductUpdate />} /> 
+            <Route path="/forms/add-store/" element={<AddStore />} /> 
             <Route path="/tables/users" element={<Users />} />
+            <Route path="/tables/stores" element={<Stores />} />
           </Route>
         </Route>
         {/* Auth layout */}

@@ -7,7 +7,7 @@ export default function AddProduct() {
         slug: "",
         price: "",
         images: null,
-        description: "",
+        description: "",    
         create_at: "",
         updated_at: "",
         quantity: 0,

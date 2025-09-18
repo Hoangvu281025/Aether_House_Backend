@@ -52,15 +52,14 @@ import "./Users.css";
 // ];
 
 const Users = () => {
-
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true)
-        const { data } = await api.get('/users'); // hoặc api.get("/users")
+        const { data } = await api.get('/users'); 
+        console.log(data);
         setUsers(data);
       } catch (err) {
         console.error("Lỗi khi lấy user:", err);
@@ -68,7 +67,6 @@ const Users = () => {
         setLoading(false);
       }
     };
-
     fetchUsers();
   },[])
 
@@ -85,7 +83,6 @@ const Users = () => {
               <th>Email</th>
               {/* <th>Created At</th> */}
               <th>Status</th>
-
             </tr>
           </thead>
           <tbody>

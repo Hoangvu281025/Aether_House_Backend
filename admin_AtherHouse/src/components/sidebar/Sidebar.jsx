@@ -48,7 +48,7 @@ const Sidebar = () => {
               className="dropdown-btn"
               onClick={() => toggleMenu("ecommerce")}
             >
-              <FaShoppingCart /> <span>Forms</span>
+              <FaWpforms /> <span>Forms</span>
               <span className="arrow">
                 {openMenu === "ecommerce" ? <FaAngleDown /> : <FaAngleRight />}
               </span>
@@ -58,16 +58,26 @@ const Sidebar = () => {
                
                 <li>
                   <NavLink
-                    to="/ecommerce/add-product"
+                    to="/forms/add-product"
                     className={({ isActive }) => (isActive ? "active-link" : "")}
                   >
                     Add Product
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/forms/add-store"
+                    className={({ isActive }) => (isActive ? "active-link" : "")}
+                  >
+                    Add Store
                   </NavLink>
                 </li>
               </ul>
             )}
           </li>
 
+
+        
 
           {/* Tables dropdown */}
           <li>
@@ -83,10 +93,13 @@ const Sidebar = () => {
             {openMenu === "tables" && (
               <ul className="submenu">
                 <li>
-                  <NavLink to="/tables/users">User</NavLink>
+                  <NavLink to="/tables/users">Users</NavLink>
                 </li>
                  <li>
-                  <NavLink to="/ecommerce/products">Products</NavLink>
+                  <NavLink to="/tables/products">Products</NavLink>
+                </li>
+                 <li>
+                  <NavLink to="/tables/stores">Stores</NavLink>
                 </li>
               </ul>
             )}

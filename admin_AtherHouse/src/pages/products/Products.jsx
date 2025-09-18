@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, {  } from "react";
 import { Link } from "react-router-dom";
 import "./Products.css";
 
 const Products = () => {
-  const [openDropdown, setOpenDropdown] = useState(null);
+ 
 
   const products = [
     {
