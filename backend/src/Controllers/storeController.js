@@ -29,8 +29,7 @@ const getStoreById = async (req, res) => {
   }
 };
 
-// Thêm store mới
-// async: bất đồng bộ 
+
 
 const addStore = async (req, res) => {
   try {
