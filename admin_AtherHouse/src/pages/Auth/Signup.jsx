@@ -100,8 +100,8 @@ const Signup = () => {
             onChange={(e) => SetComfirmPass(e.target.value)}
 
           />
-          {error && <p className="success">{error}</p>}
-          {success && <p className="error">{success}</p>}
+          {success && <p className="success">{success}</p>}
+          {error && <p className="error">{error}</p>}
           
 
           <button type="submit" className="signup-btn" disabled={loading}>

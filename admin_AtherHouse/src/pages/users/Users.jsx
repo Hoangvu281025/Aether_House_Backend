@@ -81,9 +81,9 @@ const Users = () => {
           <thead>
             <tr>
               <th>User</th>
-              <th>Phone</th>
+              {/* <th>Phone</th> */}
               <th>Email</th>
-              <th>Created At</th>
+              {/* <th>Created At</th> */}
             </tr>
           </thead>
           <tbody>
@@ -98,9 +98,9 @@ const Users = () => {
                     </div>
                   </div>
                 </td>
-                <td>{u.phone}</td>
+                {/* <td>{u.phone}</td> */}
                 <td>{u.email}</td>
-                <td>{u.created_at}</td>
+                {/* <td>{u.created_at}</td> */}
               </tr>
             ))}
           </tbody>
