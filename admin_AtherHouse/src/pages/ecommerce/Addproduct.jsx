@@ -13,7 +13,6 @@ export default function AddProduct() {
         quantity: 0,
         category: "",
     });
-
     const handleChange = (e) => {
         const { name, type, value, files } = e.target;
         if (type === "file") {
@@ -22,12 +21,10 @@ export default function AddProduct() {
             setFormData({ ...formData, [name]: value });
         }
     };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Form Data:", formData);
     };
-
     return (
         <div className="page-content">
             <h2 className="form-title">Add New Product</h2>
@@ -47,16 +44,7 @@ export default function AddProduct() {
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label>Slug</label>
-                            <input
-                                type="text"
-                                name="slug"
-                                placeholder="product-slug"
-                                value={formData.slug}
-                                onChange={handleChange}
-                            />
-                        </div>
+                        
 
                         <div className="form-group">
                             <label>Price ($)</label>
@@ -85,17 +73,6 @@ export default function AddProduct() {
                     {/* Cột 2 */}
                     <div className="form-column">
                         <div className="form-group">
-                            <label>Create At</label>
-                            <input
-                                type="date"
-                                name="create_at"
-                                value={formData.create_at}
-                                onChange={handleChange}
-                            />
-                        </div>
-
-
-                        <div className="form-group">
                             <label>Category</label>
                             <input
                                 type="text"
@@ -106,16 +83,7 @@ export default function AddProduct() {
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label>Updated At</label>
-                            <input
-                                type="date"
-                                name="updated_at"
-                                value={formData.updated_at}
-                                onChange={handleChange}
-                            />
-                        </div>
-
+                    
                         <div className="form-group">
                             <label>Quantity</label>
                             <input

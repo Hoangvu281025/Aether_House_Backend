@@ -109,7 +109,7 @@ const authController = {
                 "https://res.cloudinary.com/depbw3f5t/image/upload/v1758178941/56d6278d8053c7f46eb5a50dc7e98a89_qv0vk8.jpg",
             ];
 
-            const RandomIndex = Math.floor(Math.random * avatarUrls.length);
+            const RandomIndex = Math.floor(Math.random() * avatarUrls.length);
             const RandomAvatar = avatarUrls[RandomIndex];
             // const file = req.file;
             // if (!file) {

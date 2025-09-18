@@ -48,9 +48,6 @@ const Products = () => {
     },
   ];
 
-  const toggleDropdown = (id) => {
-    setOpenDropdown(openDropdown === id ? null : id);
-  };
 
   return (
     <div className="products-container">
@@ -63,8 +60,7 @@ const Products = () => {
         <input type="text" placeholder="Search..." className="search-input" />
         <div className="btn-group">
           <button className="btn export">Export ⬇</button>
-          <button className="btn add">
-            <Link
+           <Link
               to="/ecommerce/add-product"
               style={{
                 color: "white",
@@ -72,9 +68,12 @@ const Products = () => {
                 display: "block",
               }}
             >
+          <button className="btn add">
+           
               + Add Product
-            </Link>
           </button>
+            </Link>
+
         </div>
       </div>
 

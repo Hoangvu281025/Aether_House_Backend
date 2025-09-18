@@ -55,9 +55,7 @@ const Sidebar = () => {
             </button>
             {openMenu === "ecommerce" && (
               <ul className="submenu">
-                <li>
-                  <NavLink to="/ecommerce/products">Products</NavLink>
-                </li>
+               
                 <li>
                   <NavLink
                     to="/ecommerce/add-product"
@@ -85,7 +83,10 @@ const Sidebar = () => {
             {openMenu === "tables" && (
               <ul className="submenu">
                 <li>
-                  <NavLink to="/tables/users">User Table</NavLink>
+                  <NavLink to="/tables/users">User</NavLink>
+                </li>
+                 <li>
+                  <NavLink to="/ecommerce/products">Products</NavLink>
                 </li>
               </ul>
             )}
