@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const  middlewares  = require('../middlewares/middlewares');
+// const  middlewares  = require('../middlewares/middlewares');
 const { uploadStores } = require('../middlewares/uploadMiddleware');
 
 const { 
@@ -16,7 +16,7 @@ const {
 const upload = multer({ dest: "uploads/" });
 
 // Routes
-router.get("/",middlewares.verifyToken, getAllStores);
+router.get("/", getAllStores);
 router.get("/:id", getStoreById);
 router.post("/", uploadStores.single("image"), addStore);
 router.put("/:id", uploadStores.single("image"), updateStore);
