@@ -77,8 +77,8 @@
 }
 
 .product-img {
-  width: 40px;
-  height: 40px;
+  width: 4rem;
+  height: 4rem;
   border-radius: 6px;
   object-fit: cover;
 }
@@ -90,15 +90,6 @@
   font-weight: 600;
 }
 
-.in-stock {
-  background: #e6f7e6;
-  color: #22c55e;
-}
-
-.out-stock {
-  background: #ffeaea;
-  color: #ef4444;
-}
 
 .more-btn {
   border: none;

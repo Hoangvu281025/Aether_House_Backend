@@ -1,58 +1,15 @@
 import React, { useEffect, useState } from "react";
 import api from "../../lib/axios"
+import dayjs from "dayjs";
 
 import "./Users.css";
   
-// const users = [
-//   {
-//     id: 1,
-//     name: "Lindsey Curtis",
-//     role: "Web Designer",
-//     avatar: "https://i.pravatar.cc/40?img=1",
-//     phone: "0901234567",
-//     email: "lindsey@example.com",
-//     created_at: "2024-09-01",
-//   },
-//   {
-//     id: 2,
-//     name: "Kaiya George",
-//     role: "Project Manager",
-//     avatar: "https://i.pravatar.cc/40?img=2",
-//     phone: "0902345678",
-//     email: "kaiya@example.com",
-//     created_at: "2024-08-25",
-//   },
-//   {
-//     id: 3,
-//     name: "Zain Geidt",
-//     role: "Content Writer",
-//     avatar: "https://i.pravatar.cc/40?img=3",
-//     phone: "0903456789",
-//     email: "zain@example.com",
-//     created_at: "2024-08-10",
-//   },
-//   {
-//     id: 4,
-//     name: "Abram Schleifer",
-//     role: "Digital Marketer",
-//     avatar: "https://i.pravatar.cc/40?img=4",
-//     phone: "0904567890",
-//     email: "abram@example.com",
-//     created_at: "2024-07-22",
-//   },
-//   {
-//     id: 5,
-//     name: "Carla George",
-//     role: "Front-end Developer",
-//     avatar: "https://i.pravatar.cc/40?img=5",
-//     phone: "0905678901",
-//     email: "carla@example.com",
-//     created_at: "2024-07-01",
-//   },
-// ];
+
 
 const Users = () => {
   const [users, setUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]); // Dữ liệu gốc để reset khi đổi filter
+  const [status, setStatus] = useState("all"); // all | approved | pending
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchUsers = async () => {
@@ -61,6 +18,7 @@ const Users = () => {
         const { data } = await api.get('/users'); 
         console.log(data);
         setUsers(data);
+        setAllUsers(data)
       } catch (err) {
         console.error("Lỗi khi lấy user:", err);
       } finally {
@@ -70,51 +28,77 @@ const Users = () => {
     fetchUsers();
   },[])
 
+  useEffect(() => {
+    if (status === "all") {
+      setUsers(allUsers);
+    } else {
+      const filtered = allUsers.filter(
+        (u) => u.approvalStatus?.toLowerCase() === status
+      );
+      setUsers(filtered);
+    }
+  }, [status, allUsers]);
+
   if (loading) return <p>Đang tải danh sách người dùng...</p>;
   return (
-    <div className="user-table-wrapper">
-      <h2>User Table</h2>
-      <div className="table-container">
-        <table className="user-table">
-          <thead>
-            <tr>
-              <th>User</th>
-              {/* <th>Phone</th> */}
-              <th>Email</th>
-              {/* <th>Created At</th> */}
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id}>
-                <td>
-                  <div className="user-info">
-                    <img src={u.avatar.url} alt={u.name} className="avatar" />
-                    <div>
-                      <p className="name">{u.name}</p>
-                      <p className="role">{u.role}</p>
-                    </div>
-                  </div>
-                </td>
+    <div className="products-container">
+      <div className="products-header">
+        <h2>user List</h2>
+        <p>Track your store's progress to boost your sales.</p>
+      </div>
+
+      <div className="products-actions">
+        <input type="text" placeholder="Search..." className="search-input" />
+        <div className="btn-group">
+        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+        </select>
+        </div>
+      </div>
+
+      <table className="products-table">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" />
+            </th>
+            <th>Avatar</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user._id}>
+              <td>
+                <input type="checkbox" />
+              </td>
+              <td className="product-info">
+                <img src={user.avatar.url} alt={user.name} className="product-img" />
                 
-                {/* <td>{u.phone}</td> */}
-                <td>{u.email}</td>
-                {/* <td>{u.created_at}</td> */}
-                <td>
-                <span
-                  className={`stock-badge ${
-                    u.approvalStatus === "pending" ? "approved" : "pending"
-                  }`}
-                >
-                  {u.approvalStatus}
+              </td>
+              <td>
+                <span>{user.name}</span>
+              </td>
+              <td>{user.email}</td>
+              <td>{user.role_id.name}</td>
+              <td>
+                <span className={`stock-badge ${user.approvalStatus === "pending" ? "approved" : "pending"}`}>
+                  {user.approvalStatus}
                 </span>
               </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              <td>{dayjs(user.createdAt).format("DD/MM/YYYY HH:mm")}</td>
+              <td>:</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
