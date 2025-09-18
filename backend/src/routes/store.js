@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
+const  middlewares  = require('../middlewares/middlewares');
+const { uploadStores } = require('../middlewares/uploadMiddleware');
+
 const { 
   getAllStores,
   getStoreById,
@@ -13,10 +16,10 @@ const {
 const upload = multer({ dest: "uploads/" });
 
 // Routes
-router.get("/", getAllStores);
+router.get("/",middlewares.verifyToken, getAllStores);
 router.get("/:id", getStoreById);
-router.post("/", upload.array("images", 2), addStore);   // Thêm store (tối đa 2 ảnh)
-router.put("/:id", upload.array("images", 2), updateStore);
+router.post("/", uploadStores.single("image"), addStore);
+router.put("/:id", uploadStores.single("image"), updateStore);
 router.delete("/:id", deleteStore);
 
 module.exports = router;

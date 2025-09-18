@@ -34,27 +34,27 @@ const getStoreById = async (req, res) => {
 
 const addStore = async (req, res) => {
   try {
-    const { name, phone, email, city, address, information, desctription } = req.body;
-    const files = req.files || [];
+    const { name, phone, email, city, address, information, description } = req.body;
+    const file = req.file;
 
     // length đếm số phần tử trong mảng,nếu bằng 0 thì trả về lỗi
-    if (files.length === 0) {
+    if (!file) {
       return res.status(400).json({ success: false, message: "No files uploaded" });
     }
 
-    // tạo mãng rỗng uploaded thành file rỗng để lưu trữ ảnh
     const uploadedImages = [];
-    // vòng lặp for 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const result =  await cloudinary.uploader.upload(file.path, { folder: "AetherHouse/stores" });
 
-      // Đẩy thông tin ảnh đã upload vào mảng
-      uploadedImages.push({
-        url: result.secure_url,
-        public_id: result.public_id,
-      });
+    if (!file) {
+        return res.status(400).json({ error: 'Image file is required' });
     }
+    const localPath = file.path;
+
+    const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse/stores' });
+    uploadedImages.push({
+      url: Uploadresults.secure_url,
+      public_id: Uploadresults.public_id,
+      localPath: localPath
+    });
 
     // Thêm csdl
     const newStore = await Store.create({
@@ -64,7 +64,7 @@ const addStore = async (req, res) => {
       city,
       address,
       information,
-      desctription,
+      description,
       images: uploadedImages,
     });
 

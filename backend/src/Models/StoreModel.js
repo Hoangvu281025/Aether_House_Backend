@@ -7,11 +7,12 @@ const storeSchema = new mongoose.Schema({
     city: { type: String, required: true },
     address: { type: String, required: true },
     information: { type: String, required: true },
-    desctription: { type: String, required: true },
+    description: { type: String, required: true },
     images: [
     {
       url: { type: String, required: true },
-      public_id: { type: String, required: true }
+      public_id: { type: String, required: true },
+      localPath: {type: String, required: true},
     }
   ]  
 }, {
