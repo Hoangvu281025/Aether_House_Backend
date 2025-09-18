@@ -22,13 +22,13 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="sidebar">
+    <>
       {/* Logo */}
       <div className="sidebar-header">
         <img
             src="https://res.cloudinary.com/depbw3f5t/image/upload/v1757224196/Untitled-1_nru9av.png"
             alt="user avatar"
-            className="avatar"
+            className="logo_sidebar"
           />
       </div>
 
@@ -119,7 +119,7 @@ const Sidebar = () => {
           </li>
         </ul>
       </div>
-    </aside>
+   </>
   );
 };
 

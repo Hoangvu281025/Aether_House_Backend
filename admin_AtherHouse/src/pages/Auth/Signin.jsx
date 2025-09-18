@@ -5,7 +5,7 @@ import api from "../../lib/axios"
 
 import {Link} from "react-router-dom";
 import "./Auth.css";
-
+const MIN_PASS = 6;
 const Signin = () => {
     const navigate  = useNavigate();
     const [Email , SetEmail] = useState('');
@@ -18,11 +18,14 @@ const Signin = () => {
       e.preventDefault()
       setError('');
       setSuccess('');
+      const email = Email.trim();             
+      const pwd = Password;    
+      if (pwd.length < MIN_PASS) return setError(`Mật khẩu phải lớn hơn hoặc bằng ${MIN_PASS} ký tự`);
       try {
       setLoading(true);
       const newUser = {
-        email: Email, 
-        password: Password
+        email, 
+        password: pwd
       };
 
       const { data } = await api.post("/auth/login" , newUser);
@@ -40,7 +43,7 @@ const Signin = () => {
       SetEmail("");
       SetPassword("");
 
-      await new Promise((r) => setTimeout(r, 8000));
+      await new Promise((r) => setTimeout(r, 1000));
       navigate("/home", { replace: true });
 
     } catch (err) {
@@ -76,8 +79,8 @@ const Signin = () => {
             onChange={(e) => SetPassword(e.target.value)}
           />
 
-          {error && <p className="success">{error}</p>}
-          {success && <p className="error">{success}</p>}
+          {success && <p className="success">{success}</p>}
+          {error && <p className="error">{error}</p>}
 
           <button type="submit" className="signup-btn" disabled={loading}>
             {loading ? <span className="spinner" /> : "Sign in"}
@@ -92,7 +95,7 @@ const Signin = () => {
       {/* Right Banner */}
       <div className="signup-right">
         <div className="logo">
-          <img src="https://res.cloudinary.com/depbw3f5t/image/upload/v1757224196/Untitled-1_nru9av.png" alt="" />
+          <img src="https://res.cloudinary.com/depbw3f5t/image/upload/v1757820104/Untitled-1-white_lpecjw.png" alt="" />
         </div>
         <img className="image_banner" src="https://res.cloudinary.com/depbw3f5t/image/upload/v1757577575/background_2_efgu4s.webp" alt="Banner" />
       </div>

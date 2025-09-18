@@ -59,6 +59,7 @@ const Users = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setLoading(true)
         const { data } = await api.get('/users'); // hoặc api.get("/users")
         setUsers(data);
       } catch (err) {

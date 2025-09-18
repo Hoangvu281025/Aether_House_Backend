@@ -145,6 +145,7 @@
 /* Button */
 .signup-btn {
   margin-top: 10px;
+  background-color: black;
   color: #fff;
   padding: 16px;
   border-radius: 8px;
@@ -179,12 +180,26 @@
   position: relative;
   flex: 1;
   color: #fff;
-  /* display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; */
-  /* padding: 40px; */
   text-align: center;
+}
+.signup-right::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* sharp band */
+/* mềm, fade dần ở mép trên & dưới */
+background: linear-gradient(
+  to bottom,
+  rgba(0,0,0,.9) 0%,
+  rgba(0,0,0,0) 50%,
+  rgba(0,0,0,.6) 100%
+);
+
+
+
 }
 
 
@@ -192,9 +207,10 @@
   position: absolute;
   top: 20px;
   left: 20px;
+  z-index: 100;
 }
 .logo img{
-  width: 150px;
+  width: 200px;
 }
 .image_banner{
   width: 100%;
@@ -209,7 +225,7 @@
   color: green;
 }
 
-.success{
+.error{
   text-align: right;
   color: red;
 }

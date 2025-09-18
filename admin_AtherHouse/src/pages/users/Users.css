@@ -4,11 +4,11 @@
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 20px;
-  width: 74rem;
+  width: auto;
 }
 
 .user-table-wrapper h2 {
-  font-size: 18px;
+  font-size: 25px;
   font-weight: 600;
   margin-bottom: 15px;
   color: #111827;

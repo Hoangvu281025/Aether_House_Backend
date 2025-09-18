@@ -43,7 +43,7 @@ const Signup = () => {
       SetPassword("");
       SetComfirmPass("");
 
-      await new Promise((r) => setTimeout(r, 8000));
+      await new Promise((r) => setTimeout(r, 3000));
       navigate("/", { replace: true });
 
     } catch (err) {
@@ -119,7 +119,7 @@ const Signup = () => {
       {/* Right Side - Banner */}
       <div className="signup-right">
        <div className="logo">
-          <img src="https://res.cloudinary.com/depbw3f5t/image/upload/v1757224196/Untitled-1_nru9av.png" alt="" />
+          <img src="https://res.cloudinary.com/depbw3f5t/image/upload/v1757820104/Untitled-1-white_lpecjw.png" alt="" />
         </div>
         <img className="image_banner" src="https://res.cloudinary.com/depbw3f5t/image/upload/v1757577577/background_1_lsoh5u.webp" alt="Banner" />
      

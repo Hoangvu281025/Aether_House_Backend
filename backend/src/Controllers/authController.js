@@ -11,17 +11,17 @@ const authController = {
     login: async(req,res) =>{
         try {
             const user = await UserModel.findOne({ email: req.body.email})
-            if(!user) return res.status(404).json('woring email')
+            if(!user) return res.status(404).json({message:"email is incorrect"})
             
             // Check trạng thái duyệt
-            if (user.approvalStatus === "pending") return res.status(403).json("Account not approved");
+            if (user.approvalStatus === "pending") return res.status(403).json({message:"Account not approved"});
             
 
             const valipass = await bcrypt.compare(
                 req.body.password,
                 user.password
             );
-            if(!valipass) return res.status(404).json('woring password')
+            if(!valipass) return res.status(404).json({message:'password is incorrect'})
             const role = await RoleModel.findById(user.role_id).select('name').lean();
             const roleName = role.name.toLowerCase()
 
