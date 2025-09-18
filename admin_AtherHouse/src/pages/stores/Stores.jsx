@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "./Stores.css";
 import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
 import api from "../../lib/axios"
 
 const Stores = () => {
@@ -73,7 +74,7 @@ const Stores = () => {
                 <span>{stores.name}</span>
               </td>
               <td>{stores.city}</td>
-              <td>{stores.createdAt}</td>
+              <td>{dayjs(stores.createdAt).format("DD/MM/YYYY HH:mm")}</td>
               <td>
                 <div className="button_wrapper">
                   <button className="btn1 btn">Update</button>
