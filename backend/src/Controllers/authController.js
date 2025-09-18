@@ -100,8 +100,17 @@ const authController = {
 
             const userRole = await RoleModel.findOne({ name: 'admin' });
             const hashpass = await bcrypt.hash(password, 10);
-            const Image_url = 'https://res.cloudinary.com/depbw3f5t/image/upload/v1757743780/86d6847a8b6f618b418dad34b931b048_hxwffu.jpg'
+            // const Image_url = 'https://res.cloudinary.com/depbw3f5t/image/upload/v1757743780/86d6847a8b6f618b418dad34b931b048_hxwffu.jpg'
 
+
+            const avatarUrls = [
+                "https://res.cloudinary.com/depbw3f5t/image/upload/v1757743780/86d6847a8b6f618b418dad34b931b048_hxwffu.jpg",
+                "https://res.cloudinary.com/depbw3f5t/image/upload/v1757741610/AetherHouse/users/default/ovecwbz3xb68pltutyjt.jpg",
+                "https://res.cloudinary.com/depbw3f5t/image/upload/v1758178941/56d6278d8053c7f46eb5a50dc7e98a89_qv0vk8.jpg",
+            ];
+
+            const RandomIndex = Math.floor(Math.random * avatarUrls.length);
+            const RandomAvatar = avatarUrls[RandomIndex];
             // const file = req.file;
             // if (!file) {
             //     return res.status(400).json({ error: 'Image file is required' });
@@ -114,7 +123,7 @@ const authController = {
                 email ,
                 password: hashpass,
                 avatar:{
-                    url: Image_url ,
+                    url: RandomAvatar ,
                     public_id: null,
                     localPath: null,
                 }, 
@@ -130,7 +139,6 @@ const authController = {
             return res.status(500).json({ error: 'Internal server error' });
         }
     }
-
 }
 
 

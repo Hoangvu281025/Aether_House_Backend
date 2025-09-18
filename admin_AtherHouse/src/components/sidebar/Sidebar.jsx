@@ -48,7 +48,7 @@ const Sidebar = () => {
               className="dropdown-btn"
               onClick={() => toggleMenu("ecommerce")}
             >
-              <FaShoppingCart /> <span>E-commerce</span>
+              <FaShoppingCart /> <span>Forms</span>
               <span className="arrow">
                 {openMenu === "ecommerce" ? <FaAngleDown /> : <FaAngleRight />}
               </span>
@@ -70,26 +70,6 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li>
-            <NavLink to="/calendar">
-              <FaCalendarAlt /> <span>Calendar</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/profile">
-              <FaUser /> <span>User Profile</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/tasks">
-              <FaTasks /> <span>Task</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/formproduct">
-              <FaWpforms /> <span>Forms</span>
-            </NavLink>
-          </li>
 
           {/* Tables dropdown */}
           <li>

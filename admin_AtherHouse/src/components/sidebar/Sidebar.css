@@ -11,13 +11,16 @@
 } */
 
 .sidebar-header {
-  display: block;
+  display: flex;
+  justify-content: center;
 }
 
 
-.logo_sidebarr  {
-   
-  object-fit: cover; 
+.logo_sidebar{
+  width: 100%;
+  max-width: 200px; 
+  margin: 0 auto;
+  
 }
 
 .section-title {
@@ -43,7 +46,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 0;
+  padding: 10px 10px;
   border-radius: 8px;
   color: #374151;
   text-decoration: none;
@@ -56,7 +59,7 @@
   text-align: left;
 }
 
-/*
+
 .sidebar-menu a:hover,
 .dropdown-btn:hover {
   background: #f3f4f6;
@@ -82,14 +85,14 @@
 
 .arrow {
   margin-left: auto;
-  font-size: 12px;
+  font-size: 1rem;
   color: #6b7280;
 }
 
 
 .submenu {
   list-style: none;
-  padding-left: 35px;
+  padding-left: 10px;
   margin: 5px 0;
 }
 
@@ -99,7 +102,7 @@
 
 .submenu a {
   font-size: 14px;
-  padding: 8px 10px;
+  padding: 10px 10px;
   border-radius: 6px;
   color: #4b5563;
 }
@@ -115,4 +118,4 @@
   display: block;
   padding: 5px 10px;
 }
- */
+

@@ -26,11 +26,11 @@ const Header = () => {
           <FaBars className="icon" />
         </button> */}
 
-        <div className="search-box">
+        {/* <div className="search-box">
           <FaSearch className="search-icon" />
           <input type="text" placeholder="Search or type command..." />
           <span className="shortcut">⌘K</span>
-        </div>
+        </div> */}
       </div>
 
       {/* Right section */}
@@ -55,12 +55,11 @@ const Header = () => {
             className="avatar"
           />
           <span className="username">{user.name}</span>
-          <span className="arrow">▾</span>
+          <span className="arrow-head">▾</span>
 
           {openMenu && (
             <div className="dropdown">
               <button className="dropdown-item">Profile</button>
-              <button className="dropdown-item">Settings</button>
               <button className="dropdown-item logout" onClick={Logout}>Log out</button>
             </div>
           )}

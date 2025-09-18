@@ -66,7 +66,11 @@ const Products = () => {
           <button className="btn add">
             <Link
               to="/ecommerce/add-product"
-              style={{ color: "white", textDecoration: "none", display: "block" }}
+              style={{
+                color: "white",
+                textDecoration: "none",
+                display: "block",
+              }}
             >
               + Add Product
             </Link>
@@ -77,7 +81,9 @@ const Products = () => {
       <table className="products-table">
         <thead>
           <tr>
-            <th><input type="checkbox" /></th>
+            <th>
+              <input type="checkbox" />
+            </th>
             <th>Products</th>
             <th>Category</th>
             <th>Brand</th>
@@ -90,7 +96,9 @@ const Products = () => {
         <tbody>
           {products.map((item) => (
             <tr key={item.id}>
-              <td><input type="checkbox" /></td>
+              <td>
+                <input type="checkbox" />
+              </td>
               <td className="product-info">
                 <img src={item.image} alt={item.name} className="product-img" />
                 <span>{item.name}</span>
@@ -100,29 +108,18 @@ const Products = () => {
               <td>{item.price}</td>
               <td>
                 <span
-                  className={`stock-badge ${item.stock === "In Stock" ? "in-stock" : "out-stock"}`}
+                  className={`stock-badge ${
+                    item.stock === "In Stock" ? "in-stock" : "out-stock"
+                  }`}
                 >
                   {item.stock}
                 </span>
               </td>
               <td>{item.createdAt}</td>
               <td>
-                <div className="dropdown-wrapper">
-                  <button className="more-btn" onClick={() => toggleDropdown(item.id)}>
-                    <b>...</b>
-                  </button>
-
-                  {openDropdown === item.id && (
-                    <div className="dropdown-menu">
-                      <Link
-                        to={`/ecommerce/update-product/${item.id}`}
-                        className="dropdown-item"
-                      >
-                        Update
-                      </Link>
-                      <button className="dropdown-item">Delete</button>
-                    </div>
-                  )}
+                <div className="button_wrapper">
+                  <button className="btn1 btn">Update</button>
+                  <button className="btn2 btn">Delete</button>
                 </div>
               </td>
             </tr>

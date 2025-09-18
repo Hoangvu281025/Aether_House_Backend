@@ -84,6 +84,8 @@ const Users = () => {
               {/* <th>Phone</th> */}
               <th>Email</th>
               {/* <th>Created At</th> */}
+              <th>Status</th>
+
             </tr>
           </thead>
           <tbody>
@@ -98,9 +100,19 @@ const Users = () => {
                     </div>
                   </div>
                 </td>
+                
                 {/* <td>{u.phone}</td> */}
                 <td>{u.email}</td>
                 {/* <td>{u.created_at}</td> */}
+                <td>
+                <span
+                  className={`stock-badge ${
+                    u.approvalStatus === "pending" ? "approved" : "pending"
+                  }`}
+                >
+                  {u.approvalStatus}
+                </span>
+              </td>
               </tr>
             ))}
           </tbody>
