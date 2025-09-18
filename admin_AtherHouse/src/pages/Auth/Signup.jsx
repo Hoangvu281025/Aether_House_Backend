@@ -43,7 +43,7 @@ const Signup = () => {
       SetPassword("");
       SetComfirmPass("");
 
-      await new Promise((r) => setTimeout(r, 3000));
+      await new Promise((r) => setTimeout(r, 2000));
       navigate("/", { replace: true });
 
     } catch (err) {

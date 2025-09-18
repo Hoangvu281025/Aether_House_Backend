@@ -43,7 +43,7 @@ const Signin = () => {
       SetEmail("");
       SetPassword("");
 
-      await new Promise((r) => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 900));
       navigate("/home", { replace: true });
 
     } catch (err) {
