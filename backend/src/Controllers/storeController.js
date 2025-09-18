@@ -49,11 +49,7 @@ const addStore = async (req, res) => {
     const localPath = file.path;
 
     const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse/stores' });
-    uploadedImages.push({
-      url: Uploadresults.secure_url,
-      public_id: Uploadresults.public_id,
-      localPath: localPath
-    });
+
 
     // Thêm csdl
     const newStore = await Store.create({
@@ -64,7 +60,11 @@ const addStore = async (req, res) => {
       address,
       information,
       description,
-      images: uploadedImages,
+      images:{
+        url: Uploadresults.secure_url,
+        public_id: Uploadresults.public_id,
+        localPath: localPath
+      },
     });
 
     res.status(201).json({ success: true, store: newStore });
