@@ -1,12 +1,20 @@
 :root{
+    --blue-color1: #101828;
+    --blue-color2: #171F2F;
+    --text_blue-color1: #98A2B3;
     --black-color: #000000;
     --white-color: #ffffff;
     --orange-color:#E95C20;
-    --gray-color: #999999;
+    --gray-color: #c9c8c8;
     --gray1-color:rgb(248, 248, 248);
     --text-color: #9c9a9a;
     --delete-button:  #ad0000;
     --update-button:  #00c220;
+
+    --approved--bg:#1D3B3E;
+    --approved--text:#12B76A;
+    --pending--bg:#3F362F;
+    --pending--text:#FD853A;
 }
 * {
   margin: 0;

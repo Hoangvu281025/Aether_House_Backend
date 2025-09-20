@@ -6,7 +6,8 @@ const  middlewares  = require('../middlewares/middlewares');
 // const { uploadUser_clinet } = require('../middlewares/uploadMiddleware');
 
 /* GET users listing. */
-router.get('/',middlewares.verifyToken, userController.getallUser);
+router.get('/', userController.getallUser);
+router.get('/admins', userController.getallAdmin);
 router.delete('/:id',middlewares.verifyTokenDelete);
 // router.post('/registerUser', uploadUser_clinet.single('image'), UserControllers.registerUser);
 // router.post('/registerAdmin' ,uploadUser.single('image'), UserControllers.registerAdmin);

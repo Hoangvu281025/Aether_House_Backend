@@ -15,6 +15,8 @@ import {
 import "./Sidebar.css";
 
 const Sidebar = () => {
+  const user = JSON.parse(localStorage.getItem("user"))
+
   const [openMenu, setOpenMenu] = useState(null);
 
   const toggleMenu = (menu) => {
@@ -25,11 +27,21 @@ const Sidebar = () => {
     <>
       {/* Logo */}
       <div className="sidebar-header">
-        <img
+        {/* <img
             src="https://res.cloudinary.com/depbw3f5t/image/upload/v1757224196/Untitled-1_nru9av.png"
             alt="user avatar"
             className="logo_sidebar"
-          />
+          /> */}
+        <div className="user_sidebar">
+          <div className="avatar_sidebar">
+            <img
+              src={user.avatar.url}
+              alt="avatar"
+              className="avatar_img_sidebar"
+            />
+            <span className="username_sidebar">{user.name}</span>
+          </div>
+        </div>
       </div>
 
       {/* Menu */}
@@ -92,6 +104,9 @@ const Sidebar = () => {
             </button>
             {openMenu === "tables" && (
               <ul className="submenu">
+                <li>
+                  <NavLink to="/tables/admins">Admins</NavLink>
+                </li>
                 <li>
                   <NavLink to="/tables/users">Users</NavLink>
                 </li>

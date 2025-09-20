@@ -1,0 +1,30 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  /* gap: 20px; */
+}
+
+.sidebar {
+  position: sticky;
+  left: 0;
+  top: 0;
+  width: 300px;
+  height: 100%;
+  min-height: 100vh;
+  padding: 0 20px;
+  background: var(--blue-color1);
+  border-right: 0.2rem solid var(--blue-color2); /* viền mờ */
+  z-index: 20;
+}
+
+.right-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+
+main{
+  height: 100%;
+  background-color: var(--blue-color1);
+}

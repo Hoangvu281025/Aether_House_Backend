@@ -49,13 +49,15 @@ const Header = () => {
           ref={userRef}
           onClick={() => setOpenMenu(!openMenu)}
         >
-          <img
-            src={user.avatar.url}
-            alt="user avatar"
-            className="avatar"
-          />
-          <span className="username">{user.name}</span>
-          <span className="arrow-head">▾</span>
+          <div className="avatar_header">
+            <img
+              src={user.avatar.url}
+              alt="user avatar"
+              className="avatar_img"
+            />
+          </div>
+          {/* <span className="username">{user.name}</span>
+          <span className="arrow-head">▾</span> */}
 
           {openMenu && (
             <div className="dropdown">

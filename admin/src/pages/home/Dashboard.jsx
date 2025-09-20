@@ -9,7 +9,7 @@ const Dashbroad = () => {
         {/* Customers */}
         <div className="card">
           <div className="card-icon">
-            <FaUsers size={28} />
+            <FaUsers  className="card-icon-svg" />
           </div>
           <div className="card-info">
             <h3>Customers</h3>
@@ -21,7 +21,7 @@ const Dashbroad = () => {
         {/* Orders */}
         <div className="card">
           <div className="card-icon">
-            <FaBox size={28} />
+            <FaBox  className="card-icon-svg"/>
           </div>
           <div className="card-info">
             <h3>Orders</h3>

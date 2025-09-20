@@ -6,7 +6,7 @@ import "./Users.css";
   
 
 
-const Users = () => {
+const Admins = () => {
   const [users, setUsers] = useState([]);
   const [allUsers, setAllUsers] = useState([]); // Dữ liệu gốc để reset khi đổi filter
   const [status, setStatus] = useState("all"); // all | approved | pending
@@ -15,7 +15,7 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         setLoading(true)
-        const { data } = await api.get('/users'); 
+        const { data } = await api.get('/users/admins'); 
         console.log(data);
         setUsers(data);
         setAllUsers(data)
@@ -43,14 +43,14 @@ const Users = () => {
   return (
     <div className="products-container">
       <div className="products-header">
-        <h2>user List</h2>
+        <h2>Admin List</h2>
         <p>Track your store's progress to boost your sales.</p>
       </div>
 
       <div className="products-actions">
-        <input type="text" placeholder="Search..." className="search-input" />
+        {/* <input type="text" placeholder="Search..." className="search-input" /> */}
         <div className="btn-group">
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+        <select className="search-input" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="all">All</option>
           <option value="pending">Pending</option>
           <option value="approved">Approved</option>
@@ -103,4 +103,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Admins;

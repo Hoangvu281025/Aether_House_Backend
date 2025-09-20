@@ -1,0 +1,117 @@
+.user-table-wrapper {
+  /* margin-top: 100px; */
+  height: auto;
+  padding: 1rem;
+  background-color: var(--blue-color1);
+  /* border: 1px solid #e5e7eb; */
+  /* border-radius: 12px; */
+  /* padding: 20px; */
+  /* width: auto; */
+}
+.user-title h2{
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 2rem 0;
+  color: var(--white-color);
+}
+
+.table_user{
+  background-color: var(--blue-color2);
+  /* padding: 1.5rem 0; */
+  border-radius: 1.6rem;
+}
+
+.table_user-title{
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding: 1rem;
+  color: var(--white-color);
+}
+
+.table_users{
+  padding: 1rem;
+  /* background-color: var(--white-color); */
+}
+.table_users-box{
+  padding: 1rem;
+  background-color: var(--blue-color2);
+  color: var(--white-color);
+}
+.table-wrap{
+  width:100%;
+  overflow:auto;        /* avoid layout break on small screens */
+  border-radius:10px;
+}
+
+.table-wrap table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+.table-wrap thead th{
+  text-align:left;
+  font-size:14px;
+  font-weight:600;
+  color:var(--muted);
+  padding:14px 18px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(to bottom, rgba(255,255,255,.02), rgba(255,255,255,0));
+}
+
+.table-wrap tbody td{
+  padding:14px 18px;
+  border-bottom:1px solid var(--line);
+  font-size:14px;
+  vertical-align:middle;
+}
+
+.table-wrap tbody tr:hover{
+  background:var(--row-hover);
+}
+
+/* ============ USER CELL ============ */
+.user{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:220px;
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid var(--card);
+  box-shadow:0 0 0 1px var(--line);
+}
+
+.u-name{
+  font-weight:600;
+  line-height:1.2;
+}
+
+.u-role{
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* ============ STATUS CHIP ============ */
+.chip{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.2px;
+  line-height:1;
+}
+
+/* bạn có thể gán className="chip active|pending|cancel|approved" */
+.chip.active{   background:var(--chip-green);   color:var(--chip-green-ink); }
+.chip.approved{ background:var(--approved--bg);   color:var(--approved--text); }
+.chip.pending{  background:var(--pending--bg);  color:var(--pending--text); }
+.chip.cancel{   background:var(--chip-red);     color:var(--chip-red-ink); }
+
+

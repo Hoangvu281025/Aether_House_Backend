@@ -13,6 +13,7 @@ import Stores from "./pages/Stores/Stores";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css"
 import AuthRedirect from "./components/AuthRedirect";
+import Admins from "./pages/users/Admins";
 function App() {
   return (
     <Router>
@@ -26,6 +27,7 @@ function App() {
             <Route path="/forms/update-product/" element={<FormProductUpdate />} /> 
             <Route path="/forms/add-store/" element={<AddStore />} /> 
             <Route path="/tables/users" element={<Users />} />
+            <Route path="/tables/admins" element={<Admins />} />
             <Route path="/tables/stores" element={<Stores />} />
           </Route>
         </Route>

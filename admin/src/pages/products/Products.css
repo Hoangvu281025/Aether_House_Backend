@@ -1,6 +1,6 @@
 .products-container {
   margin-top: 20px;
-  background: #fff;
+  background-color: var(--blue-color1);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);

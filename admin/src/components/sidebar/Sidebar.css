@@ -1,26 +1,30 @@
-/* .sidebar {
-  width: 300px;
-  height: 100vh;
-  background: #fff;
-  border-right: 1px solid #e5e7eb;
-  padding: 20px 15px;
-  position: fixed;
-  top: 0;
-  left: 0; 
-  overflow-y: auto;
-} */
 
 .sidebar-header {
-  display: flex;
-  justify-content: center;
+  background-color: var(--blue-color2);
+  margin: 1rem 0;
+  border-radius: 1.5rem;
+  padding: 1rem 0;
 }
 
-
-.logo_sidebar{
+.username_sidebar{
+  font-size: 1.5rem;
+  color: var(--white-color);
+}
+/* .logo_sidebar{
   width: 100%;
   max-width: 200px; 
   margin: 0 auto;
   
+} */
+.avatar_sidebar{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+.avatar_img_sidebar{
+  width: 50px;
+  border-radius: 50%;
 }
 
 .section-title {

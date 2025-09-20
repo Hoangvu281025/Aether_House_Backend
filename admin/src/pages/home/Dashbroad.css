@@ -1,18 +1,19 @@
 .dashboard {
-  padding: 70px;
-  font-family: "Inter", sans-serif;
+  padding:  1rem; 
+  background-color: var(--blue-color1);
+  height: 100vh;
 }
 
 .cards {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
 }
 
 .card {
   flex: 1;
   min-width:500px;
-  background: #fff;
+  background-color: var(--blue-color2);
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -23,31 +24,33 @@
   transition: transform 0.2s;
 }
 
-.card:hover {
+/* .card:hover {
   transform: translateY(-5px);
-}
+} */
 
 .card-icon {
-  background: #f3f4f6;
+  background-color: var(--blue-color1);
   padding: 12px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
+.card-icon-svg{
+  font-size: 1.8rem;
+  fill: var(--white-color);
+}
 .card-info h3 {
-  font-size: 16px;
-  font-weight: 500;
-  margin: 0;
-  color: #555;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text_blue-color1);
 }
 
 .card-info .number {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: bold;
   margin: 5px 0;
-  color: #111;
+  color: var(--white-color);
 }
 
 .percent {

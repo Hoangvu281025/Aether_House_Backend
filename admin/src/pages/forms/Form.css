@@ -1,24 +1,22 @@
 .page-content {
-  width: 74rem;
-  margin-top: 100px;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 12px;
+  width: 100%;
+  padding: 2rem;
+  background-color: var(--blue-color1);
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .form-title {
   font-size: 26px;
   font-weight: 600;
-  margin-bottom: 25px;
-  color: #111827;
+  margin: 2rem 0;
+  color: var(--white-color);
 }
 
 /* Grid 2 cột */
 .product-form .form-grid {
   display: flex;
   gap: 30px;
-  flex-wrap: wrap;
+  flex-wrap: wap;
 }
 
 .form-column {
