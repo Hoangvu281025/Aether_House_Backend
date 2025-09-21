@@ -1,106 +1,167 @@
 import React, { useEffect, useState } from "react";
-import api from "../../lib/axios"
+import api from "../../lib/axios";
 import dayjs from "dayjs";
-
 import "./Users.css";
-  
 
-
-const Admins = () => {
+const Users = () => {
   const [users, setUsers] = useState([]);
-  const [allUsers, setAllUsers] = useState([]); // Dữ liệu gốc để reset khi đổi filter
-  const [status, setStatus] = useState("all"); // all | approved | pending
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
+    let isMounted = true;
     const fetchUsers = async () => {
       try {
-        setLoading(true)
-        const { data } = await api.get('/users/admins'); 
-        console.log(data);
-        setUsers(data);
-        setAllUsers(data)
+        setLoading(true);
+        const { data } = await api.get(`/users/admins?page=${page}&limit=${limit}`);
+        if (!isMounted) return;
+        setUsers(data?.users || []);
+        setTotalPages(data?.totalPages || 1);
       } catch (err) {
         console.error("Lỗi khi lấy user:", err);
+        if (isMounted) {
+          setUsers([]);
+          setTotalPages(1);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
     fetchUsers();
-  },[])
+    return () => { isMounted = false; };
+  }, [page, limit]);
 
-  useEffect(() => {
-    if (status === "all") {
-      setUsers(allUsers);
-    } else {
-      const filtered = allUsers.filter(
-        (u) => u.approvalStatus?.toLowerCase() === status
-      );
-      setUsers(filtered);
-    }
-  }, [status, allUsers]);
-
-  if (loading) return <p>Đang tải danh sách người dùng...</p>;
   return (
-    <div className="products-container">
-      <div className="products-header">
+    <div className="user-table-wrapper">
+      <div className="user-title">
         <h2>Admin List</h2>
-        <p>Track your store's progress to boost your sales.</p>
       </div>
 
-      <div className="products-actions">
-        {/* <input type="text" placeholder="Search..." className="search-input" /> */}
-        <div className="btn-group">
-        <select className="search-input" value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-        </select>
+      <div className="table_user">
+        <h3 className="table_user-title">Admin</h3>
+        <hr />
+
+        <div className="table_users">
+          <div className="table_users-box">
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Avatar</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th></th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={5}>
+                        <div className="table-loading">
+                          <span className="spinner" />
+                          {/* <span>Đang tải danh sách người dùng...</span> */}
+                        </div>
+                      </td>
+                    </tr>
+                  ) : users.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="empty-row">
+                        Không có người dùng.
+                      </td>
+                    </tr>
+                  ) : (
+                    users.map((user) => (
+                      <tr key={user._id}>
+                        <td>
+                          <div className="user">
+                            <img
+                              className="avatar"
+                              src={user?.avatar?.url}
+                              alt=""
+                            />
+                            <div>
+                              <div className="u-name">{user?.name}</div>
+                              <div className="u-role">{user?.role_id?.name}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{user?.email}</td>
+                        <td>
+                          <span
+                            className={`chip ${
+                              (user?.approvalStatus || "").toLowerCase()
+                            }`}
+                          >
+                            {(user?.approvalStatus || "").charAt(0).toUpperCase() +
+                              (user?.approvalStatus || "").slice(1)}
+                          </span>
+                        </td>
+                        <td>{dayjs(user?.createdAt).format("DD/MM/YYYY HH:mm")}</td>
+                        <td className="budget">
+                          <svg
+                            className="fill-current"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="white"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              clipRule="evenodd"
+                              d="M5.99902 10.245C6.96552 10.245 7.74902 11.0285 7.74902 11.995V12.005C7.74902 12.9715 6.96552 13.755 5.99902 13.755C5.03253 13.755 4.24902 12.9715 4.24902 12.005V11.995C4.24902 11.0285 5.03253 10.245 5.99902 10.245ZM17.999 10.245C18.9655 10.245 19.749 11.0285 19.749 11.995V12.005C19.749 12.9715 18.9655 13.755 17.999 13.755C17.0325 13.755 16.249 12.9715 16.249 12.005V11.995C16.249 11.0285 17.0325 10.245 17.999 10.245ZM13.749 11.995C13.749 11.0285 12.9655 10.245 11.999 10.245C11.0325 10.245 10.249 11.0285 10.249 11.995V12.005C10.249 12.9715 11.0325 13.755 11.999 13.755C12.9655 13.755 13.749 12.9715 13.749 12.005V11.995Z"
+                            />
+                          </svg>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="pagination">
+              <button
+                className="nav prev"
+                onClick={() => setPage((p) => p - 1)}
+                disabled={page === 1}
+              >
+                Previous
+              </button>
+
+              <div className="pages">
+                {[...Array(totalPages)].map((_, i) => {
+                  const n = i + 1;
+                  return (
+                    <button
+                      key={n}
+                      className={`page-num ${page === n ? "active" : ""}`}
+                      onClick={() => setPage(n)}
+                    >
+                      {n}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                className="nav next"
+                onClick={() => setPage((p) => p + 1)}
+                disabled={page === totalPages}
+              >
+                Next
+              </button>
+            </div>
+
+          </div>
         </div>
       </div>
-
-      <table className="products-table">
-        <thead>
-          <tr>
-            <th>
-              <input type="checkbox" />
-            </th>
-            <th>Avatar</th>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Created At</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user._id}>
-              <td>
-                <input type="checkbox" />
-              </td>
-              <td className="product-info">
-                <img src={user.avatar.url} alt={user.name} className="product-img" />
-                
-              </td>
-              <td>
-                <span>{user.name}</span>
-              </td>
-              <td>{user.email}</td>
-              <td>{user.role_id.name}</td>
-              <td>
-                <span className={`stock-badge ${user.approvalStatus === "pending" ? "approved" : "pending"}`}>
-                  {user.approvalStatus}
-                </span>
-              </td>
-              <td>{dayjs(user.createdAt).format("DD/MM/YYYY HH:mm")}</td>
-              <td>:</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 };
 
-export default Admins;
+export default Users;

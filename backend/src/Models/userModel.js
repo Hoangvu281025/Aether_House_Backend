@@ -13,6 +13,12 @@ const UserSchema = new Schema({
     },
     isActive: {type: Boolean, default: true}, // true hoạt động bth || false bị khóa
     role_id: {type: mongoose.Schema.Types.ObjectId , ref: "Role" , required: true }, 
+    modules: {
+        type: [String],
+        enum: ["all", "product", "category", "order", "user" , "store" ,], // tuỳ bạn
+        default: [],
+    },
+
     approvalStatus: {
         type: String,
         enum: ['pending', 'approved'],

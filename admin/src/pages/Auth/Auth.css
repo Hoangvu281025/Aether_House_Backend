@@ -11,7 +11,7 @@
 /* Left Side */
 .signup-left {
   flex: 0.4;
-  background: #fff;
+  background-color: var(--blue-color1);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -19,7 +19,7 @@
 }
 .back-link {
   font-size: 14px;
-  color: #4b5563;
+  color: var(--white-color);
   text-decoration: none;
   margin-bottom: 20px;
   display: inline-block;
@@ -29,39 +29,15 @@
   font-size: 28px;
   font-weight: 600;
   margin-bottom: 6px;
-  color: #111827;
+  color: var(--white-color);
 }
 
 .signup-subtitle {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--white-color);
   margin-bottom: 20px;
 }
 
-/* Social Login */
-/* .social-login {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
-} */
-
-/* .google-btn,
-.x-btn {
-  flex: 1;
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.2s;
-} */
-
-/* .google-btn:hover,
-.x-btn:hover {
-  background: #f3f4f6;
-} */
 
 /* Divider */
 .divider {
@@ -74,7 +50,7 @@
 .divider::after {
   content: "";
   height: 1px;
-  background: #e5e7eb;
+  background-color: var(--blue-color1);
   position: absolute;
   top: 50%;
   width: 40%;
@@ -90,7 +66,7 @@
 
 .divider span {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--white-color);
   background: #fff;
   padding: 0 10px;
   position: relative;
@@ -106,21 +82,21 @@
 .signup-form label {
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: var(--white-color);
 }
 
 .signup-form input {
   padding: 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--white-color);
   border-radius: 8px;
   font-size: 14px;
   outline: none;
   transition: 0.2s;
-  background-color: #ffffff; 
-  color: #111827;              /* text đen */
+  background-color: var(--blue-color1); 
+  color: var(--white-color);
 }
 .signup-form input:focus {
-  border: 1px solid black;
+  box-shadow: 0 0.1rem 0.4rem var(--white-color);
 }
 
 .signup-form input::placeholder {
@@ -128,49 +104,38 @@
 }
 
 
-/* Checkbox */
-/* .checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #4b5563;
-}
 
-.checkbox-row input {
-  width: 16px;
-  height: 16px;
-} */
 
 /* Button */
 .signup-btn {
   margin-top: 10px;
-  background-color: black;
-  color: #fff;
+  background-color: var(--white-color);
+  color: var(--black-color);
   padding: 16px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
   font-size: 15px;
   transition: 0.2s;
+  border: 1px solid black;
+
 }
 
 .signup-btn:hover {
-  border: 1px solid black;
-
-  color: black;
-  background: white;
+  border: 1px solid var(--white-color);
+  color: var(--white-color);
+  background-color: var(--blue-color2);
 }
 
 /* Text */
 .login-text {
   margin-top: 20px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #6b7280;
 }
 
 .login-text a {
-  color: var(--orange-color);
+  color: var(--white-color);
   text-decoration: none;
   font-weight: 500;
 }
@@ -179,8 +144,6 @@
 .signup-right {
   position: relative;
   flex: 1;
-  color: #fff;
-  text-align: center;
 }
 .signup-right::after {
   content: "";
@@ -191,9 +154,9 @@
   height: 100%;
 background: linear-gradient(
   to bottom,
-  rgba(0,0,0,.9) 0%,
-  rgba(0,0,0,0) 50%,
-  rgba(0,0,0,.6) 100%
+  var(--blue-color1) 0%,
+  rgba(0,0,0,0) 30%,
+  var(--blue-color2) 100%
 );
 
 
@@ -213,7 +176,7 @@ background: linear-gradient(
 .image_banner{
   width: 100%;
   height: 100%;
-  object-fit: cover; /* fill full, không méo ảnh */
+  object-fit: cover;
   display: block;
 }
 
@@ -221,6 +184,7 @@ background: linear-gradient(
 .success{
   text-align: right;
   color: green;
+  font-size: 1rem;
 }
 
 .error{

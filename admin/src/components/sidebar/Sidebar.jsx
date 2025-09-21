@@ -55,7 +55,7 @@ const Sidebar = () => {
           </li>
 
           {/* E-commerce dropdown */}
-          <li>
+          {/* <li>
             <button
               className="dropdown-btn"
               onClick={() => toggleMenu("ecommerce")}
@@ -86,13 +86,13 @@ const Sidebar = () => {
                 </li>
               </ul>
             )}
-          </li>
+          </li> */}
 
 
         
 
           {/* Tables dropdown */}
-          <li>
+          {/* <li>
             <button
               className="dropdown-btn"
               onClick={() => toggleMenu("tables")}
@@ -118,12 +118,22 @@ const Sidebar = () => {
                 </li>
               </ul>
             )}
-          </li>
+          </li> */}
 
 
           <li>
-            <NavLink to="/pages">
-              <FaFile /> <span>Pages</span>
+            <NavLink to="/tables/admins">
+              <FaFile /> <span>Manage Admin</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/tables/users">
+              <FaFile /> <span>Manage User</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/tables/stores">
+              <FaFile /> <span>Manage Store</span>
             </NavLink>
           </li>
         </ul>

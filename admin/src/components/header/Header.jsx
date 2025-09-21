@@ -1,8 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect} from "react";
+import { useNavigate } from "react-router-dom";   // đúng
 import "./Header.css";
 import { FaBars, FaSearch, FaMoon, FaBell } from "react-icons/fa";
 import { Logout } from "../../pages/Auth/logout";
+
 const Header = () => {
+  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"))
   const [openMenu, setOpenMenu] = useState(false);
   const userRef = useRef(null);
@@ -17,6 +20,12 @@ const Header = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  
+
+  const goProfile = () => {
+    navigate("/Profile");
+  };
 
   return (
     <header className="header">
@@ -45,7 +54,7 @@ const Header = () => {
         </button> */}
 
         <div
-          className="user"
+          className="user_header"
           ref={userRef}
           onClick={() => setOpenMenu(!openMenu)}
         >
@@ -61,7 +70,7 @@ const Header = () => {
 
           {openMenu && (
             <div className="dropdown">
-              <button className="dropdown-item">Profile</button>
+              <button className="dropdown-item" onClick={goProfile}>Profile</button>
               <button className="dropdown-item logout" onClick={Logout}>Log out</button>
             </div>
           )}

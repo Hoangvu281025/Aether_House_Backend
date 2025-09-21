@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css"
 import AuthRedirect from "./components/AuthRedirect";
 import Admins from "./pages/users/Admins";
+import Profile from "./pages/Profile/Profile";
 function App() {
   return (
     <Router>
@@ -29,6 +30,7 @@ function App() {
             <Route path="/tables/users" element={<Users />} />
             <Route path="/tables/admins" element={<Admins />} />
             <Route path="/tables/stores" element={<Stores />} />
+            <Route path="/Profile" element={<Profile />} />
           </Route>
         </Route>
         {/* Auth layout */}

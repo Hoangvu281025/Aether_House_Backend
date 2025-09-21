@@ -13,7 +13,7 @@ const {
 } = require("../Controllers/storeController");
 
 // Cấu hình multer để upload file tạm
-const upload = multer({ dest: "uploads/" });
+// const upload = multer({ dest: "uploads/" });
 
 // Routes
 router.get("/", getAllStores);
