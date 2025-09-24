@@ -1,41 +1,35 @@
-const jwt = require('jsonwebtoken')
-const RoleModel = require('../Models/roleModel');
-
-
+const jwt = require('jsonwebtoken');
+const User = require('../Models/userModel');
 
 const middlewares = {
-    verifyToken: (req, res,  next) => {
-        const token = req.headers.token;
-        if(token){
-            // bearar 1234 sẽ lấy được 1234
-            const accessToken = token.split(" ")[1];
-            jwt.verify(accessToken , process.env.JWT_ACCESS_KEY, (err, user)=>{
-                if(err){
-                    res.status(403).json({message:'Token is not valid'})
-                }
-                res.user = user;
-                return next();
-            })
-        }else{
-            res.status(401).json("you're not login")
-        }
-    },
+  verifyToken: (req, res, next) => {
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) return res.status(401).json({ message: "You're not logged in" });
 
-    verifyTokenDelete: (req,res,next) => {
-        middlewares.verifyToken(req,res, async () =>{
-            try {
-                // const roleName = req.user.role_name;
-                // console.log(roleName);
-                // // if(!roleID) return res.status(403).json({error: 'no role in token'});
+    const accessToken = authHeader.split(" ")[1];
+    jwt.verify(accessToken, process.env.JWT_ACCESS_KEY, (err, user) => {
+      if (err) return res.status(403).json({ message: "Token is not valid" });
 
-                // const role = await RoleModel.findById(roleID).select('name')
-                // console.log(role);
-            } catch (error) {
-                return res.status(500).json({error: 'Auth check failed'})
-            }
-        }) 
+      req.user = user; // <-- đúng chỗ
+      next();
+    });
+  },
+
+  // Middleware kiểm tra quyền "user"
+  verifyCRUDUser: async (req, res, next) => {
+    try {
+      const dbUser = await User.findById(req.user.id).select("modules");
+      if (!dbUser) return res.status(404).json({ message: "User not found" });
+
+      if (dbUser.modules.includes("all") || dbUser.modules.includes("user")) {
+        return next();
+      }
+
+      return res.status(403).json({ message: "No permission to CRUD user" });
+    } catch (error) {
+      return res.status(500).json({ message: "Auth check failed" });
     }
-}
-
+  }
+};
 
 module.exports = middlewares;

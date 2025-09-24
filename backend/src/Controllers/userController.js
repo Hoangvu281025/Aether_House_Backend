@@ -167,6 +167,45 @@ const userController = {
         }
     },
 
+    updateImageUser: async (req , res) =>{
+        try {
+            const ID = req.params.id
+            const user = await UserModel.findById(ID);
+
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            const file = req.file;
+            if (!file) {
+                return res.status(400).json({ error: 'Image file is required' });
+            }
+            const localPath = file.path;
+
+            const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse/users/client' });
+            const updatedUser = await UserModel.findByIdAndUpdate(
+                ID,
+                {
+                    avatar: {
+                        url: Uploadresults.secure_url,
+                        public_id: Uploadresults.public_id,
+                        localPath: localPath
+                    },
+                },
+                { new: true } // để trả về user mới đã update
+                ).select("-password");
+
+             return res.status(200).json({
+                success: true,
+                message: "Avatar updated successfully",
+                user: updatedUser,
+            });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+
 
 
 

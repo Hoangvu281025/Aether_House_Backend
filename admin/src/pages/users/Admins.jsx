@@ -86,6 +86,7 @@ const Users = () => {
                             <div>
                               <div className="u-name">{user?.name}</div>
                               <div className="u-role">{user?.role_id?.name}</div>
+                                <div className="u-role">{user.modules}</div>
                             </div>
                           </div>
                         </td>

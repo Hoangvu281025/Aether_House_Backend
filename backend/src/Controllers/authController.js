@@ -33,7 +33,7 @@ const authController = {
                         role_name : roleName
                     },
                     process.env.JWT_ACCESS_KEY,
-                    {expiresIn: "30d"} //thời gian hết hạn
+                    {expiresIn: "10d"} //thời gian hết hạn
                 )
                 const {password , ...others} = user._doc;
                 res.status(200).json({...others , accessToken})

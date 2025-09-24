@@ -18,7 +18,7 @@ const Profile = () => {
         const fetchUser = async () => {
         try {
             const { data } = await api.get(`/users/${id}`);
-            
+            console.log(data)
             setUser(data?.user || []); 
             setAddress(data?.addresses || []); 
             
@@ -50,8 +50,8 @@ const Profile = () => {
         formData.append("avatar", avatarFile);
 
         try {
-            const { data } = await api.put(`/users/${id}/avatar`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
+            const { data } = await api.put(`/users/${id}/avataradmin`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
             });
 
             if (data.success) {
