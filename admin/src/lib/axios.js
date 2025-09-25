@@ -13,16 +13,16 @@ api.interceptors.request.use((config) => {
 });
 
 // Nếu token hết hạn → backend trả 401 → xoá localStorage & quay về login
-api.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    if (err?.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      window.location.href = "/"; // trang login
-    }
-    return Promise.reject(err);
-  }
-);
+// api.interceptors.response.use(
+//   (res) => res,
+//   (err) => {
+//     if (err?.response?.status === 401) {
+//       localStorage.removeItem("token");
+//       localStorage.removeItem("user");
+//       window.location.href = "/"; // trang login
+//     }
+//     return Promise.reject(err);
+//   }
+// );
 
 export default api;

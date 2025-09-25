@@ -2,6 +2,7 @@ const UserModel = require('../Models/userModel');
 const RoleModel = require('../Models/roleModel');
 const AddressModel = require('../Models/addressModel');
 const cloudinary = require('../config/cloudinary');
+const bcrypt = require('bcryptjs');
 
 
 
@@ -9,7 +10,7 @@ const userController = {
     getallUser: async (req, res) => {
         try {
             // lấy page & limit từ query (mặc định page = 1, limit = 10)
-            const page = parseInt(req.query.page) || 1;
+            const page = parseInt(req.query.page) || 1; 
             const limit = parseInt(req.query.limit) || 8;
             const skip = (page - 1) * limit;
             const adminRole = await RoleModel.find({ name: { $in: ["admin", "superadmin"] } }).select("_id");
@@ -208,9 +209,80 @@ const userController = {
 
 
 
+    updateName: async (req,res) => {
+        try {
+            const{name} = req.body;
+            if(!name || !name.trim()) {
+                return res.status(404).json({error: "Name is bắt buộc "});
+            }
+            const updated = await UserModel.findByIdAndUpdate(
+                req.params.id,
+                {name: name.trim()},
+                {name: true, runValidators: true}
+            )
+            .select("-password")
+            .populate("role_id","name");
+
+            if(!updated) return res.status(404).json({ error: "User not thấy"});
+
+            return res.status(202).json({
+                message: "Name updated successfully",
+                user: updated,
+            });
+        }catch (err) {
+            console.log(err);
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    },
 
 
 
+
+
+
+
+    updatePassword: async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ error: "New password must be ít nhất 6 characters" });
+    }
+
+    const actor = req.user;               
+    const targetId = req.params.id;       
+
+    const target = await UserModel.findById(targetId); // có password sẵn trong schema
+    if (!target) return res.status(404).json({ error: "User not found" });
+
+    const isSelf  = actor && String(actor.id) === String(targetId); 
+    const isAdmin = ["admin", "superadmin"].includes(actor?.role_name); 
+
+    if (!isSelf && !isAdmin) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    // User tự đổi thì phải cung cấp & xác thực currentPassword
+    if (isSelf) {
+      if (!currentPassword) {
+        return res.status(400).json({ error: "Current password is required" });
+      }
+      const ok = await bcrypt.compare(currentPassword, target.password);
+      if (!ok) {
+        return res.status(400).json({ error: "Current password is incorrect" });
+      }
+    }
+
+    const hash = await bcrypt.hash(newPassword, 10);
+    target.password = hash;
+    await target.save();
+
+    return res.status(200).json({ message: "Password updated thành công ròi quí dị" });
+  } catch (err) {
+    return res.status(500).json({ message: "Internal sever lỗi" });
+  }
+},
+    
 
 
 
