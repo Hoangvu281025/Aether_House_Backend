@@ -1,14 +1,14 @@
 var express = require('express');
 var router = express.Router();
 const { userController } = require('../Controllers/userController')
-// const  middlewares  = require('../middlewares/middlewares');
+const  middlewares  = require('../middlewares/middlewares');
 const { uploadUser_admin } = require('../middlewares/uploadMiddleware');
 const { uploadUser_clinet } = require('../middlewares/uploadMiddleware');
 // const { uploadUser_clinet } = require('../middlewares/uploadMiddleware');
 
 /* GET users listing. */
-router.get('/' ,userController.getallUser); //middlewares.verifyCRUDUser,middlewares.verifyToken,
-router.get('/admins', userController.getallAdmin);
+router.get('/' ,middlewares.verifyToken,userController.getallUser); //middlewares.verifyCRUDUser,
+router.get('/admins',middlewares.verifyToken, userController.getallAdmin);
 router.get('/:id', userController.getbyID);
 router.delete('/:id');
 router.put('/:id/approve', userController.updateApprovalStatusUser);

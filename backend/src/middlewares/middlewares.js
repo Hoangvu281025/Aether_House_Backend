@@ -3,7 +3,7 @@ const User = require('../Models/userModel');
 
 const middlewares = {
   verifyToken: (req, res, next) => {
-    const authHeader = req.headers["authorization"];
+    const authHeader = req.headers.token;
     if (!authHeader) return res.status(401).json({ message: "You're not logged in" });
 
     const accessToken = authHeader.split(" ")[1];
