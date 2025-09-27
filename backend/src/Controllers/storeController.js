@@ -1,9 +1,8 @@
 const cloudinary = require("../config/cloudinary");
 const Store = require("../Models/storeModel");
+const slugify = require("slugify");
 
-// Lấy tất cả store
 const getAllStores = async (req, res) => {
-  // find là lấy tất cả ,200 lấy thành công
   try {
     const stores = await Store.find();
     res.status(200).json({ success: true, stores });
@@ -13,8 +12,6 @@ const getAllStores = async (req, res) => {
   }
 };
 
-// Lấy store theo ID
-// req.params; lấy id trên url
 const getStoreById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -29,31 +26,36 @@ const getStoreById = async (req, res) => {
   }
 };
 
+const getStoreBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const store = await Store.findOne({ slug });
+    if (!store) {
+      return res.status(404).json({ success: false, message: "Store not found" });
+    }
+    res.status(200).json({ success: true, store });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
-
+// Tạo store
 const addStore = async (req, res) => {
   try {
     const { name, phone, email, city, address, information, description } = req.body;
     const file = req.file;
 
-    // length đếm số phần tử trong mảng,nếu bằng 0 thì trả về lỗi
     if (!file) {
       return res.status(400).json({ success: false, message: "No files uploaded" });
     }
 
-    const uploadedImages = [];
-
-    if (!file) {
-        return res.status(400).json({ error: 'Image file is required' });
-    }
     const localPath = file.path;
-
     const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse/stores' });
 
-
-    // Thêm csdl
     const newStore = await Store.create({
       name,
+      slug: slugify(name, { lower: true, strict: true }), 
       phone,
       email,
       city,
@@ -75,13 +77,17 @@ const addStore = async (req, res) => {
 };
 
 // Cập nhật store
-// tạo đối tượng updates để lưu trữ các trường cần cập nhật
 const updateStore = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
 
-    // Nếu có upload ảnh mới thì upload lên Cloudinary,có thể ktra có sp hay chưa nếu chưa thì báo(fix lại)
+    // Nếu update tên thì cũng cập nhật slug
+    if (updates.name) {
+      updates.slug = slugify(updates.name, { lower: true, strict: true });
+    }
+
+    // Upload ảnh mới nếu có
     if (req.files && req.files.length > 0) {
       const uploadedImages = [];
       for (let i = 0; i < req.files.length; i++) {
@@ -95,9 +101,7 @@ const updateStore = async (req, res) => {
       updates.images = uploadedImages;
     }
 
-    // findByIdAndUpdate cập nhật thằng nào thằng đó ra thoi,ko ra hết
     const updatedStore = await Store.findByIdAndUpdate(id, updates, { new: true });
-
     if (!updatedStore) {
       return res.status(404).json({ success: false, message: "Store not found" });
     }
@@ -110,7 +114,6 @@ const updateStore = async (req, res) => {
 };
 
 // Xóa store
-// findById kiểm tra có hay không 
 const deleteStore = async (req, res) => {
   try {
     const { id } = req.params;
@@ -120,12 +123,9 @@ const deleteStore = async (req, res) => {
       return res.status(404).json({ success: false, message: "Store not found" });
     }
 
-    // Xóa ảnh trên Cloudinary
-    for (const img of store.images) {
-      await cloudinary.uploader.destroy(img.public_id);
-    }
+    // Xóa ảnh trên Cloudinary (chú ý: hiện images của em không phải mảng, nếu muốn nhiều thì đổi sang array)
+    await cloudinary.uploader.destroy(store.images.public_id);
 
-    // deleteOne xóa 1 lần
     await store.deleteOne();
 
     res.status(200).json({ success: true, message: "Store deleted successfully" });
@@ -138,6 +138,7 @@ const deleteStore = async (req, res) => {
 module.exports = {
   getAllStores,
   getStoreById,
+  getStoreBySlug,
   addStore,
   updateStore,
   deleteStore,

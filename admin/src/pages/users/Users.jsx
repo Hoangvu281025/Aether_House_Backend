@@ -33,48 +33,50 @@ const Users = () => {
       }
     };
     fetchUsers();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, [page, limit]);
 
-
   const openConfirm = (user) => {
-    setTargetUser(user);       // gán user cần duyệt
-    setConfirmOpen(true);      // mở modal
+    setTargetUser(user); // gán user cần duyệt
+    setConfirmOpen(true); // mở modal
   };
-
 
   const closeConfirm = () => {
     setConfirmOpen(false);
     setTargetUser(null);
   };
 
-  const hanldeConfirm = async() => {
-    if(!targetUser) return;
+  const hanldeConfirm = async () => {
+    if (!targetUser) return;
 
     try {
       setConfirmLoading(true);
-      
 
       await api.put(`/users/${targetUser._id}/approve`);
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user._id === targetUser._id
-            ? { ...user, approvalStatus: user.approvalStatus == "approved" ? "pending" : "approved" }
+            ? {
+                ...user,
+                approvalStatus:
+                  user.approvalStatus == "approved" ? "pending" : "approved",
+              }
             : user
         )
       );
       await new Promise((r) => setTimeout(r, 2000));
-      
-      setTargetUser(null)
-      setConfirmOpen(false)
+
+      setTargetUser(null);
+      setConfirmOpen(false);
     } catch (error) {
-      console.log(error)
-    }finally{
-      setConfirmOpen(false)
+      console.log(error);
+    } finally {
+      setConfirmOpen(false);
       setConfirmLoading(false);
     }
-  }
-
+  };
 
   return (
     <div className="user-table-wrapper">
@@ -129,17 +131,18 @@ const Users = () => {
                             <div>
                               <div className="u-name">{user.name}</div>
                               <div className="u-role">{user.role_id.name}</div>
-                            
                             </div>
                           </div>
                         </td>
                         <td>{user.email}</td>
                         <td>
-                          <span className={`chip ${user.approvalStatus }`}>
+                          <span className={`chip ${user.approvalStatus}`}>
                             {user.approvalStatus}
                           </span>
                         </td>
-                        <td>{dayjs(user.createdAt).format("DD/MM/YYYY HH:mm")}</td>
+                        <td>
+                          {dayjs(user.createdAt).format("DD/MM/YYYY HH:mm")}
+                        </td>
                         <td className="budget">
                           <button onClick={() => openConfirm(user)}>
                             <svg
@@ -207,8 +210,8 @@ const Users = () => {
                       <div className="pop-up-content-header">
                         <h2>Xác nhận duyệt người dùng {targetUser?.name}</h2>
                         <p>
-                          Bạn có chắc chắn muốn duyệt người dùng này không? Hành động này sẽ
-                          cho phép họ đăng nhập và sử dụng hệ thống.
+                          Bạn có chắc chắn muốn duyệt người dùng này không? Hành
+                          động này sẽ cho phép họ đăng nhập và sử dụng hệ thống.
                         </p>
                       </div>
 
@@ -231,9 +234,6 @@ const Users = () => {
                 </div>
               </div>
             )}
-
-            
-            
           </div>
         </div>
       </div>
