@@ -29,6 +29,21 @@ const middlewares = {
     } catch (error) {
       return res.status(500).json({ message: "Auth check failed" });
     }
+  },
+  // Middleware kiểm tra quyền "store"
+  verifyCRUDStore: async (req, res, next) => {
+    try {
+      const dbUser = await User.findById(req.user.id).select("modules");
+      if (!dbUser) return res.status(404).json({ message: "User not found" });
+
+      if (dbUser.modules.includes("all") || dbUser.modules.includes("store")) {
+        return next();
+      }
+
+      return res.status(403).json({ message: "No permission to CRUD user" });
+    } catch (error) {
+      return res.status(500).json({ message: "Auth check failed" });
+    }
   }
 };
 

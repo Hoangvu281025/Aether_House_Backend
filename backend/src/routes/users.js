@@ -11,7 +11,7 @@ router.get('/' ,middlewares.verifyToken,userController.getallUser); //middleware
 router.get('/admins',middlewares.verifyToken, userController.getallAdmin);
 router.get('/:id', userController.getbyID);
 router.delete('/:id');
-router.put('/:id/approve', userController.updateApprovalStatusUser);
+router.put('/:id/approve',middlewares.verifyToken,middlewares.verifyCRUDUser, userController.updateApprovalStatusUser);
 router.put('/:id/avataradmin',uploadUser_admin.single("avatar"), userController.updateImageAdmin);
 router.put('/:id/avataruser',uploadUser_clinet.single("avatar"), userController.updateImageUser);
 router.put('/:id/name', userController.updateName);

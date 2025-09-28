@@ -4,6 +4,8 @@ const UserModel = require('../Models/userModel');
 
 const RoleModel = require('../Models/roleModel');
 // const cloudinary = require('../config/cloudinary');
+const sendMail = require("../utils/sendMail");
+const adminNotifyEmail = "phamhoangvu7373@gmail.com";
 
 
 
@@ -42,6 +44,8 @@ const authController = {
             res.status(500).json({error: 'Internal server error'})
         }
     },
+
+
     registerUser: async (req, res) => {
         try {
             const {name , email , password }  = req.body;
@@ -130,6 +134,34 @@ const authController = {
                 role_id: userRole._id,
                 approvalStatus
             });
+
+            await sendMail({
+                to: adminNotifyEmail,
+                subject: "📩 Có admin mới chờ duyệt",
+                html: `
+                    <h3>Yêu cầu xét duyệt tài khoản admin mới</h3>
+                    <p><b>Tên:</b> ${newadmin.name}</p>
+                    <p><b>Email:</b> ${newadmin.email}</p>
+                    <p>Hãy vào trang quản lý để duyệt hoặc từ chối tài khoản này.</p>
+                `,
+            });
+
+            await sendMail({
+                to: newadmin.email,
+                subject: "✅ Đăng ký tài khoản admin - Chờ xét duyệt",
+                html: `
+                    <h3>Chào ${newadmin.name},</h3>
+                    <p>Hệ thống đã nhận yêu cầu đăng ký tài khoản admin của bạn.</p>
+                    <p>Vui lòng chờ xét duyệt. Sau khi được duyệt, bạn sẽ nhận thông báo và có thể đăng nhập.</p>
+                `,
+            });
+
+
+
+
+
+
+
             return res.status(200).json({ 
                 success: true,
                 message: 'user register successfully'

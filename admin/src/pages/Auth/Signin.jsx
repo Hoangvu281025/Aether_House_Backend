@@ -31,10 +31,12 @@ const Signin = () => {
       const { data } = await api.post("/auth/login" , newUser);
 
       if(data?.accessToken){
-        localStorage.setItem('token' , data.accessToken)
+        localStorage.setItem('token' , data.accessToken);
+        localStorage.setItem("token_expiry", Date.now() + 60 * 60 * 1000); // ví dụ token sống 1 tiếng
       }
 
       localStorage.setItem('user' , JSON.stringify(data))
+      
 
 
       setSuccess(data?.message || "Đăng nhập thành công!");
@@ -48,6 +50,7 @@ const Signin = () => {
 
     } catch (err) {
       const msg = err?.response?.data?.error || err?.response?.data?.message || "Có lỗi xảy ra";
+      console.log(err)
       setError(msg);
       
     }finally{

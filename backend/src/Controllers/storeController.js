@@ -1,6 +1,6 @@
 const cloudinary = require("../config/cloudinary");
 const Store = require("../Models/storeModel");
-const slugify = require("slugify");
+// const slugify = require("../utils/slugify");
 
 const getAllStores = async (req, res) => {
   try {

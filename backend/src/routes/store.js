@@ -10,12 +10,13 @@ const {
   updateStore,
   deleteStore
 } = require("../Controllers/storeController");
+const  middlewares  = require('../middlewares/middlewares');
 
-router.get("/", getAllStores);
+router.get("/",middlewares.verifyToken,middlewares.verifyCRUDStore, getAllStores);
 router.get("/slug/:slug", getStoreBySlug);
 router.get("/:id", getStoreById);
 
-router.post("/", uploadStores.single("images"), addStore);
+router.post("/",middlewares.verifyToken,middlewares.verifyCRUDStore, uploadStores.single("images"), addStore);
 
 router.put("/:id", updateStore);
 
