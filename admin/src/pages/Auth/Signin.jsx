@@ -5,57 +5,28 @@ import api from "../../lib/axios"
 
 import {Link} from "react-router-dom";
 import "./Auth.css";
-const MIN_PASS = 6;
+
 const Signin = () => {
     const navigate  = useNavigate();
     const [Email , SetEmail] = useState('');
-    const [Password , SetPassword] = useState('');
-    const [error, setError]         = useState("");
-    const [success, setSuccess]     = useState("");
-    const [loading, setLoading]     = useState(false);
+
+    
 
     const handleSubmit = async(e) =>{
       e.preventDefault()
-      setError('');
-      setSuccess('');
-      const email = Email.trim();             
-      const pwd = Password;    
-      if (pwd.length < MIN_PASS) return setError(`Mật khẩu phải lớn hơn hoặc bằng ${MIN_PASS} ký tự`);
-      try {
-      setLoading(true);
-      const newUser = {
-        email, 
-        password: pwd
-      };
-
-      const { data } = await api.post("/auth/login" , newUser);
-
-      if(data?.accessToken){
-        localStorage.setItem('token' , data.accessToken);
-        localStorage.setItem("token_expiry", Date.now() + 60 * 60 * 1000); // ví dụ token sống 1 tiếng
-      }
-
-      localStorage.setItem('user' , JSON.stringify(data))
-      
-
-
-      setSuccess(data?.message || "Đăng nhập thành công!");
-
      
-      SetEmail("");
-      SetPassword("");
+      try {
+     
 
-      await new Promise((r) => setTimeout(r, 900));
-      navigate("/home", { replace: true });
+      await api.post("/auth/login-admin" , {email: Email});
 
-    } catch (err) {
-      const msg = err?.response?.data?.error || err?.response?.data?.message || "Có lỗi xảy ra";
-      console.log(err)
-      setError(msg);
       
-    }finally{
-      setLoading(false)
-    }
+      await new Promise((r) => setTimeout(r, 900));
+      navigate("/Verify", { replace: true, state: { Email } });
+
+      } catch (err) {
+        console.log(err)
+      }
     }
   return (
     <div className="signup-container">
@@ -74,25 +45,13 @@ const Signin = () => {
             onChange={(e) => SetEmail(e.target.value)}
           />
 
-          <label>Password *</label>
-          <input 
-            type="password" 
-            placeholder="Enter your password" 
-            required 
-            onChange={(e) => SetPassword(e.target.value)}
-          />
+         
 
-          {success && <p className="success">{success}</p>}
-          {error && <p className="error">{error}</p>}
-
-          <button type="submit" className="signup-btn" disabled={loading}>
-            {loading ? <span className="spinner" /> : "Sign in"}
+        
+          <button type="submit" className="signup-btn" >
+           Sign in
           </button>
         </form>
-
-        <p className="login-text">
-          Already have an account? <Link to="/signup">Sign Up</Link>
-        </p>
       </div>
 
       {/* Right Banner */}

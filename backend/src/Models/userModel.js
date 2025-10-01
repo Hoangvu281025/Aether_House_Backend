@@ -3,9 +3,8 @@ const { Schema } = mongoose;
 
 
 const UserSchema = new Schema({
-    name: {type: String, required: true},
+    name: {type: String},
     email: {type: String, required: true},
-    password: {type: String, required: true},
     avatar: {
         url: {type: String, required: true},
         public_id: {type: String},
@@ -15,15 +14,11 @@ const UserSchema = new Schema({
     role_id: {type: mongoose.Schema.Types.ObjectId , ref: "Role" , required: true }, 
     modules: {
         type: [String],
-        enum: ["all", "product", "category", "order", "user" , "store" ,], // tuỳ bạn
         default: [],
     },
 
-    approvalStatus: {
-        type: String,
-        enum: ['pending', 'approved'],
-        default: 'pending'
-    }
+    otp: { type: String }, 
+    otpExpires: { type: Date }, 
 },{
     timestamps: true
 })

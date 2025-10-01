@@ -4,10 +4,12 @@ const {authController} = require('../Controllers/authController')
 // const { uploadUser_clinet } = require('../middlewares/uploadMiddleware');
 
 /* GET users listing. */
-router.post('/login', authController.login);
+router.post('/login-admin', authController.loginAdmin);
+router.post('/login-client', authController.loginClient);
+router.post('/verify', authController.verifyOtp);
 // router.post('/registerUser', uploadUser_clinet.single('image'), UserControllers.registerUser);
 // router.post('/registerAdmin' ,uploadUser.single('image'), UserControllers.registerAdmin);
-router.post('/registerUser', authController.registerUser);
-router.post('/registerAdmin' , authController.registerAdmin);
+// router.post('/registerUser', authController.registerUser);
+// router.post('/registerAdmin' , authController.registerAdmin);
 
 module.exports = router;

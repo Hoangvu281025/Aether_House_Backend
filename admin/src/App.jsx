@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css"
 import AuthLayout from "./Layout/AuthLayout";
 import MainLayout from "./Layout/MainLayout";
 import Signin from "./pages/Auth/Signin";
-import Signup from "./pages/Auth/Signup";
+import Verify from "./pages/Auth/Verify";
 import Dashboard from "./pages/home/Dashboard";
 import Addproduct from "./pages/forms/Addproduct";  
 import FormProductUpdate from "./pages/forms/Updateproduct"
@@ -11,10 +12,11 @@ import AddStore from "./pages/forms/AddStore";
 import Users from "./pages/users/Users";
 import Stores from "./pages/Stores/Stores";
 import ProtectedRoute from "./components/ProtectedRoute";
-import "./App.css"
+
 import AuthRedirect from "./components/AuthRedirect";
 import Admins from "./pages/users/Admins";
 import Profile from "./pages/Profile/Profile";
+
 function App() {
   return (
     <Router>
@@ -37,7 +39,7 @@ function App() {
         <Route element={<AuthRedirect />}>
           <Route element={<AuthLayout />}>
             <Route path="/" element={<Signin />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/Verify" element={<Verify />} />
           </Route>
         </Route>
       </Routes>
