@@ -2,13 +2,15 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../lib/axios"
-
 import {Link} from "react-router-dom";
+
+import Spinner from "../../components/spinner/spinner"
 import "./Auth.css";
 
 const Signin = () => {
     const navigate  = useNavigate();
     const [Email , SetEmail] = useState('');
+    const [loading , SetLoading] = useState(false);
 
     
 
@@ -16,16 +18,15 @@ const Signin = () => {
       e.preventDefault()
      
       try {
-     
+        SetLoading(true);
+        await api.post("/auth/login-admin" , {email: Email});
 
-      await api.post("/auth/login-admin" , {email: Email});
-
-      
-      await new Promise((r) => setTimeout(r, 900));
-      navigate("/Verify", { replace: true, state: { Email } });
+        navigate("/Verify", { replace: true, state: { Email } });
 
       } catch (err) {
         console.log(err)
+      }finally{
+        SetLoading(false);
       }
     }
   return (
@@ -35,9 +36,8 @@ const Signin = () => {
         <h2 className="signup-title">Sign In</h2>
         <p className="signup-subtitle">Create your account to get started!</p>
 
-
+      
         <form className="signup-form" onSubmit={handleSubmit}>
-          <label>Email *</label>
           <input 
             type="email" 
             placeholder="info@gmail.com" 
@@ -49,7 +49,7 @@ const Signin = () => {
 
         
           <button type="submit" className="signup-btn" >
-           Sign in
+            {loading ? <Spinner/> : "Sign in"}
           </button>
         </form>
       </div>

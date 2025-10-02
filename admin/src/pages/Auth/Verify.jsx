@@ -10,20 +10,15 @@ const Verify = () => {
   const location = useLocation();
   const savedEmail = location.state?.Email;
   const [otp , SetOtp] = useState('');
+  const [error , SetError] = useState('');
   
   
 
 
   const handleRegister = async(e) => {
     e.preventDefault();
-   
-
-   
-
     try {
-     
-
-      const res = await api.post("/auth/verify" , {email:savedEmail , otp});
+      const res = await api.post("/auth/verifyAdmin" , {email:savedEmail , otp});
       const { accessToken, user } = res.data || {};
 
     if (accessToken) {
@@ -35,8 +30,9 @@ const Verify = () => {
       navigate("/home", { replace: true });
 
     } catch (err) {
-     console.log(err)
-      
+      const res  = err.response || {};
+      const data = res.data || {};
+      SetError(data.message || "");
     }
   }
   return (
@@ -45,20 +41,16 @@ const Verify = () => {
       <div className="signup-left">
        
         <h2 className="signup-title">Enter code</h2>
-        <p className="signup-subtitle">Sent to ${savedEmail}</p>
+        <p className="signup-subtitle">Sent to {savedEmail}</p>
 
         <form className="signup-form" onSubmit={handleRegister}>
-          <label>Full Name *</label>
           <input 
             type="text" 
-            placeholder="Full name" 
+            placeholder="6-digit code" 
             required 
             onChange={(e) => SetOtp(e.target.value)}
-
           />
-
-         
-          
+          {error && <p className="error">{error}</p>}
 
           <button type="submit" className="signup-btn" >
             Submit
@@ -66,7 +58,7 @@ const Verify = () => {
         </form>
 
         <p className="login-text">
-          Already have an account? <Link to="/">Sign In</Link>
+          <Link to="/">Sign in with a different email</Link>
         </p>
       </div>
 

@@ -170,19 +170,48 @@ const authController = {
 
 
 
-    verifyOtp: async (req, res) => {
+    verifyOtpUser: async (req, res) => {
         try {
             const { email, otp } = req.body;
             const user = await UserModel.findOne({ email });
 
             if (!user) return res.status(404).json({ message: "User not found" });
-
             if (user.otp !== otp || user.otpExpires < Date.now()) {
-            return res.status(400).json({ message: "Invalid or expired OTP" });
+                return res.status(400).json({ message: "Invalid or expired OTP" });
             }
 
             // OTP đúng thì tạo accessToken
             const role = await RoleModel.findById(user.role_id).select("name").lean();
+            if(role.name === "admin") return res.status(400).json({ message: "Không có quyền" });
+            const accessToken = jwt.sign(
+            { id: user._id, role_id: user.role_id, role_name: role.name.toLowerCase() },
+            process.env.JWT_ACCESS_KEY,
+            { expiresIn: "10d" }
+            );
+
+            // Xóa OTP sau khi dùng
+            user.otp = undefined;
+            user.otpExpires = undefined;
+            await user.save();
+
+            res.status(200).json({ accessToken, user });
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    },
+    verifyOtpAdmin: async (req, res) => {
+        try {
+            const { email, otp } = req.body;
+            const user = await UserModel.findOne({ email });
+
+            if (!user) return res.status(404).json({ message: "User not found" });
+            if (user.otp !== otp || user.otpExpires < Date.now()) {
+                return res.status(400).json({ message: "Invalid or expired OTP" });
+            }
+
+            // OTP đúng thì tạo accessToken
+            const role = await RoleModel.findById(user.role_id).select("name").lean();
+            if(role.name === "user") return res.status(400).json({ message: "Không có quyền" });
             const accessToken = jwt.sign(
             { id: user._id, role_id: user.role_id, role_name: role.name.toLowerCase() },
             process.env.JWT_ACCESS_KEY,
