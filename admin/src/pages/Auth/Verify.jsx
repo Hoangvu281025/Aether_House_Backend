@@ -18,7 +18,7 @@ const Verify = () => {
   const handleRegister = async(e) => {
     e.preventDefault();
     try {
-      const res = await api.post("/auth/verifyAdmin" , {email:savedEmail , otp});
+      const res = await api.post("/auth/verify" , {email:savedEmail , otp});
       const { accessToken, user } = res.data || {};
 
     if (accessToken) {

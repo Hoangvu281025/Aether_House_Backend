@@ -11,7 +11,8 @@ const Signin = () => {
     const navigate  = useNavigate();
     const [Email , SetEmail] = useState('');
     const [loading , SetLoading] = useState(false);
-
+    const [error , SetError] = useState('');
+    
     
 
     const handleSubmit = async(e) =>{
@@ -24,7 +25,9 @@ const Signin = () => {
         navigate("/Verify", { replace: true, state: { Email } });
 
       } catch (err) {
-        console.log(err)
+        const res  = err.response || {};
+        const data = res.data || {};
+        SetError(data.message || "");
       }finally{
         SetLoading(false);
       }
@@ -46,7 +49,7 @@ const Signin = () => {
           />
 
          
-
+          {error && <p className="error">{error}</p>}
         
           <button type="submit" className="signup-btn" >
             {loading ? <Spinner/> : "Sign in"}

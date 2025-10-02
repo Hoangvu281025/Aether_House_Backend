@@ -49,14 +49,11 @@ const authController = {
         try {
             const { email } = req.body;
 
-            if (!email) {
-                return res.status(400).json({ message: "Email is required" });
-            }
+            if (!email) return res.status(400).json({ message: "Email is required" });
+            
 
-            // Tìm user theo email
-            let user = await UserModel.findOne({ email });
+            let user = await UserModel.findOne({ email }).populate('role_id', 'name');
             const userRole = await RoleModel.findOne({ name: 'admin' });
-            // Nếu chưa có thì tạo mới user (trạng thái pending hoặc user mặc định)
             if (!user) {
                 user = new UserModel({
                     email,
@@ -66,6 +63,9 @@ const authController = {
                 });
                 await user.save();
             }
+            
+            const checkRole = user.role_id.name;
+            if (checkRole === "user") return res.status(500).json({ message: "Role 'user' not configured" });
 
             // Tạo OTP ngẫu nhiên (6 số)
             const otp = crypto.randomInt(100000, 999999);
@@ -102,7 +102,7 @@ const authController = {
             res.status(200).json({ message: "OTP has been sent to your email" });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: "Internal server error" });
+            res.status(500).json({ message: "Internal server error" });
         }
     },
 
@@ -113,9 +113,9 @@ const authController = {
             if (!email) {
                 return res.status(400).json({ message: "Email is required" });
             }
+           
 
-            // Tìm user theo email
-            let user = await UserModel.findOne({ email });
+            let user = await UserModel.findOne({ email }).populate('role_id', 'name');
             const userRole = await RoleModel.findOne({ name: 'user' });
             // Nếu chưa có thì tạo mới user (trạng thái pending hoặc user mặc định)
             if (!user) {
@@ -127,7 +127,8 @@ const authController = {
                 });
                 await user.save();
             }
-
+            const checkRole = user.role_id.name;
+            if (checkRole === "admin") return res.status(500).json({ message: "Role 'user' not configured" });
             // Tạo OTP ngẫu nhiên (6 số)
             const otp = crypto.randomInt(100000, 999999);
 
@@ -168,9 +169,7 @@ const authController = {
     },
 
 
-
-
-    verifyOtpUser: async (req, res) => {
+    verifyOtp: async (req, res) => {
         try {
             const { email, otp } = req.body;
             const user = await UserModel.findOne({ email });
@@ -182,36 +181,6 @@ const authController = {
 
             // OTP đúng thì tạo accessToken
             const role = await RoleModel.findById(user.role_id).select("name").lean();
-            if(role.name === "admin") return res.status(400).json({ message: "Không có quyền" });
-            const accessToken = jwt.sign(
-            { id: user._id, role_id: user.role_id, role_name: role.name.toLowerCase() },
-            process.env.JWT_ACCESS_KEY,
-            { expiresIn: "10d" }
-            );
-
-            // Xóa OTP sau khi dùng
-            user.otp = undefined;
-            user.otpExpires = undefined;
-            await user.save();
-
-            res.status(200).json({ accessToken, user });
-        } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
-        }
-    },
-    verifyOtpAdmin: async (req, res) => {
-        try {
-            const { email, otp } = req.body;
-            const user = await UserModel.findOne({ email });
-
-            if (!user) return res.status(404).json({ message: "User not found" });
-            if (user.otp !== otp || user.otpExpires < Date.now()) {
-                return res.status(400).json({ message: "Invalid or expired OTP" });
-            }
-
-            // OTP đúng thì tạo accessToken
-            const role = await RoleModel.findById(user.role_id).select("name").lean();
-            if(role.name === "user") return res.status(400).json({ message: "Không có quyền" });
             const accessToken = jwt.sign(
             { id: user._id, role_id: user.role_id, role_name: role.name.toLowerCase() },
             process.env.JWT_ACCESS_KEY,
