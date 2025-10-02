@@ -90,7 +90,7 @@ const Profile = () => {
                         className="profile-avatar"
                     />
                 <div>
-                    <h2 className="profile-name">{user.name}</h2>
+                    <h2 className="profile-name">{user.email}</h2>
                     <p className="profile-role">{user.role_id.name.toUpperCase()}</p>
                 </div>
                 </div>
