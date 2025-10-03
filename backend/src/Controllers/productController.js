@@ -82,7 +82,7 @@ const addProduct = async (req , res) => {
             for (let i= 0; i < files.length; i++) {
                 const file = files[i];
                 const localPath = file.path;
-                const results = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse' });
+                const results = await cloudinary.uploader.upload(localPath, { folder: `AetherHouse/products/${name}` });
                 uploadedImages.push({
                     url: results.secure_url,
                     public_id: results.public_id,

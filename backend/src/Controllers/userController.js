@@ -107,63 +107,63 @@ const userController = {
     
 
     updateApprovalStatusUser: async (req, res) => {
-  try {
-    const user = await UserModel.findById(req.params.id);
-    if (!user) return res.status(404).json({ error: "User not found" });
+        try {
+            const user = await UserModel.findById(req.params.id);
+            if (!user) return res.status(404).json({ error: "User not found" });
 
-    // Toggle trạng thái
-    const was = user.approvalStatus; // 'pending' | 'approved'
-    user.approvalStatus = was === "pending" ? "approved" : "pending";
-    await user.save();
+            // Toggle trạng thái
+            const was = user.approvalStatus; // 'pending' | 'approved'
+            user.approvalStatus = was === "pending" ? "approved" : "pending";
+            await user.save();
 
-    // Chuẩn bị email theo trạng thái mới
-    const isApproved = user.approvalStatus === "approved";
-    const subject = isApproved
-      ? "🎉 Tài khoản của bạn đã được duyệt"
-      : "⚠️ Tài khoản của bạn tạm thời bị khóa chờ duyệt lại";
+            // Chuẩn bị email theo trạng thái mới
+            const isApproved = user.approvalStatus === "approved";
+            const subject = isApproved
+            ? "🎉 Tài khoản của bạn đã được duyệt"
+            : "⚠️ Tài khoản của bạn tạm thời bị khóa chờ duyệt lại";
 
-    const html = isApproved
-      ? `
-        <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
-          <h2>Chúc mừng ${user.name || ""}!</h2>
-          <p>Tài khoản của bạn trên <b>AetherHouse</b> đã được <b>duyệt</b>.</p>
-          <p>Bây giờ bạn có thể đăng nhập và sử dụng hệ thống.</p>
-          <p style="margin-top:16px">👉 <a href="http://localhost:5173/" target="_blank">Đăng nhập ngay</a></p>
-          <hr style="margin:20px 0;border:none;border-top:1px solid #eee"/>
-          <p style="color:#666;font-size:13px">Nếu bạn không yêu cầu, vui lòng liên hệ hỗ trợ.</p>
-        </div>
-      `
-      : `
-        <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
-          <h2>Xin chào ${user.name || ""},</h2>
-          <p>Tài khoản của bạn hiện đang ở trạng thái <b>chờ duyệt</b>.</p>
-          <p>Vui lòng chờ quản trị viên xem xét. Chúng tôi sẽ thông báo ngay khi có cập nhật.</p>
-          <hr style="margin:20px 0;border:none;border-top:1px solid #eee"/>
-          <p style="color:#666;font-size:13px">Nếu có thắc mắc, vui lòng phản hồi email này.</p>
-        </div>
-      `;
+            const html = isApproved
+            ? `
+                <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+                <h2>Chúc mừng ${user.name || ""}!</h2>
+                <p>Tài khoản của bạn trên <b>AetherHouse</b> đã được <b>duyệt</b>.</p>
+                <p>Bây giờ bạn có thể đăng nhập và sử dụng hệ thống.</p>
+                <p style="margin-top:16px">👉 <a href="http://localhost:5173/" target="_blank">Đăng nhập ngay</a></p>
+                <hr style="margin:20px 0;border:none;border-top:1px solid #eee"/>
+                <p style="color:#666;font-size:13px">Nếu bạn không yêu cầu, vui lòng liên hệ hỗ trợ.</p>
+                </div>
+            `
+            : `
+                <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+                <h2>Xin chào ${user.name || ""},</h2>
+                <p>Tài khoản của bạn hiện đang ở trạng thái <b>chờ duyệt</b>.</p>
+                <p>Vui lòng chờ quản trị viên xem xét. Chúng tôi sẽ thông báo ngay khi có cập nhật.</p>
+                <hr style="margin:20px 0;border:none;border-top:1px solid #eee"/>
+                <p style="color:#666;font-size:13px">Nếu có thắc mắc, vui lòng phản hồi email này.</p>
+                </div>
+            `;
 
-    // Gửi mail (không để lỗi mail làm hỏng response)
-    try {
-      await sendMail({
-        to: user.email,
-        subject,
-        html,
-      });
-    } catch (mailErr) {
-      console.error("Send approval mail failed:", mailErr?.message || mailErr);
-      // không throw để API vẫn trả 200
-    }
+            // Gửi mail (không để lỗi mail làm hỏng response)
+            try {
+            await sendMail({
+                to: user.email,
+                subject,
+                html,
+            });
+            } catch (mailErr) {
+            console.error("Send approval mail failed:", mailErr?.message || mailErr);
+            // không throw để API vẫn trả 200
+            }
 
-    return res.status(200).json({
-      message: isApproved ? "User approved successfully" : "User set to pending",
-      user,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-},
+            return res.status(200).json({
+            message: isApproved ? "User approved successfully" : "User set to pending",
+            user,
+            });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    },
 
 
 
@@ -262,6 +262,33 @@ const userController = {
             .populate("role_id","name");
 
             if(!updated) return res.status(404).json({ error: "User not thấy"});
+
+            return res.status(202).json({
+                message: "Name updated successfully",
+                user: updated,
+            });
+        }catch (err) {
+            console.log(err);
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    },
+
+
+
+    updateinfor: async (req,res) => {
+        try {
+            const{ name , email } = req.body;
+            if(!name || !email ) {
+                return res.status(404).json({message: "Name and email is bắt buộc "});
+            }
+            const updated = await UserModel.findByIdAndUpdate(
+                req.params.id,
+                {name,
+                email,},
+                {new: true, runValidators: true}
+            );
+
+            if(!updated) return res.status(404).json({ message: "User not thấy"});
 
             return res.status(202).json({
                 message: "Name updated successfully",

@@ -10,6 +10,8 @@ const Profile = () => {
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [modalMode, setModalMode] = useState("");
     const [avatarFile, setAvatarFile] = useState(null);
+    const [email , SetEmail] = useState('');
+    const [name , SetName] = useState('');
 
     const token = JSON.parse(localStorage.getItem("user"));
     const id = token._id;
@@ -69,6 +71,15 @@ const Profile = () => {
             alert("Lỗi khi cập nhật avatar!");
         }
     };
+    const handleSaveInfor = async () => {
+        try {
+            await api.put(`/users/${id}/infor`, {name , email});
+            alert('update thành công')
+        } catch (err) {
+            console.error("Lỗi update infor:", err);
+            alert("Lỗi khi cập nhật infor!");
+        }
+    };
 
     if (!user) {
         return (
@@ -123,10 +134,10 @@ const Profile = () => {
                         <p className="label">Full Name</p>
                         <p className="value">Chowdury</p>
                     </div> */}
-                    {/* <div>
-                        <p className="label">Last Name</p>
-                        <p className="value">Musharof</p>
-                    </div> */}
+                    <div>
+                        <p className="label">Full Name</p>
+                        <p className="value">{user.name || "admin"}</p>
+                    </div>
                     <div>
                         <p className="label">Email address</p>
                         <p className="value">{user.email}</p>
@@ -189,11 +200,11 @@ const Profile = () => {
                         <div className="grid grid-2 gap">
                             <div>
                                 <label>Full Name</label>
-                                <input name="FullName" placeholder="Doe" />
+                                <input name="FullName" placeholder="Doe"  onChange={(e) => SetName(e.target.value)} />
                             </div>
                             <div>
                                 <label>Email Address</label>
-                                <input name="email" type="email" placeholder="john@example.com" />
+                                <input name="email" type="email" placeholder="john@example.com"  onChange={(e) => SetEmail(e.target.value)} />
                             </div>
                         </div>
                         </>
@@ -229,7 +240,7 @@ const Profile = () => {
                         <button className="btn primary" type="button" onClick={handleSaveAvatar}>Save Changes avatar</button>
                     )}
                     {modalMode === "infor" && (
-                        <button className="btn primary" type="button">Save Changes infor</button>
+                        <button className="btn primary" type="button" onClick={handleSaveInfor}>Save Changes infor</button>
                     )}
                     {modalMode === "address" && (
                         <button className="btn primary" type="button">Save Changes address</button>

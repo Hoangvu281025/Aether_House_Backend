@@ -172,7 +172,7 @@ const authController = {
     verifyOtp: async (req, res) => {
         try {
             const { email, otp } = req.body;
-            const user = await UserModel.findOne({ email });
+            const user = await UserModel.findOne({ email }).populate('role_id', 'name');
 
             if (!user) return res.status(404).json({ message: "User not found" });
             if (user.otp !== otp || user.otpExpires < Date.now()) {

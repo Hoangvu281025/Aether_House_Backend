@@ -23,7 +23,7 @@ const Verify = () => {
 
     if (accessToken) {
       localStorage.setItem("token", accessToken);
-      localStorage.setItem("token_expiry", String(Date.now() + 60 * 60 * 1000)); // 1 giờ (lưu dạng string)
+      localStorage.setItem("token_expiry", String(Date.now() +24* 60 * 60 * 1000)); // 24 giờ (lưu dạng string)
       localStorage.setItem("user", JSON.stringify(user));
     }
       await new Promise((r) => setTimeout(r, 2000));

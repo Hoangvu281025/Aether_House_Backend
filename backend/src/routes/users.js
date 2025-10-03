@@ -14,7 +14,7 @@ router.delete('/:id');
 router.put('/:id/approve',middlewares.verifyToken,middlewares.verifyCRUDUser, userController.updateApprovalStatusUser);
 router.put('/:id/avataradmin',uploadUser_admin.single("avatar"), userController.updateImageAdmin);
 router.put('/:id/avataruser',uploadUser_clinet.single("avatar"), userController.updateImageUser);
-router.put('/:id/name', userController.updateName);
+router.put('/:id/infor', userController.updateinfor);
 router.put('/:id/password', userController.updatePassword);
 
 

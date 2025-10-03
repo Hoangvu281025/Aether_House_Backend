@@ -7,7 +7,12 @@
 }
 
 .username_sidebar{
+  font-size: 0.9rem;
+  color: var(--white-color);
+}
+.role_sidebar{
   font-size: 0.8rem;
+  font-weight: bold;
   color: var(--white-color);
 }
 /* .logo_sidebar{

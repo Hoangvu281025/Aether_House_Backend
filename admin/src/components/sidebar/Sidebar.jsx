@@ -30,6 +30,7 @@ const Sidebar = () => {
               alt="avatar"
               className="avatar_img_sidebar"
             /> */}
+            <span className="role_sidebar">{user.role_id.name}</span>
             <span className="username_sidebar">{user.email}</span>
           </div>
         </div>
