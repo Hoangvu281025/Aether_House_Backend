@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from "react";
 import api from "../../lib/axios";
 import "./Profile.css";
+import Spinner from "../../components/spinner/spinner"
+
 // import { FaFacebookF, FaLinkedinIn, FaInstagram } from "react-icons/fa";
 // import { LuX } from "react-icons/lu";
 
 const Profile = () => {
-    const [user, setUser] = useState(null);
-    const [address, setAddress] = useState(null);
+    const [user, setUser] = useState("");
+    const [address, setAddress] = useState([]);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [modalMode, setModalMode] = useState("");
     const [avatarFile, setAvatarFile] = useState(null);
     const [email , SetEmail] = useState('');
     const [name , SetName] = useState('');
+    const [loading , SetLoading] = useState(false);
 
     const token = JSON.parse(localStorage.getItem("user"));
     const id = token._id;
+    if(!id){
+        window.location.href = "/logout"; // hoặc route tuỳ hệ thống FE của bạn    
+    };
     useEffect(() => {
         
         const fetchUser = async () => {
@@ -34,7 +40,11 @@ const Profile = () => {
 
     const openConfirm = (mode) => {
         setModalMode(mode);
-        setConfirmOpen(true);    
+        setConfirmOpen(true);  
+        if (mode === "infor" && user) {
+            SetName(user?.name || "");
+            SetEmail(user?.email || "");
+        }  
     };
 
     const closeConfirm = () => {
@@ -73,18 +83,27 @@ const Profile = () => {
     };
     const handleSaveInfor = async () => {
         try {
-            await api.put(`/users/${id}/infor`, {name , email});
-            alert('update thành công')
+            SetLoading(true)
+            const {data} = await api.put(`/users/${id}/infor`, {name , email});
+            if (data.success) {
+                // Cập nhật localStorage
+                localStorage.setItem("user", JSON.stringify(data.user));
+                window.location.reload()
+            }
         } catch (err) {
             console.error("Lỗi update infor:", err);
             alert("Lỗi khi cập nhật infor!");
+        }finally{
+            SetLoading(false)
+            setConfirmOpen(false);
         }
     };
 
     if (!user) {
         return (
         <div className="profile-container">
-            <p>Đang tải hoặc không tìm thấy user.</p>
+           <Spinner/>
+           <p>Không tìm thấy user</p>
         </div>
         );
     }
@@ -92,62 +111,60 @@ const Profile = () => {
         
         <div className="profile-container">
 
-       
-            <div className="profile-card" >
-                <div className="profile-info">
-                    <img
-                        src={user.avatar.url}
-                        alt="avatar"
-                        className="profile-avatar"
-                    />
-                <div>
-                    <h2 className="profile-name">{user.email}</h2>
-                    <p className="profile-role">{user.role_id.name.toUpperCase()}</p>
+            {!user ? (
+                <div className="profile-container">
+                    <Spinner/>
                 </div>
-                </div>
-                <div className="profile-actions">
-                {/* <button className="icon-btn">
-                    <FaFacebookF />
-                </button>
-                <button className="icon-btn">
-                    <LuX />
-                </button>
-                <button className="icon-btn">
-                    <FaLinkedinIn />
-                </button>
-                <button className="icon-btn">
-                    <FaInstagram />
-                </button> */}
-                <button className="edit-btn" onClick={()=>openConfirm("avatar")}>Edit</button>
-                </div>
-            </div>
+            ):(
+                <>
+                    <div className="profile-card" >
+                        <div className="profile-info">
+                            <img
+                                src={user.avatar.url}
+                                alt="avatar"
+                                className="profile-avatar"
+                            />
+                            <div>
+                                <h2 className="profile-name">{user.email}</h2>
+                                <p className="profile-role">{user.role_id.name.toUpperCase()}</p>
+                            </div>
+                        </div>
+                        <div className="profile-actions">
+                            <button className="edit-btn" onClick={()=>openConfirm("avatar")}>Edit</button>
+                        </div>
+                    </div>
 
      
-            <div className="profile-card">
-                <div className="section-header">
-                <h3>Personal Information</h3>
-                <button className="edit-btn" onClick={()=>openConfirm("infor")}>Edit</button>
+                    <div className="profile-card">
+                        <div className="section-header">
+                        <h3>Personal Information</h3>
+                        <button className="edit-btn" onClick={()=>openConfirm("infor")}>Edit</button>
 
-                </div>
-                <div className="info-grid">
-                    {/* <div>
-                        <p className="label">Full Name</p>
-                        <p className="value">Chowdury</p>
-                    </div> */}
-                    <div>
-                        <p className="label">Full Name</p>
-                        <p className="value">{user.name || "admin"}</p>
+                        </div>
+                        <div className="info-grid">
+                            {/* <div>
+                                <p className="label">Full Name</p>
+                                <p className="value">Chowdury</p>
+                            </div> */}
+                            <div>
+                                <p className="label">Full Name</p>
+                                <p className="value">{user.name || "admin"}</p>
+                            </div>
+                            <div>
+                                <p className="label">Email address</p>
+                                <p className="value">{user.email}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <p className="label">Email address</p>
-                        <p className="value">{user.email}</p>
-                    </div>
-                </div>
-            </div>
+                </>
+            )}
+       
+            
 
         {/* Address */}
-            {address.map((addresses) =>(
-                <div className="profile-card" key={addresses._id}>
+        {(address && address.length > 0) ? (
+            address.map((addr) =>(
+                <div className="profile-card" key={addr._id}>
                     <div className="section-header">
                         <h3>Address</h3>
                         <button className="edit-btn" onClick={()=>openConfirm("address")}>Edit</button>
@@ -156,24 +173,52 @@ const Profile = () => {
                     <div className="info-grid">
                     <div>
                         <p className="label">Address</p>
-                        <p className="value">{addresses.address}</p>
+                        <p className="value">{addr.address || ""}</p>
                     </div>
                 
                     <div>
                         <p className="label">ward</p>
-                        <p className="value">{addresses.ward}</p>
+                        <p className="value">{addr.ward}</p>
                     </div>
                     <div>
                         <p className="label">Country</p>
-                        <p className="value">{addresses.country}</p>
+                        <p className="value">{addr.country}</p>
                     </div>
                     <div>
                         <p className="label">Phone</p>
-                        <p className="value">{addresses.phone}</p>
+                        <p className="value">{addr.phone}</p>
                     </div>
                     </div>
                 </div>
-            ))}
+            ))
+        ):(
+            <div className="profile-card" >
+                <div className="section-header">
+                    <h3>Address</h3>
+                    <button className="edit-btn" onClick={()=>openConfirm("address")}>Add</button>
+
+                </div>
+                <div className="info-grid">
+                <div>
+                    <p className="label">Address</p>
+                    <p className="value"></p>
+                </div>
+            
+                <div>
+                    <p className="label">ward</p>
+                    <p className="value"></p>
+                </div>
+                <div>
+                    <p className="label">Country</p>
+                    <p className="value"></p>
+                </div>
+                <div>
+                    <p className="label">Phone</p>
+                    <p className="value"></p>
+                </div>
+                </div>
+            </div>
+        )}
 
 
         {confirmOpen && (
@@ -194,19 +239,27 @@ const Profile = () => {
                     )}
 
                     {modalMode === "infor" && (
+                        
                         <>
-                        <h4 className="section-title">Personal Information</h4>
+                        {loading ? (
+                            <Spinner/>
+                        ): (
+                            <>
+                            <h4 className="section-title">Personal Information</h4>
 
-                        <div className="grid grid-2 gap">
-                            <div>
-                                <label>Full Name</label>
-                                <input name="FullName" placeholder="Doe"  onChange={(e) => SetName(e.target.value)} />
+                            <div className="grid grid-2 gap">
+                                <div>
+                                    <label>Full Name</label>
+                                    <input name="name" placeholder="Doe" value={name}  onChange={(e) => SetName(e.target.value)} />
+                                </div>
+                                <div>
+                                    <label>Email Address</label>
+                                    <input name="email" type="email" value={email} placeholder="john@example.com"  onChange={(e) => SetEmail(e.target.value)} disabled />
+                                </div>
                             </div>
-                            <div>
-                                <label>Email Address</label>
-                                <input name="email" type="email" placeholder="john@example.com"  onChange={(e) => SetEmail(e.target.value)} />
-                            </div>
-                        </div>
+                            </>
+                        )}
+                        
                         </>
                     )}
 

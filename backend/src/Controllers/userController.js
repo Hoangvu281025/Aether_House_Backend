@@ -247,31 +247,6 @@ const userController = {
 
 
 
-    updateName: async (req,res) => {
-        try {
-            const{name} = req.body;
-            if(!name || !name.trim()) {
-                return res.status(404).json({error: "Name is bắt buộc "});
-            }
-            const updated = await UserModel.findByIdAndUpdate(
-                req.params.id,
-                {name: name.trim()},
-                {name: true, runValidators: true}
-            )
-            .select("-password")
-            .populate("role_id","name");
-
-            if(!updated) return res.status(404).json({ error: "User not thấy"});
-
-            return res.status(202).json({
-                message: "Name updated successfully",
-                user: updated,
-            });
-        }catch (err) {
-            console.log(err);
-            return res.status(500).json({ error: "Internal server error" });
-        }
-    },
 
 
 
@@ -286,11 +261,12 @@ const userController = {
                 {name,
                 email,},
                 {new: true, runValidators: true}
-            );
+            ).populate("role_id" ,"name");
 
             if(!updated) return res.status(404).json({ message: "User not thấy"});
 
             return res.status(202).json({
+                success: true,
                 message: "Name updated successfully",
                 user: updated,
             });
