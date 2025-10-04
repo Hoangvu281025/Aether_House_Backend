@@ -10,40 +10,7 @@ const crypto = require("crypto");
 
 
 const authController = {
-    // login: async(req,res) =>{
-    //     try {
-    //         const user = await UserModel.findOne({ email: req.body.email})
-    //         if(!user) return res.status(404).json({message:"email is incorrect"})
-            
-    //         // Check trạng thái duyệt
-    //         if (user.approvalStatus === "pending") return res.status(403).json({message:"Account not approved"});
-            
-
-    //         const valipass = await bcrypt.compare(
-    //             req.body.password,
-    //             user.password
-    //         );
-    //         if(!valipass) return res.status(404).json({message:'password is incorrect'})
-    //         const role = await RoleModel.findById(user.role_id).select('name').lean();
-    //         const roleName = role.name.toLowerCase()
-
-    //         if(user && valipass){
-    //             const accessToken = jwt.sign(
-    //                 {
-    //                     id: user._id,
-    //                     role_id: user.role_id,
-    //                     role_name : roleName
-    //                 },
-    //                 process.env.JWT_ACCESS_KEY,
-    //                 {expiresIn: "10d"} //thời gian hết hạn
-    //             )
-    //             const {password , ...others} = user._doc;
-    //             res.status(200).json({...others , accessToken})
-    //         }
-    //     } catch (error) {
-    //         res.status(500).json({error: 'Internal server error'})
-    //     }
-    // },
+   
 
     loginAdmin: async (req, res) => {
         try {
@@ -53,11 +20,20 @@ const authController = {
             
 
             let user = await UserModel.findOne({ email }).populate('role_id', 'name');
-            const userRole = await RoleModel.findOne({ name: 'admin' });
+
+            if (user && user.isActive === false) {
+                return res.status(403).json({ message: "Your account has been disabled" });
+            }
+            
+
             if (!user) {
+                const userRole = await RoleModel.findOne({ name: 'admin' });
                 user = new UserModel({
                     email,
-                    avatar: {url:'https://res.cloudinary.com/depbw3f5t/image/upload/v1758463486/AetherHouse/users/admin/gjmevtpfkk800qemilaz.jpg'},
+                    avatar: {
+                        url:'https://res.cloudinary.com/depbw3f5t/image/upload/v1758463486/AetherHouse/users/admin/gjmevtpfkk800qemilaz.jpg',
+                        isDefault: true
+                    },
                     role_id: userRole._id,
                     
                 });

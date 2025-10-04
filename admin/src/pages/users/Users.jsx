@@ -136,9 +136,10 @@ const Users = () => {
                         </td>
                         <td>{user.email}</td>
                         <td>
-                          <span className={`chip ${user.approvalStatus}`}>
-                            {user.approvalStatus}
+                          <span className={`chip ${user.isActive ? 'active' : 'inactive'}`}>
+                            {user.isActive ? 'Hoạt động' : 'Bị khóa'}
                           </span>
+
                         </td>
                         <td>
                           {dayjs(user.createdAt).format("DD/MM/YYYY HH:mm")}

@@ -8,7 +8,7 @@ const UserSchema = new Schema({
     avatar: {
         url: {type: String, required: true},
         public_id: {type: String},
-        localPath: {type: String},
+        isDefault: {type: Boolean},
     },
     isActive: {type: Boolean, default: true}, // true hoạt động bth || false bị khóa
     role_id: {type: mongoose.Schema.Types.ObjectId , ref: "Role" , required: true }, 

@@ -4,7 +4,7 @@ const AddressModel = require('../Models/addressModel');
 const cloudinary = require('../config/cloudinary');
 const bcrypt = require('bcryptjs');
 const sendMail = require("../utils/sendMail");
-
+const fs = require("fs");
 
 
 const userController = {
@@ -182,19 +182,25 @@ const userController = {
             }
             const localPath = file.path;
 
+            const oldPublicId = user?.avatar?.public_id; 
+            const isDefault = user?.avatar?.isDefault === true 
+            if (oldPublicId && !isDefault) { 
+                await cloudinary.uploader.destroy(oldPublicId).catch(err => { console.log("Destroy old avatar failed:", err?.message); }); 
+            }
             const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse/users/admin' });
+            
             const updatedUser = await UserModel.findByIdAndUpdate(
                 ID,
                 {
                     avatar: {
                         url: Uploadresults.secure_url,
                         public_id: Uploadresults.public_id,
-                        localPath: localPath
+                        isDefault: false
                     },
                 },
                 { new: true } // để trả về user mới đã update
-                ).select("-password");
-
+                ).populate('role_id','name');
+            fs.unlink(file.path, () => {});
              return res.status(200).json({
                 success: true,
                 message: "Avatar updated successfully",
@@ -220,7 +226,11 @@ const userController = {
                 return res.status(400).json({ error: 'Image file is required' });
             }
             const localPath = file.path;
-
+            const oldPublicId = user?.avatar?.public_id; 
+            const isDefault = user?.avatar?.isDefault === true 
+            if (oldPublicId && !isDefault) { 
+                await cloudinary.uploader.destroy(oldPublicId).catch(err => { console.log("Destroy old avatar failed:", err?.message); }); 
+            }
             const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse/users/client' });
             const updatedUser = await UserModel.findByIdAndUpdate(
                 ID,
@@ -232,7 +242,7 @@ const userController = {
                     },
                 },
                 { new: true } // để trả về user mới đã update
-                ).select("-password");
+                ).populate('role_id','name');
 
              return res.status(200).json({
                 success: true,
@@ -241,12 +251,9 @@ const userController = {
             });
         } catch (error) {
             console.log(error);
-            return res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).json({ error: 'Internal server error'});
         }
     },
-
-
-
 
 
 
@@ -282,47 +289,7 @@ const userController = {
 
 
 
-    updatePassword: async (req, res) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
 
-    if (!newPassword || newPassword.length < 6) {
-      return res.status(400).json({ error: "New password must be ít nhất 6 characters" });
-    }
-
-    const actor = req.user;               
-    const targetId = req.params.id;       
-
-    const target = await UserModel.findById(targetId); // có password sẵn trong schema
-    if (!target) return res.status(404).json({ error: "User not found" });
-
-    const isSelf  = actor && String(actor.id) === String(targetId); 
-    const isAdmin = ["admin", "superadmin"].includes(actor?.role_name); 
-
-    if (!isSelf && !isAdmin) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
-
-    // User tự đổi thì phải cung cấp & xác thực currentPassword
-    if (isSelf) {
-      if (!currentPassword) {
-        return res.status(400).json({ error: "Current password is required" });
-      }
-      const ok = await bcrypt.compare(currentPassword, target.password);
-      if (!ok) {
-        return res.status(400).json({ error: "Current password is incorrect" });
-      }
-    }
-
-    const hash = await bcrypt.hash(newPassword, 10);
-    target.password = hash;
-    await target.save();
-
-    return res.status(200).json({ message: "Password updated thành công ròi quí dị" });
-  } catch (err) {
-    return res.status(500).json({ message: "Internal sever lỗi" });
-  }
-},
     
 
 
@@ -335,9 +302,21 @@ const userController = {
 
     deleteUser: async (req, res) => {
         try {
-            const user = await UserModel.findById(req.params.id);
-            res.status(200).json("delete successfully")
-            
+            const user = await UserModel.findByIdAndUpdate(
+                req.params.id,
+                { isActive: false },
+                { new: true }
+            );
+
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: "User account has been disabled",
+                user,
+            });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error: 'Internal server error' });

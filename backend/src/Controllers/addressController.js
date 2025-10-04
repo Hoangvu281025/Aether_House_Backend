@@ -12,9 +12,7 @@ const addressController = {
         try {
            const {name , address, city , phone , ward , country , user_id } = req.body;
 
-           const checkphone = await AddressModel.findOne({phone});
-
-           if(checkphone) return res.status(400).json({error: "phone already exists"})
+           
 
 
             const newAddress = await AddressModel.create({
@@ -35,6 +33,38 @@ const addressController = {
 
 
         } catch (error) {
+            res.status(500).json({error: 'Internal server error'})
+        }
+    },
+
+    updateAddress: async(req,res) => {
+        try{
+            const {name , address, city , phone , ward , country , user_id } = req.body;
+
+        //    const checkphone = await AddressModel.findOne({phone});
+
+        //    if(checkphone) return res.status(400).json({error: "phone already exists"})
+
+
+            await AddressModel.findByIdAndUpdate(
+                req.params.id,
+                {name,
+                address,
+                city,
+                phone,
+                ward,
+                country,
+                user_id,}
+            )
+
+            return res.status(200).json({
+                Success: true,
+                message: 'update Address successfully'
+            })
+
+
+        } catch (error) {
+            console.log(error)
             res.status(500).json({error: 'Internal server error'})
         }
     }

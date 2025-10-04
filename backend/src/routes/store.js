@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { uploadStores } = require('../middlewares/uploadMiddleware');
+const upload = require('../middlewares/upload');
 
 const { 
   getAllStores,
@@ -16,7 +16,7 @@ router.get("/",middlewares.verifyToken,middlewares.verifyCRUDStore, getAllStores
 router.get("/slug/:slug", getStoreBySlug);
 router.get("/:id", getStoreById);
 
-router.post("/",middlewares.verifyToken,middlewares.verifyCRUDStore, uploadStores.single("images"), addStore);
+router.post("/",middlewares.verifyToken,middlewares.verifyCRUDStore, upload.single("images"), addStore);
 
 router.put("/:id", updateStore);
 

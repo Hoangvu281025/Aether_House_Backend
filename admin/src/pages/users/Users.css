@@ -109,8 +109,8 @@
 }
 
 /* bạn có thể gán className="chip active|pending|cancel|approved" */
-.chip.active{   background:var(--chip-green);   color:var(--chip-green-ink); }
-.chip.approved{ background:var(--approved--bg);   color:var(--approved--text); }
+.chip.active{   background:var(--approved--bg);   color:var(--approved--text); }
+.chip.inactive{ background:var(--pending--bg);   color:var(--pending--text); }
 .chip.pending{  background:var(--pending--bg);  color:var(--pending--text); }
 .chip.cancel{   background:var(--chip-red);     color:var(--chip-red-ink); }
 

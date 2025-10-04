@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 const { userController } = require('../Controllers/userController')
 const  middlewares  = require('../middlewares/middlewares');
-const { uploadUser_admin } = require('../middlewares/uploadMiddleware');
-const { uploadUser_clinet } = require('../middlewares/uploadMiddleware');
+
+const upload = require('../middlewares/upload')
 // const { uploadUser_clinet } = require('../middlewares/uploadMiddleware');
 
 /* GET users listing. */
@@ -12,10 +12,10 @@ router.get('/admins',middlewares.verifyToken, userController.getallAdmin);
 router.get('/:id', userController.getbyID);
 router.delete('/:id');
 router.put('/:id/approve',middlewares.verifyToken,middlewares.verifyCRUDUser, userController.updateApprovalStatusUser);
-router.put('/:id/avataradmin',uploadUser_admin.single("avatar"), userController.updateImageAdmin);
-router.put('/:id/avataruser',uploadUser_clinet.single("avatar"), userController.updateImageUser);
+router.put('/:id/avataradmin',upload.single("avatar"), userController.updateImageAdmin);
+router.put('/:id/avataruser',upload.single("avatar"), userController.updateImageUser);
 router.put('/:id/infor', userController.updateinfor);
-router.put('/:id/password', userController.updatePassword);
+// router.put('/:id/password', userController.updatePassword);
 
 
 // router.post('/registerUser', uploadUser_clinet.single('image'), UserControllers.registerUser);

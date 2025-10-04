@@ -8,12 +8,17 @@ import Spinner from "../../components/spinner/spinner"
 
 const Profile = () => {
     const [user, setUser] = useState("");
-    const [address, setAddress] = useState([]);
+    const [addressList, setAddress] = useState([]);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [modalMode, setModalMode] = useState("");
     const [avatarFile, setAvatarFile] = useState(null);
     const [email , SetEmail] = useState('');
     const [name , SetName] = useState('');
+    const [addressValue , setAddressValue] = useState('');
+    const [wardValue , SetWardValue] = useState('');
+    const [countryValue , SetCountryValue] = useState('');
+    const [phoneValue , SetPhoneValue] = useState('');
+    const [cityValue , SetCityValue] = useState('');
     const [loading , SetLoading] = useState(false);
 
     const token = JSON.parse(localStorage.getItem("user"));
@@ -45,6 +50,15 @@ const Profile = () => {
             SetName(user?.name || "");
             SetEmail(user?.email || "");
         }  
+        if (mode === "address"  && addressList.length > 0) {
+            const addr = addressList[0];
+
+            setAddressValue(addr.address || "");
+            SetWardValue(addr.ward || "");
+            SetCountryValue(addr.country || "");
+            SetPhoneValue(addr.phone || "");
+            SetCityValue(addr.city || "");
+        }
     };
 
     const closeConfirm = () => {
@@ -98,6 +112,48 @@ const Profile = () => {
             setConfirmOpen(false);
         }
     };
+
+    const handleAddAddress = async () => {
+        try {
+            SetLoading(true);
+            console.log(name)
+            const payload = {
+                name:user.name,
+                address: addressValue,
+                city: cityValue,
+                ward: wardValue,
+                country: countryValue,
+                phone: phoneValue,
+                user_id: id,
+            };
+            await api.post("/address",payload);
+            window.location.reload()
+        } catch (error) {
+            console.log(error)
+            alert('ko được')
+        }
+    }
+    const handleUpAddress = async () => {
+        try {
+            SetLoading(true);
+            const address_id = addressList[0];
+            console.log(address_id)
+            const payload = {
+                name:user.name,
+                address: addressValue,
+                city: cityValue,
+                ward: wardValue,
+                country: countryValue,
+                phone: phoneValue,
+                user_id: id,
+            };
+            await api.put(`/address/${address_id._id}/upaddress`,payload);
+            window.location.reload()
+        } catch (error) {
+            console.log(error);
+            alert('ko được')
+        }
+    }
 
     if (!user) {
         return (
@@ -162,8 +218,8 @@ const Profile = () => {
             
 
         {/* Address */}
-        {(address && address.length > 0) ? (
-            address.map((addr) =>(
+        {(addressList && addressList.length > 0) ? (
+            addressList.map((addr) =>(
                 <div className="profile-card" key={addr._id}>
                     <div className="section-header">
                         <h3>Address</h3>
@@ -255,6 +311,7 @@ const Profile = () => {
                                 <div>
                                     <label>Email Address</label>
                                     <input name="email" type="email" value={email} placeholder="john@example.com"  onChange={(e) => SetEmail(e.target.value)} disabled />
+                                    <span>Email không được phép thay đổi</span>
                                 </div>
                             </div>
                             </>
@@ -270,19 +327,23 @@ const Profile = () => {
                         <div className="grid grid-2 gap">
                             <div>
                                 <label>Address</label>
-                                <input name="FullName" placeholder="Doe" />
+                                <input name="address" type="text" value={addressValue} placeholder="Address" onChange={(e) =>{setAddressValue(e.target.value)}} />
                             </div>
                             <div>
                                 <label>Ward</label>
-                                <input name="email" type="email" placeholder="john@example.com" />
+                                <input name="Ward" type="text" value={wardValue}  placeholder="Ward" onChange={(e) =>{SetWardValue(e.target.value)}}/>
                             </div>
                             <div>
                                 <label>Country</label>
-                                <input name="email" type="email" placeholder="john@example.com" />
+                                <input name="Country" type="text" value={countryValue} placeholder="Country" onChange={(e) =>{SetCountryValue(e.target.value)}} />
                             </div>
                             <div>
                                 <label>Phone</label>
-                                <input name="email" type="email" placeholder="john@example.com" />
+                                <input name="Phone" type="number" value={phoneValue} placeholder="Phone" onChange={(e) =>{SetPhoneValue(e.target.value)}}/>
+                            </div>
+                            <div>
+                                <label>City</label>
+                                <input name="city" type="text" value={cityValue} placeholder="City" onChange={(e) =>{SetCityValue(e.target.value)}}/>
                             </div>
                         </div>
                         </>
@@ -296,7 +357,11 @@ const Profile = () => {
                         <button className="btn primary" type="button" onClick={handleSaveInfor}>Save Changes infor</button>
                     )}
                     {modalMode === "address" && (
-                        <button className="btn primary" type="button">Save Changes address</button>
+                        addressList && addressList.length > 0 ?(
+                            <button className="btn primary" type="button" onClick={handleUpAddress}>update</button>
+                        ):(
+                            <button className="btn primary" type="button" onClick={handleAddAddress}>add address</button>
+                        )
                     )}
                     </div>
                 </div>

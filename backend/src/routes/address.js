@@ -7,6 +7,7 @@ const { addressController } = require('../Controllers/addressController')
 
 /* GET users listing. */
 router.post('/', addressController.addAddress);
+router.put('/:id/upaddress', addressController.updateAddress);
 
 
 
