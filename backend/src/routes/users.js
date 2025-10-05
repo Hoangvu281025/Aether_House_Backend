@@ -7,14 +7,16 @@ const upload = require('../middlewares/upload')
 // const { uploadUser_clinet } = require('../middlewares/uploadMiddleware');
 
 /* GET users listing. */
+router.get('/count', userController.countUsers);
 router.get('/' ,middlewares.verifyToken,userController.getallUser); //middlewares.verifyCRUDUser,
 router.get('/admins',middlewares.verifyToken, userController.getallAdmin);
 router.get('/:id', userController.getbyID);
-router.delete('/:id');
-router.put('/:id/approve',middlewares.verifyToken,middlewares.verifyCRUDUser, userController.updateApprovalStatusUser);
-router.put('/:id/avataradmin',upload.single("avatar"), userController.updateImageAdmin);
-router.put('/:id/avataruser',upload.single("avatar"), userController.updateImageUser);
-router.put('/:id/infor', userController.updateinfor);
+router.put('/:id/disabledAdmin',middlewares.verifyToken,middlewares.verifyCRUDAdmin, userController.toggleActive);
+router.put('/:id/disabledUser',middlewares.verifyToken,middlewares.verifyCRUDUser, userController.toggleActive);
+router.put('/:id/avataradmin',middlewares.verifyToken ,upload.single("avatar"), userController.updateImageAdmin);
+router.put('/:id/avataruser',middlewares.verifyToken ,upload.single("avatar"), userController.updateImageUser);
+router.put('/:id/infor',middlewares.verifyToken , userController.updateinfor);
+
 // router.put('/:id/password', userController.updatePassword);
 
 

@@ -16,6 +16,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AuthRedirect from "./components/AuthRedirect";
 import Admins from "./pages/users/Admins";
 import Profile from "./pages/Profile/Profile";
+import RequireSuperAdmin from "./components/RequireSuperAdmin";
 
 function App() {
   return (
@@ -29,8 +30,10 @@ function App() {
             <Route path="/forms/add-product" element={<Addproduct />} /> 
             <Route path="/forms/update-product/" element={<FormProductUpdate />} /> 
             <Route path="/forms/add-store/" element={<AddStore />} /> 
-            <Route path="/tables/users" element={<Users />} />
-            <Route path="/tables/admins" element={<Admins />} />
+            <Route path="/user" element={<Users />} />
+           <Route element={<RequireSuperAdmin />}>
+              <Route path="/admin" element={<Admins />} />
+            </Route>
             <Route path="/tables/stores" element={<Stores />} />
             <Route path="/Profile" element={<Profile />} />
           </Route>

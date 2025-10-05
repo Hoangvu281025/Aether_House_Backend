@@ -112,14 +112,15 @@ const Sidebar = () => {
             )}
           </li> */}
 
-
+            {user.role_id.name === "superadmin" && (
+              <li>
+                <NavLink to="/admin">
+                  <FaFile /> <span>Manage Admin</span>
+                </NavLink>
+              </li>
+            )}
           <li>
-            <NavLink to="/tables/admins">
-              <FaFile /> <span>Manage Admin</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/tables/users">
+            <NavLink to="/user">
               <FaFile /> <span>Manage User</span>
             </NavLink>
           </li>

@@ -31,7 +31,7 @@ const authController = {
                 user = new UserModel({
                     email,
                     avatar: {
-                        url:'https://res.cloudinary.com/depbw3f5t/image/upload/v1758463486/AetherHouse/users/admin/gjmevtpfkk800qemilaz.jpg',
+                        url:'https://res.cloudinary.com/depbw3f5t/image/upload/v1759648822/47b43a185143840ba5ca7160a073a361_qqhceb.jpg',
                         isDefault: true
                     },
                     role_id: userRole._id,
@@ -43,10 +43,8 @@ const authController = {
             const checkRole = user.role_id.name;
             if (checkRole === "user") return res.status(500).json({ message: "Role 'user' not configured" });
 
-            // Tạo OTP ngẫu nhiên (6 số)
+            
             const otp = crypto.randomInt(100000, 999999);
-
-            // Lưu OTP tạm vào user (có thể kèm thời gian hết hạn 5 phút)
             user.otp = otp;
             user.otpExpires = Date.now() + 15 * 60 * 1000; // 15 phút
             await user.save();

@@ -300,28 +300,63 @@ const userController = {
 
 
 
-    deleteUser: async (req, res) => {
+    toggleActive: async (req, res) => {
         try {
-            const user = await UserModel.findByIdAndUpdate(
-                req.params.id,
-                { isActive: false },
-                { new: true }
+            const user = await UserModel.findById(req.params.id);
+            if (!user) return res.status(404).json({ error: "User not found" });
+
+            const nextActive = !user.isActive;
+
+            const updated = await UserModel.findByIdAndUpdate(
+            user._id,
+            { isActive: nextActive },
+            { new: true }
             );
 
-            if (!user) {
-                return res.status(404).json({ error: "User not found" });
-            }
+            const subject = nextActive
+            ? "🎉 Your account has been re-enabled"
+            : "⚠️ Your account has been temporarily disabled";
+
+            const html = nextActive
+            ? `
+                <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:640px;margin:auto">
+                <h2>Welcome back ${updated.name || ""}!</h2>
+                <p>Your account on <b>AetherHouse</b> has been <b>re-enabled</b>. You can log in now.</p>
+                <p style="margin-top:12px">👉 <a href="http://localhost:5173/" target="_blank">Log in</a></p>
+                </div>
+            `
+            : `
+                <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:640px;margin:auto">
+                <h2>Hello ${updated.name || ""},</h2>
+                <p>Your account on <b>AetherHouse</b> has been <b>temporarily disabled</b>.</p>
+                <p>Please contact support for assistance.</p>
+                </div>
+            `;
+
+            try { await sendMail({ to: updated.email, subject, html }); } catch(e){ console.log("sendMail error:", e?.message || e); }
 
             return res.status(200).json({
-                success: true,
-                message: "User account has been disabled",
-                user,
+            success: true,
+            message: nextActive ? "Account enabled" : "Account disabled",
+            user: updated,
             });
-        } catch (error) {
-            console.log(error);
-            return res.status(500).json({ error: 'Internal server error' });
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({ error: "Internal server error" });
         }
     },
+
+
+
+    countUsers: async (req, res) => {
+        try {
+            const total = await UserModel.countDocuments();
+            res.json({ total });
+        } catch (e) {
+            console.error(e);
+            res.status(500).json({ error: "Server error" });
+        }
+    }
 }
 
 

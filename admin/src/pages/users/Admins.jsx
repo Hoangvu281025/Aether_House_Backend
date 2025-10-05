@@ -54,14 +54,13 @@ const Users = () => {
     try {
       setConfirmLoading(true);
 
-      await api.put(`/users/${targetUser._id}/approve`);
+      await api.put(`/users/${targetUser._id}/disabled`);
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user._id === targetUser._id
             ? {
                 ...user,
-                approvalStatus:
-                  user.approvalStatus == "approved" ? "pending" : "approved",
+                isActive: !user.isActive,
               }
             : user
         )
@@ -225,7 +224,6 @@ const Users = () => {
                       </div>
                     </>
                   ) : (
-                    // Khi loading thì ẩn nội dung và hiển thị spinner
                     <div className="popup-loading-state">
                       <div className="spinner big" />
                       <p>Cập nhật thành công</p>

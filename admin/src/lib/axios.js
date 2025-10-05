@@ -39,7 +39,7 @@ api.interceptors.request.use((config) => {
     setTimeout(() => (window.location.href = "/"), 50);
     return Promise.reject(new Error("Token expired"));
   }
-
+  
   if (token) config.headers.token = `Bearer ${token}`;
   return config;
 });
