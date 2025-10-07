@@ -1,6 +1,7 @@
 const cloudinary = require('../config/cloudinary');
 const Category = require('../Models/categoryModel');
 const Product = require('../Models/productModel');
+const ProductVariant = require("../Models/product_variantModel");
 const { toSlug } = require('../utils/slugify');
 
 const getProductsByParentSlug = async (req, res) => {
@@ -61,10 +62,19 @@ const getByIDpro = async (req , res) => {
 
         const product = await Product.findOne({ _id: product_id , is_hidden: false}).populate('category_id');
         if(!product) return res.status(404).json({ success: false , errer: "Product not found or hidden"});
-        res.status(200).json({
-            success: true,
-            product
-        })
+
+
+
+        const variantDoc = await ProductVariant
+      .findOne({ product_id: product._id })
+      .select("Variation")
+      .lean();
+
+    return res.status(200).json({
+      success: true,
+      product,
+      variations: variantDoc?.Variation || [],
+    });
     } catch (err) {
         console.log(err)
         res.status(500).json({
@@ -72,6 +82,8 @@ const getByIDpro = async (req , res) => {
         })
     }   
 }
+
+
 const addProduct = async (req , res) => {
     try {
         const { name,  price, description, quantity, colspan , category_id } = req.body;

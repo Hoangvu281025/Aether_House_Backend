@@ -17,7 +17,6 @@ const ProductSchema = new Schema({
     }],
     is_hidden: {type: Boolean, default: false},
     category_id: {type: mongoose.Schema.Types.ObjectId , ref: "Category" , required: true},
-    
 },{
 timestamps: true
 }
