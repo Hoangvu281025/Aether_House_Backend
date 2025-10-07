@@ -12,13 +12,13 @@ const {
 } = require("../Controllers/storeController");
 const  middlewares  = require('../middlewares/middlewares');
 
-router.get("/",middlewares.verifyToken,middlewares.verifyCRUDStore, getAllStores);
+router.get("/", getAllStores);
 router.get("/slug/:slug", getStoreBySlug);
 router.get("/:id", getStoreById);
 
-router.post("/",middlewares.verifyToken,middlewares.verifyCRUDStore, upload.single("images"), addStore);
+router.post("/",middlewares.verifyToken,middlewares.verifyCRUDStore, upload.single("image"), addStore);
 
-router.put("/:id", updateStore);
+router.put("/:id",upload.single('image'), updateStore);
 
 router.delete("/:id", deleteStore);
 

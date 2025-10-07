@@ -125,7 +125,7 @@ const Sidebar = () => {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/tables/stores">
+            <NavLink to="/store">
               <FaFile /> <span>Manage Store</span>
             </NavLink>
           </li>

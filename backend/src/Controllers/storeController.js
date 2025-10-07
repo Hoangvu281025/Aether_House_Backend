@@ -1,10 +1,12 @@
 const cloudinary = require("../config/cloudinary");
-const Store = require("../Models/storeModel");
-// const slugify = require("../utils/slugify");
+const storeModel = require("../Models/storeModel");
+// const Store = require("../Models/storeModel");
+const {toSlug} = require("../utils/slugify");
+const fs = require("fs");
 
 const getAllStores = async (req, res) => {
   try {
-    const stores = await Store.find();
+    const stores = await storeModel.find();
     res.status(200).json({ success: true, stores });
   } catch (error) {
     console.error(error);
@@ -15,7 +17,7 @@ const getAllStores = async (req, res) => {
 const getStoreById = async (req, res) => {
   try {
     const { id } = req.params;
-    const store = await Store.findById(id);
+    const store = await storeModel.findById(id);
     if (!store) {
       return res.status(404).json({ success: false, message: "Store not found" });
     }
@@ -29,7 +31,7 @@ const getStoreById = async (req, res) => {
 const getStoreBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    const store = await Store.findOne({ slug });
+    const store = await storeModel.findOne({ slug });
     if (!store) {
       return res.status(404).json({ success: false, message: "Store not found" });
     }
@@ -44,18 +46,19 @@ const getStoreBySlug = async (req, res) => {
 const addStore = async (req, res) => {
   try {
     const { name, phone, email, city, address, information, description } = req.body;
+    const slug = toSlug(city);
     const file = req.file;
 
     if (!file) {
       return res.status(400).json({ success: false, message: "No files uploaded" });
     }
 
-    const localPath = file.path;
-    const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse/stores' });
+    const Path = file.path;
+    const Uploadresults = await cloudinary.uploader.upload(Path, { folder: 'AetherHouse/stores' });
 
-    const newStore = await Store.create({
+    const newStore = await storeModel.create({
       name,
-      slug: slugify(name, { lower: true, strict: true }), 
+      slug,
       phone,
       email,
       city,
@@ -65,9 +68,11 @@ const addStore = async (req, res) => {
       images:{
         url: Uploadresults.secure_url,
         public_id: Uploadresults.public_id,
-        localPath: localPath
       },
     });
+
+    fs.unlink(Path, () => {});
+    
 
     res.status(201).json({ success: true, store: newStore });
   } catch (error) {
@@ -80,36 +85,50 @@ const addStore = async (req, res) => {
 const updateStore = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
+    console.log("Updating store with ID:", id);
 
-    // Nếu update tên thì cũng cập nhật slug
-    if (updates.name) {
-      updates.slug = slugify(updates.name, { lower: true, strict: true });
-    }
-
-    // Upload ảnh mới nếu có
-    if (req.files && req.files.length > 0) {
-      const uploadedImages = [];
-      for (let i = 0; i < req.files.length; i++) {
-        const file = req.files[i];
-        const result = await cloudinary.uploader.upload(file.path, { folder: "Stores" });
-        uploadedImages.push({
-          url: result.secure_url,
-          public_id: result.public_id,
-        });
-      }
-      updates.images = uploadedImages;
-    }
-
-    const updatedStore = await Store.findByIdAndUpdate(id, updates, { new: true });
-    if (!updatedStore) {
+    const store = await storeModel.findById(id);
+    if (!store) {
       return res.status(404).json({ success: false, message: "Store not found" });
     }
 
-    res.status(200).json({ success: true, store: updatedStore });
+    // 2) Lọc field hợp lệ & xử lý slug nếu đổi tên
+    const { name, phone, email, city, address, information, description } = req.body;
+    let images = store.images;
+    if (req.file?.path) {
+      // upload ảnh mới
+      const up = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'AetherHouse/stores'
+      });
+
+      // gán ảnh mới vào updates
+      images = {
+        url: up.secure_url,
+        public_id: up.public_id,
+      };
+
+      // xoá ảnh cũ (nếu có)
+      if (store.images?.public_id) {
+        try {
+          await cloudinary.uploader.destroy(store.images.public_id);
+        } catch (e) {
+          // Không fail request chỉ vì xoá ảnh cũ lỗi
+          console.warn("[destroy old image failed]", e?.message);
+        }
+      }
+    }
+    // Nếu đổi name thì cập nhật slug
+    let slug = store.slug;
+    slug = toSlug(store.city);
+    const updatedStore = await storeModel.findByIdAndUpdate(id, { name, slug, phone, email, city, address, information, description , images }, {
+      new: true,
+      runValidators: true,
+    });
+
+    return res.status(200).json({ success: true, store: updatedStore });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("[updateStore]", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 

@@ -34,7 +34,7 @@ function App() {
            <Route element={<RequireSuperAdmin />}>
               <Route path="/admin" element={<Admins />} />
             </Route>
-            <Route path="/tables/stores" element={<Stores />} />
+            <Route path="/store" element={<Stores />} />
             <Route path="/Profile" element={<Profile />} />
           </Route>
         </Route>

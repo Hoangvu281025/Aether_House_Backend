@@ -1,27 +1,21 @@
-.page-content {
-  width: 100%;
-  padding: 2rem;
-  background-color: var(--blue-color1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
+
 
 .form-title {
   font-size: 26px;
   font-weight: 600;
-  margin: 2rem 0;
+  margin: 1rem 0;
   color: var(--white-color);
 }
 
 /* Grid 2 cột */
 .product-form .form-grid {
   display: flex;
-  gap: 30px;
+  gap: 2rem;
   flex-wrap: wap;
 }
 
 .form-column {
   flex: 1;
-  min-width: 280px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -59,13 +53,6 @@ textarea {
   min-height: 80px;
 }
 
-/* Responsive */
-@media screen and (max-width: 600px) {
-  .product-form .form-grid {
-    flex-direction: column;
-    gap: 20px;
-  }
-}
 /* Container upload */
 .end {
   margin-top: 30px;
@@ -89,9 +76,7 @@ textarea {
   background-color: #f3f4fd;
 }
 
-.form-group.upload input[type="file"] {
-  display: none;
-}
+
 
 /* Thông tin trong upload */
 .form-group.upload label {
