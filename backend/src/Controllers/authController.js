@@ -161,6 +161,7 @@ const authController = {
             { expiresIn: "10d" }
             );
 
+            user.token = accessToken;
             // Xóa OTP sau khi dùng
             user.otp = undefined;
             user.otpExpires = undefined;

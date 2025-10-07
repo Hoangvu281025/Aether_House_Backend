@@ -54,9 +54,6 @@ const Stores = () => {
       <table className="products-table">
         <thead>
           <tr>
-            <th>
-              <input type="checkbox" />
-            </th>
             <th>Name</th>
             <th>City</th>
             <th>Created At</th>
@@ -66,9 +63,6 @@ const Stores = () => {
         <tbody>
           {Stores.map((stores) => (
             <tr key={stores._id}>
-              <td>
-                <input type="checkbox" />
-              </td>
               <td className="product-info">
                 <img src={stores.images.url} alt={stores.name} className="product-img" />
                 <span>{stores.name}</span>

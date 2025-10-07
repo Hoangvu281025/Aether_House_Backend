@@ -1,7 +1,5 @@
 .products-container {
   margin-top: 20px;
-  background: #fff;
-  border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   width: auto;
@@ -11,12 +9,13 @@
   margin: 0;
   font-size: 20px;
   font-weight: 600;
+  color: var(--white-color);
 }
 
 .products-header p {
   margin: 4px 0 20px;
   font-size: 14px;
-  color: #666;
+  color: var(--white-color);
 }
 
 .products-actions {
@@ -60,6 +59,7 @@
 .products-table {
   width: 100%;
   border-collapse: collapse;
+  color: var(--white-color);
 }
 
 .products-table th,
