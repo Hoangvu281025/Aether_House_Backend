@@ -1,18 +1,38 @@
 const jwt = require('jsonwebtoken');
 const User = require('../Models/userModel');
+const userModel = require('../Models/userModel');
 
 const middlewares = {
-  verifyToken: (req, res, next) => {
-    const authHeader = req.headers.token;
-    if (!authHeader) return res.status(401).json({ message: "You're not logged in" });
+  verifyToken: async (req, res, next) => {
+    try {
+      const header =  req.headers.token;
+      if (!header) return res.status(401).json({ message: "You're not logged in" });
 
-    const accessToken = authHeader.split(" ")[1];
-    jwt.verify(accessToken, process.env.JWT_ACCESS_KEY, (err, user) => {
-      if (err) return res.status(403).json({ message: "Token is not valid" });
+      // Hỗ trợ cả "Bearer xxx" hoặc raw token
+      const accessToken = header.split(" ")[1];
 
-      req.user = user; 
-      next();
-    });
+      // verify (sync) để dùng try/catch
+      const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_KEY);
+
+      // Tìm user và lấy các field cần so sánh
+      const user = await User.findById(decoded.id).select("token isActive modules");
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      // So sánh với token lưu trong DB
+      if (!user.token || user.token !== accessToken) {
+        return res.status(403).json({ message: "Token mismatch or expired" });
+      }
+
+      if (user.isActive === false) {
+        return res.status(403).json({ message: "Account is disabled" });
+      }
+
+      // Gắn thông tin vào req để middleware sau dùng
+      req.user = { id: decoded.id };
+      return next();
+    } catch (err) {
+      return res.status(403).json({ message: "Token is not valid" });
+    }
   },
 
   // Middleware kiểm tra quyền "user"

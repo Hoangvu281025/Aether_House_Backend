@@ -17,6 +17,7 @@ import AuthRedirect from "./components/AuthRedirect";
 import Admins from "./pages/users/Admins";
 import Profile from "./pages/Profile/Profile";
 import RequireSuperAdmin from "./components/RequireSuperAdmin";
+import { Logout } from "./pages/Auth/logout";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             </Route>
             <Route path="/store" element={<Stores />} />
             <Route path="/Profile" element={<Profile />} />
+            <Route path="/logout" element={<Logout />} />
           </Route>
         </Route>
         {/* Auth layout */}

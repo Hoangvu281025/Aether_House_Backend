@@ -35,8 +35,7 @@ api.interceptors.request.use((config) => {
   const expiry = Number(localStorage.getItem("token_expiry") || 0);
 
   if (expiry && Date.now() >= expiry) {
-    localStorage.clear();
-    setTimeout(() => (window.location.href = "/"), 50);
+    setTimeout(() => (window.location.href = "/logout"), 50);
     return Promise.reject(new Error("Token expired"));
   }
   

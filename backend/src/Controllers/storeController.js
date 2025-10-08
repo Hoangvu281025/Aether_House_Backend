@@ -92,11 +92,9 @@ const updateStore = async (req, res) => {
       return res.status(404).json({ success: false, message: "Store not found" });
     }
 
-    // 2) Lọc field hợp lệ & xử lý slug nếu đổi tên
     const { name, phone, email, city, address, information, description } = req.body;
     let images = store.images;
     if (req.file?.path) {
-      // upload ảnh mới
       const up = await cloudinary.uploader.upload(req.file.path, {
         folder: 'AetherHouse/stores'
       });
@@ -112,12 +110,10 @@ const updateStore = async (req, res) => {
         try {
           await cloudinary.uploader.destroy(store.images.public_id);
         } catch (e) {
-          // Không fail request chỉ vì xoá ảnh cũ lỗi
           console.warn("[destroy old image failed]", e?.message);
         }
       }
     }
-    // Nếu đổi name thì cập nhật slug
     let slug = store.slug;
     slug = toSlug(store.city);
     const updatedStore = await storeModel.findByIdAndUpdate(id, { name, slug, phone, email, city, address, information, description , images }, {

@@ -173,131 +173,19 @@ const authController = {
         }
     },
 
-    // registerUser: async (req, res) => {
-    //     try {
-    //         const {name , email , password }  = req.body;
-    //         if(!name || !email || !password) return res.status(400).json({ error: 'name email password requied' });
-
-    //         const checkName = await UserModel.findOne({ name });
-    //         if(checkName) return res.status(400).json({ error: 'name already exists' });
-
-
-    //         const checkEmail = await UserModel.findOne({ email });
-    //         if(checkEmail) return res.status(400).json({ error: 'email already exists' });
-
-    //         const userRole = await RoleModel.findOne({ name: 'user' });
-    //         if (!userRole) {
-    //             return res.status(500).json({ error: 'User role not found' });
-    //         }
-    //         const hashpass = await bcrypt.hash(password, 10);
-
-    //         const Image_url = 'https://res.cloudinary.com/depbw3f5t/image/upload/v1757741610/AetherHouse/users/default/ovecwbz3xb68pltutyjt.jpg';   
-
-    //         await UserModel.create({ 
-    //             name ,
-    //             email ,
-    //             password: hashpass,
-    //             avatar:{
-    //                 url: Image_url,
-    //                 public_id: null,
-    //                 localPath: null,
-    //             } ,
-    //             role_id: userRole._id,
-    //             approvalStatus: 'approved'
-    //         });
-    //         return res.status(200).json({ 
-    //             success: true,
-    //             message: 'account registration successfully' ,
-    //         });
-    //     } catch (error) {
-    //         console.log(error);
-    //         return res.status(500).json({ error: 'Internal server error' });
-    //     }
-    // },
-
-    // registerAdmin: async (req, res) => {
-    //     try {
-    //         const {name , email , password }  = req.body;
-    //         if(!name || !email || !password) return res.status(400).json({ error: 'name email password requied' });
-    //         const approvalStatus = 'pending'; // Mặc định trạng thái là 'pending'
-
-    //         // const checkName = await UserModel.findOne({ name });
-    //         // if(checkName) return res.status(400).json({ error: 'name already exists' });
-
-
-    //         const checkEmail = await UserModel.findOne({ email });
-    //         if(checkEmail) return res.status(400).json({ error: 'email already exists' });
-
-
-    //         const userRole = await RoleModel.findOne({ name: 'admin' });
-    //         const hashpass = await bcrypt.hash(password, 10);
-    //         // const Image_url = 'https://res.cloudinary.com/depbw3f5t/image/upload/v1757743780/86d6847a8b6f618b418dad34b931b048_hxwffu.jpg'
-
-
-    //         const avatarUrls = [
-    //             "https://res.cloudinary.com/depbw3f5t/image/upload/v1757743780/86d6847a8b6f618b418dad34b931b048_hxwffu.jpg",
-    //             "https://res.cloudinary.com/depbw3f5t/image/upload/v1757741610/AetherHouse/users/default/ovecwbz3xb68pltutyjt.jpg",
-    //             "https://res.cloudinary.com/depbw3f5t/image/upload/v1758178941/56d6278d8053c7f46eb5a50dc7e98a89_qv0vk8.jpg",
-    //         ];
-
-    //         const RandomIndex = Math.floor(Math.random() * avatarUrls.length);
-    //         const RandomAvatar = avatarUrls[RandomIndex];
-    //         // const file = req.file;
-    //         // if (!file) {
-    //         //     return res.status(400).json({ error: 'Image file is required' });
-    //         // }
-    //         // const localPath = file.path;
-
-    //         // const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse/users/admin' });
-    //         const newadmin = await UserModel.create({ 
-    //             name ,
-    //             email ,
-    //             password: hashpass,
-    //             avatar:{
-    //                 url: RandomAvatar ,
-    //                 public_id: null,
-    //                 localPath: null,
-    //             }, 
-    //             role_id: userRole._id,
-    //             approvalStatus
-    //         });
-
-    //         await sendMail({
-    //             to: adminNotifyEmail,
-    //             subject: "📩 Có admin mới chờ duyệt",
-    //             html: `
-    //                 <h3>Yêu cầu xét duyệt tài khoản admin mới</h3>
-    //                 <p><b>Tên:</b> ${newadmin.name}</p>
-    //                 <p><b>Email:</b> ${newadmin.email}</p>
-    //                 <p>Hãy vào trang quản lý để duyệt hoặc từ chối tài khoản này.</p>
-    //             `,
-    //         });
-
-    //         await sendMail({
-    //             to: newadmin.email,
-    //             subject: "✅ Đăng ký tài khoản admin - Chờ xét duyệt",
-    //             html: `
-    //                 <h3>Chào ${newadmin.name},</h3>
-    //                 <p>Hệ thống đã nhận yêu cầu đăng ký tài khoản admin của bạn.</p>
-    //                 <p>Vui lòng chờ xét duyệt. Sau khi được duyệt, bạn sẽ nhận thông báo và có thể đăng nhập.</p>
-    //             `,
-    //         });
-
-
-
-
-
-
-
-    //         return res.status(200).json({ 
-    //             success: true,
-    //             message: 'user register successfully'
-    //         });
-    //     } catch (error) {
-    //         console.error(error);
-    //         return res.status(500).json({ error: 'Internal server error' });
-    //     }
-    // }
+    logout: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await UserModel.findById(userId);
+            if (!user) return res.status(404).json({ message: "User not found" });
+            user.token = undefined;
+            await user.save();
+            res.status(200).json({ message: "Logged out successfully" });
+        }
+        catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    },
 }
 
 
@@ -306,78 +194,5 @@ const authController = {
 
 
 
-// const login = async (req, res) => {
-//     try {
-//         const users = await UserModel.find()
-//         .select('name email avatar roles approvalStatus createdAt')
-//         .populate('roles', 'name')
-//         .lean();
-
-//         const shaped = users.map(u => ({
-//         id: u._id,
-//         name: u.name,
-//         email: u.email,
-//         avatar: u.avatar ? {
-//             url: u.avatar.url,
-//             public_id: u.avatar.public_id
-//         } : null,
-//         role: u.roles, // { _id, name }
-//         approvalStatus: u.approvalStatus,
-//         createdAt: u.createdAt
-//         }));
-
-//         return res.json({ success: true, users: shaped });
-
-//     } catch (error) {
-//         return res.status(500).json({ error: 'Internal server error' });
-//     }
-// }
-
-// const registerAdmin = async (req, res) => {
-//     try {
-//         const {name , email , password }  = req.body;
-//         if(!name || !email || !password) return res.status(400).json({ error: 'name email password requied' });
-//         const approvalStatus = 'pending'; // Mặc định trạng thái là 'pending'
-
-//         // const checkName = await UserModel.findOne({ name });
-//         // if(checkName) return res.status(400).json({ error: 'name already exists' });
-
-
-//         const checkEmail = await UserModel.findOne({ email });
-//         if(checkEmail) return res.status(400).json({ error: 'email already exists' });
-
-
-//         const userRole = await RoleModel.findOne({ name: 'user' });
-//         const hashpass = await bcrypt.hash(password, 10);
-//         const Image_url = 'https://res.cloudinary.com/depbw3f5t/image/upload/v1757743780/86d6847a8b6f618b418dad34b931b048_hxwffu.jpg'
-
-//         // const file = req.file;
-//         // if (!file) {
-//         //     return res.status(400).json({ error: 'Image file is required' });
-//         // }
-//         // const localPath = file.path;
-
-//         // const Uploadresults = await cloudinary.uploader.upload(localPath, { folder: 'AetherHouse/users/admin' });
-//         const newadmin = await UserModel.create({ 
-//             name ,
-//             email ,
-//             password: hashpass,
-//             avatar:{
-//                 url: Image_url ,
-//                 public_id: null,
-//                 localPath: null,
-//             }, 
-//             roles: userRole._id,
-//             approvalStatus
-//         });
-//         return res.status(200).json({ 
-//             success: true,
-//             message: 'user register successfully'
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({ error: 'Internal server error' });
-//     }
-// }
 
 module.exports = {authController}

@@ -21,6 +21,11 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleLogout = async (e) => {
+    e.stopPropagation();     // tránh click lan lên parent
+    setOpenMenu(false);      // đóng menu ngay
+    navigate("/logout")
+  };
   
 
   const goProfile = () => {
@@ -71,7 +76,7 @@ const Header = () => {
           {openMenu && (
             <div className="dropdown">
               <button className="dropdown-item" onClick={goProfile}>Profile</button>
-              <button className="dropdown-item logout" onClick={Logout}>Log out</button>
+              <button className="dropdown-item logout" onClick={handleLogout}>Log out</button>
             </div>
           )}
         </div>
