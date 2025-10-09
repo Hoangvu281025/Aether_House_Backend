@@ -2,6 +2,7 @@ import "./Stores.css";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import api from "../../lib/axios";
+import Spinner from "../../components/spinner/spinner"
 
 const Stores = () => {
   const [stores, setStores] = useState([]);
@@ -48,7 +49,6 @@ const Stores = () => {
   // Fetch list
   const fetchStores = async () => {
     try {
-      setLoading(true);
       const { data } = await api.get("/stores");
       setStores(data.stores || []);
     } catch (err) {
@@ -75,12 +75,6 @@ const Stores = () => {
       setDescription(current.description || "");
       setInformation(current.information || "");
       setImage(null); // chỉ set khi user chọn file mới
-    } else {
-      // nếu list chưa có đủ detail, có thể gọi API detail ở đây
-      // (async () => {
-      //   const { data } = await api.get(`/stores/${editingId}`);
-      //   // set... theo data
-      // })();
     }
   }, [confirmOpen, modalMode, editingId, stores]);
 
@@ -98,7 +92,7 @@ const Stores = () => {
       if (image) fd.append("image", image); // chỉ gửi khi có file mới
 
       if (modalMode === "update" && editingId) {
-        // UPDATE
+        setLoading(true);
         const { data } = await api.put(`/stores/${editingId}`, fd, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -114,6 +108,7 @@ const Stores = () => {
         alert("Cập nhật cửa hàng thành công!");
       } else {
         // ADD
+        setLoading(true);
         const { data } = await api.post("/stores", fd, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -127,13 +122,14 @@ const Stores = () => {
 
       resetForm();
       closeConfirm();
+      setLoading(false);
     } catch (err) {
       console.error("Lỗi khi lưu:", err?.response?.data || err.message);
       alert("Lưu thất bại!");
     }
   };
 
-  if (loading) return <p>Đang tải danh sách cửa hàng...</p>;
+  if (!stores) return <p>Đang tải danh sách cửa hàng...</p>;
 
   return (
     <div className="products-container">
@@ -251,6 +247,14 @@ const Stores = () => {
                       onChange={(e) => setPhone(e.target.value)}
                     />
                   </div>
+                  <div className="form-group">
+                    <label>Images</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setImage(e.target.files?.[0] || null)}
+                    />
+                  </div>
                 </div>
 
                 <div className="form-column">
@@ -283,27 +287,25 @@ const Stores = () => {
                     />
                   </div>
 
-                  <div className="form-group">
-                    <label>Images</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setImage(e.target.files?.[0] || null)}
-                    />
-                  </div>
+                  
                 </div>
               </div>
 
               <div className="btn-row">
+                
+                <button type="submit" className="submit-btn" disabled={loading}>
+                  {loading ? (
+                    <Spinner />
+                  ) : (
+                    modalMode === "update" ? "Save Changes" : "Save Store"
+                  )}
+                </button>
                 <button
                   type="button"
                   className="cancel-btn"
                   onClick={closeConfirm}
                 >
                   Cancel
-                </button>
-                <button type="submit" className="submit-btn">
-                  {modalMode === "update" ? "Save Changes" : "Save Store"}
                 </button>
               </div>
             </form>

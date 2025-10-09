@@ -4,6 +4,7 @@ var router = express.Router();
 const ProductControllers = require('../Controllers/productController');
 const upload = require('../middlewares/upload');
 
+router.get('/', ProductControllers.getall);
 router.get('/by-cate/:parentSlug', ProductControllers.getProductsByParentSlug);
 router.get('/by-cate/:parentSlug/:childSlug', ProductControllers.getProductsByChildSlug);
 router.get('/by-id/:id', ProductControllers.getByIDpro);

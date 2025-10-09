@@ -1,52 +1,24 @@
-import React, {  } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import api from "../../lib/axios";
+
 import "./Products.css";
 
 const Products = () => {
- 
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await api.get("/products");
+        setProducts(response.data.products);
 
-  const products = [
-    {
-      id: 1,
-      name: "ASUS ROG Gaming Laptop",
-      category: "Laptop",
-      brand: "ASUS",
-      price: "$2,199",
-      stock: "Out of Stock",
-      createdAt: "01 Dec, 2027",
-      image: "https://via.placeholder.com/50x50?text=ASUS",
-    },
-    {
-      id: 2,
-      name: "Airpods Pro 2nd Gen",
-      category: "Accessories",
-      brand: "Apple",
-      price: "$839",
-      stock: "In Stock",
-      createdAt: "29 Jun, 2027",
-      image: "https://via.placeholder.com/50x50?text=Airpods",
-    },
-    {
-      id: 3,
-      name: "Apple Watch Ultra",
-      category: "Watch",
-      brand: "Apple",
-      price: "$1,579",
-      stock: "Out of Stock",
-      createdAt: "13 Mar, 2027",
-      image: "https://via.placeholder.com/50x50?text=Watch",
-    },
-    {
-      id: 4,
-      name: "Bose QuietComfort Earbuds",
-      category: "Audio",
-      brand: "Bose",
-      price: "$279",
-      stock: "In Stock",
-      createdAt: "18 Nov, 2027",
-      image: "https://via.placeholder.com/50x50?text=Bose",
-    },
-  ];
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
+    
 
 
   return (
@@ -85,45 +57,54 @@ const Products = () => {
             </th>
             <th>Products</th>
             <th>Category</th>
-            <th>Brand</th>
+            <th>Quantity</th>
             <th>Price</th>
-            <th>Stock</th>
+            <th>Status</th>
             <th>Created At</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {products.map((item) => (
-            <tr key={item.id}>
-              <td>
-                <input type="checkbox" />
-              </td>
-              <td className="product-info">
-                <img src={item.image} alt={item.name} className="product-img" />
-                <span>{item.name}</span>
-              </td>
-              <td>{item.category}</td>
-              <td>{item.brand}</td>
-              <td>{item.price}</td>
-              <td>
-                <span
-                  className={`stock-badge ${
-                    item.stock === "In Stock" ? "in-stock" : "out-stock"
-                  }`}
-                >
-                  {item.stock}
-                </span>
-              </td>
-              <td>{item.createdAt}</td>
-              <td>
-                <div className="button_wrapper">
-                  <button className="btn1 btn">Update</button>
-                  <button className="btn2 btn">Delete</button>
-                </div>
-              </td>
-            </tr>
-          ))}
+          {products.map((item) => {
+            const mainImage = item.images.find(img => img.is_main) || item.images[0];
+
+            return (
+              <tr key={item._id}>
+                <td>
+                  <input type="checkbox" />
+                </td>
+                <td className="product-info">
+                  <img 
+                    src={mainImage?.url} 
+                    alt={item.name} 
+                    className="product-img" 
+                  />
+                  <span>{item.name}</span>
+                </td>
+                <td>{item.category_id.name}</td>
+                <td>{item.quantity}</td>
+                <td>{item.price}</td>
+                <td>
+                  <span
+                    className={`stock-badge ${
+                      item.stock === "In Stock" ? "in-stock" : "out-stock"
+                    }`}
+                  >
+                    {item.stock}
+                  </span>
+                </td>
+                <td>{new Date(item.createdAt).toLocaleDateString()}</td>
+                <td>
+                  <div className="button_wrapper">
+                    <button className="btn1 btn">Update</button>
+                    <button className="btn2 btn">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
+
       </table>
     </div>
   );

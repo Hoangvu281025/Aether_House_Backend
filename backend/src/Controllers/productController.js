@@ -4,6 +4,17 @@ const Product = require('../Models/productModel');
 const ProductVariant = require("../Models/product_variantModel");
 const { toSlug } = require('../utils/slugify');
 
+const getall = async (req, res) => {
+  try {
+    const products = await Product.find({ is_hidden: false }).populate("category_id");
+    res.json({ success: true, products });
+
+   
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 const getProductsByParentSlug = async (req, res) => {
   try {
     const { parentSlug } = req.params;
@@ -182,6 +193,7 @@ const deleteProduct  = async (req , res) => {
 
 
 module.exports = {
+    getall,
     getProductsByParentSlug,
     getProductsByChildSlug,
     getByIDpro,

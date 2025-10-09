@@ -27,7 +27,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Dashboard />} />
-            <Route path="/tables/products" element={<Products />} />
+            <Route path="/product" element={<Products />} />
             <Route path="/forms/add-product" element={<Addproduct />} /> 
             <Route path="/forms/update-product/" element={<FormProductUpdate />} /> 
             <Route path="/forms/add-store/" element={<AddStore />} /> 

@@ -113,7 +113,15 @@ const updateStore = async (req, res) => {
           console.warn("[destroy old image failed]", e?.message);
         }
       }
+
+      // Xoá file tạm sau upload
+      try {
+        await fs.unlink(req.file.path);
+      } catch (e) {
+        console.warn("[unlink temp failed]", e?.message);
+      }
     }
+    
     let slug = store.slug;
     slug = toSlug(store.city);
     const updatedStore = await storeModel.findByIdAndUpdate(id, { name, slug, phone, email, city, address, information, description , images }, {

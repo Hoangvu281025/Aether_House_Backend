@@ -4,13 +4,14 @@ import { useNavigate,useLocation } from "react-router-dom";
 import {Link} from "react-router-dom";
 import api from "../../lib/axios"
 import "./Auth.css";
-
+import Spinner from "../../components/spinner/spinner"
 const Verify = () => {
   const navigate  = useNavigate();
   const location = useLocation();
   const savedEmail = location.state?.Email;
   const [otp , SetOtp] = useState('');
   const [error , SetError] = useState('');
+  const [loading , SetLoading] = useState(false);
   
   
 
@@ -18,6 +19,7 @@ const Verify = () => {
   const handleRegister = async(e) => {
     e.preventDefault();
     try {
+      SetLoading(true);
       const res = await api.post("/auth/verify" , {email:savedEmail , otp});
       const { accessToken, user } = res.data || {};
 
@@ -33,6 +35,8 @@ const Verify = () => {
       const res  = err.response || {};
       const data = res.data || {};
       SetError(data.message || "");
+    }finally{
+      SetLoading(false);
     }
   }
   return (
@@ -53,7 +57,7 @@ const Verify = () => {
           {error && <p className="error">{error}</p>}
 
           <button type="submit" className="signup-btn" >
-            Submit
+            {loading ? <Spinner/> : "Submit"}
           </button>
         </form>
 
