@@ -50,7 +50,20 @@ const getAllCategorys = async (req , res) => {
     }
 }
 
-
+const getchildrencate = async (req , res) => {
+    try {
+        const categories = await CategoryModel.find({ parentId: { $ne: null } , status: "active"});
+        res.status(200).json({
+            success: true,
+            categories
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            error : 'Internal server error'
+        })
+    }
+}
 
 const getByCategoryID = async (req , res) => {
     try {
@@ -156,6 +169,7 @@ module.exports = {
     getMenu,
     getAllCategorys,
     getByCategoryID,
+    getchildrencate,
     addCategory,
     updateCategory,
     toggleCategoryStatus 

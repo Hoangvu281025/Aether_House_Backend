@@ -30,3 +30,10 @@ body{
   font-size: 62.5%;   
   line-height: 1.6;
 }
+
+
+/* bạn có thể gán className="chip active|pending|cancel|approved" */
+.active{   background:var(--approved--bg);   color:var(--approved--text); }
+.inactive{ background:var(--pending--bg);   color:var(--pending--text); }
+.pending{  background:var(--pending--bg);  color:var(--pending--text); }
+.cancel{   background:var(--chip-red);     color:var(--chip-red-ink); }
