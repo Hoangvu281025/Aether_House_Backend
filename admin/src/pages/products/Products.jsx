@@ -68,7 +68,22 @@ const Products = () => {
     setCategory_id("");
     setImages([]);
   };
-
+  const toCatId = (v) => (v && typeof v === "object" ? v._id : v || "");
+  useEffect(() => {
+      if (!confirmOpen || modalMode !== "update" || !editingId) return;
+      const current = products.find((s) => s._id === editingId);
+      if (current) {
+        setName(current.name || "");
+        setPrice(current.price || "");
+        setDescription(current.description || "");
+        setQuantity(current.quantity || "");
+        setColspan(current.colspan || 1);
+        setCategory_id(current.category_id || "");
+        const catId = toCatId(current.category_id);
+        setCategory_id(String(catId));
+        setImages([]); // chỉ set khi user chọn file mới
+      }
+    }, [confirmOpen, modalMode, editingId, products]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -106,8 +121,8 @@ const Products = () => {
         const { data } = await api.post("/products", fd, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        if (data?.store) {
-          setProducts((prev) => [data.store, ...prev]);
+        if (data?.id) {
+          console.log("Thêm sản phẩm thành công với id:", data.id);
         } else {
           await fetchProducts();
         }
@@ -195,7 +210,7 @@ const Products = () => {
                 <td>{new Date(item.createdAt).toLocaleDateString()}</td>
                 <td>
                   <div className="button_wrapper">
-                    <button className="btn1 btn">Update</button>
+                    <button className="btn1 btn" onClick={() =>openConfirm("update" , item._id)}>Update</button>
                     <button className="btn2 btn">Delete</button>
                   </div>
                 </td>
@@ -239,7 +254,7 @@ const Products = () => {
                     />
                   </div>
 
-                  <div className="form-group">
+                  {/* <div className="form-group">
                     <label>description</label>
                     <input
                       type="text"
@@ -247,7 +262,7 @@ const Products = () => {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />
-                  </div>
+                  </div> */}
 
                   <div className="form-group">
                     <label>Quantity</label>
@@ -287,7 +302,7 @@ const Products = () => {
 
                   <div className="form-group">
                     <label>Category</label>
-                    <select name="" id="" value={category_id} onChange={(e) => setCategory_id(e.target.value)}>
+                    <select name="" id="" value={String(category_id || "")} onChange={(e) => setCategory_id(e.target.value)}>
                       {cate.map((item) => (
                         <option key={item._id} value={item._id}>{item.name}</option>
                       ))}
@@ -296,8 +311,10 @@ const Products = () => {
 
                   <div className="form-group">
                     <label>Description</label>
-                    <textarea
+                    <textarea 
                       placeholder="Store description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
                     />
                   </div>
 

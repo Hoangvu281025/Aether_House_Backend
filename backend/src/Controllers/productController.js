@@ -137,8 +137,8 @@ const addProduct = async (req , res) => {
 
 const updateProduct = async (req , res) => {
     try {
-        const { name ,slug } = req.body;
-        const category_id = req.params.id;
+        const { name, category_id } = req.body;
+        const slug = toSlug(name);
         const category = await Category.findOne({ _id:category_id , status: "active"});
         if(!category) return res.status(400).json({ error: "name and slug requied"})
 
@@ -149,14 +149,9 @@ const updateProduct = async (req , res) => {
             category.name = name;
         }
 
-        // Kiểm tra trùng slug
-        if (slug) {
-            const slugExists = await Category.findOne({ slug, _id: { $ne: category_id } });
-            if (slugExists) return res.status(400).json({ error: "Category slug already exists" });
-            category.slug = slug;
-        }
+        
 
-        await category.save();
+        
         res.status(200).json({
             success: true,
             categories : updateCategory
