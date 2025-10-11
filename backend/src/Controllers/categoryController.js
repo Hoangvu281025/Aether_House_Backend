@@ -37,10 +37,16 @@ const getMenu = async (req , res) => {
 
 const getAllCategorys = async (req , res) => {
     try {
-        const categories = await CategoryModel.find({ status: "active"});
+        const page = parseInt(req.query.page) || 1; 
+        const limit = parseInt(req.query.limit) || 8;
+        const skip = (page - 1) * limit;
+        const categories = await CategoryModel.find({ status: "active"}).skip(skip).limit(limit);
+        const total = await CategoryModel.countDocuments({ status: "active"});
+        
         res.status(200).json({
             success: true,
-            categories
+            categories,
+            totalPages: Math.ceil(total / limit),
         })
     } catch (err) {
         console.log(err)
@@ -53,6 +59,20 @@ const getAllCategorys = async (req , res) => {
 const getchildrencate = async (req , res) => {
     try {
         const categories = await CategoryModel.find({ parentId: { $ne: null } , status: "active"});
+        res.status(200).json({
+            success: true,
+            categories
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            error : 'Internal server error'
+        })
+    }
+}
+const getcatefa = async (req , res) => {
+    try {
+        const categories = await CategoryModel.find({ parentId: null  , status: "active"});
         res.status(200).json({
             success: true,
             categories
@@ -88,7 +108,7 @@ const addCategory = async (req , res) => {
         const slug = toSlug(name);
         if(!name || !slug ) return res.status(400).json({ error: "name and slug requied"})
 
-            // Check trùng name
+        // Check trùng name
         const nameExists = await CategoryModel.findOne({ name });
         if (nameExists) return res.status(400).json({ error: "Category name already exists" });
 
@@ -170,6 +190,7 @@ module.exports = {
     getAllCategorys,
     getByCategoryID,
     getchildrencate,
+    getcatefa,
     addCategory,
     updateCategory,
     toggleCategoryStatus 

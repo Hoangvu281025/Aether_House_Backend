@@ -4,6 +4,7 @@ const CategoryControllers = require('../Controllers/categoryController');
 /* GET users listing. */
 router.get('/menu', CategoryControllers.getMenu);
 router.get('/catechild', CategoryControllers.getchildrencate);
+router.get('/catefa', CategoryControllers.getcatefa);
 router.get('/', CategoryControllers.getAllCategorys);
 router.get('/:id', CategoryControllers.getByCategoryID);
 router.post('/', CategoryControllers.addCategory);

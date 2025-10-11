@@ -18,6 +18,7 @@ import Admins from "./pages/users/Admins";
 import Profile from "./pages/Profile/Profile";
 import RequireSuperAdmin from "./components/RequireSuperAdmin";
 import { Logout } from "./pages/Auth/logout";
+import Category from "./pages/category/Category";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/forms/update-product/" element={<FormProductUpdate />} /> 
             <Route path="/forms/add-store/" element={<AddStore />} /> 
             <Route path="/user" element={<Users />} />
+            <Route path="/category" element={<Category />} />
            <Route element={<RequireSuperAdmin />}>
               <Route path="/admin" element={<Admins />} />
             </Route>

@@ -48,11 +48,15 @@ const Products = () => {
   }, []);
     
   const openConfirm = (mode, id = null) => {
+    
     setModalMode(mode);
     setEditingId(id);
     setConfirmOpen(true);
   };
-  const closeConfirm = () => {
+  const closeConfirm = (mode) => {
+    if(mode !== "add") {
+      resetForm();
+    }
     setConfirmOpen(false);
     setEditingId(null);
     // tuỳ chọn: reset khi đóng
@@ -122,7 +126,9 @@ const Products = () => {
           headers: { "Content-Type": "multipart/form-data" },
         });
         if (data?.id) {
+          setProducts((prev) => [data.products, ...prev]);
           console.log("Thêm sản phẩm thành công với id:", data.id);
+
         } else {
           await fetchProducts();
         }
@@ -154,7 +160,6 @@ const Products = () => {
           <button className="btn export">Export ⬇</button>
            
           <button className="btn add" onClick={() => openConfirm("add")}>
-           
               + Add Product
           </button>
            

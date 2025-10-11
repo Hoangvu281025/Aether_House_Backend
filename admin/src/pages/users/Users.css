@@ -22,6 +22,8 @@
 }
 
 .table_user-title{
+  display: flex;
+  justify-content: space-between;
   font-size: 1.4rem;
   font-weight: bold;
   padding: 1rem;
@@ -303,4 +305,47 @@
   width: 40px;
   height: 40px;
   border-width: 4px;
+}
+
+/* ==== ACTION BUTTONS GIỐNG PRODUCT ==== */
+.budget {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.button_wrapper .btn {
+  border: none;
+  padding: 6px 12px;
+  font-weight: bold;
+  font-size: 13px;
+  color: var(--white-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+/* Nút Sửa */
+.button_wrapper .btn1 {
+  background-color: var(--update-button);
+}
+.button_wrapper .btn1:hover {
+  background-color: #008c15; /* sáng hơn khi hover */
+  transform: translateY(-1px);
+}
+
+/* Nút Xoá */
+.button_wrapper .btn2 {
+  background-color: var(--delete-button);
+}
+.button_wrapper .btn2:hover {
+  background-color: #750000; /* tối hơn khi hover */
+  transform: translateY(-1px);
 }

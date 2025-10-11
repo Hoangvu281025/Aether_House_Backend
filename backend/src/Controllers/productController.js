@@ -125,7 +125,8 @@ const addProduct = async (req , res) => {
         })
         res.status(200).json({
             success_true: true,
-            id: newProduct._id
+            id: newProduct._id,
+            products: newProduct
         })
     } catch (error) {
         console.log(error)
