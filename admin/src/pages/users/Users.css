@@ -349,3 +349,20 @@
   background-color: #750000; /* tối hơn khi hover */
   transform: translateY(-1px);
 }
+
+
+
+/* popup modules */
+.mod-grid{
+  display:grid; gap:10px; margin:12px 0 6px;
+}
+.mod-item{
+  display:grid; grid-template-columns:auto 1fr; gap:10px;
+  align-items:center; border:1px solid #eef0f3; border-radius:10px; padding:10px;
+}
+.mod-item input{ transform: scale(1.05); }
+.mod-info{ line-height:1.25; }
+.mod-name{ font-weight:600; }
+.mod-desc{ font-size:12px; color:#6b7280; }
+
+/* bạn đã có .pop-up, .pop-up-content, .btn.cancel/.btn.confirm, .spinner... giữ nguyên dùng lại */

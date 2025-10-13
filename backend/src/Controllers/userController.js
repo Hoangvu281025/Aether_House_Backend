@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const sendMail = require("../utils/sendMail");
 const fs = require("fs");
 
-
+const ALLOWED = ['all','store','product','user'];
 const userController = {
     getallUser: async (req, res) => {
         try {
@@ -83,7 +83,7 @@ const userController = {
                 return res.status(400).json({ error: "ID is required" });
             }
 
-            const user = await UserModel.findById(id).populate("role_id",""); 
+            const user = await UserModel.findById(id).populate("role_id"); 
             const addresses = await AddressModel.find({ user_id: id });
             if (!user) {
                 return res.status(404).json({ error: "User not found" });
@@ -243,6 +243,7 @@ const userController = {
                 },
                 { new: true } // để trả về user mới đã update
                 ).populate('role_id','name');
+            fs.unlink(file.path, () => {});
 
              return res.status(200).json({
                 success: true,
@@ -356,7 +357,55 @@ const userController = {
             console.error(e);
             res.status(500).json({ error: "Server error" });
         }
-    }
+    },
+
+
+    addModule: async(req,res)=>{
+        try {
+            const { modules } = req.body;
+            if (!ALLOWED.includes(modules)) {
+                return res.status(400).json({ success:false, message:'Invalid modules', allowed: ALLOWED });
+            }
+            const user = await UserModel.findByIdAndUpdate(
+            req.params.id,
+            { $addToSet: { modules: modules } },  // tránh trùng
+            { new: true }
+            ).select('name email modules');
+            if (!user) return res.status(404).json({ success:false, message:'User not found' });
+            return res.json({ success:true, user });
+        } catch (e) {
+            console.error('addModule error:', e);
+            return res.status(500).json({ success:false, message:'Internal server error' });
+        }
+    },
+
+
+
+    updateModules: async (req, res) => {
+        try {
+            const { modules } = req.body;
+            if (!Array.isArray(modules)) {
+            return res.status(400).json({ success:false, message:'modules must be an array' });
+            }
+            // chỉ giữ modules hợp lệ
+            const cleaned = modules.filter((m) => ALLOWED.includes(m));
+            const user = await UserModel.findByIdAndUpdate(
+            req.params.id,
+            { $set: { modules: cleaned } },
+            { new: true }
+            ).select('name email modules');
+            if (!user) return res.status(404).json({ success:false, message:'User not found' });
+            return res.json({ success:true, user });
+        } catch (e) {
+            console.error('updateModules error:', e);
+            return res.status(500).json({ success:false, message:'Internal server error' });
+        }
+    },
+
+
+
+
+
 }
 
 

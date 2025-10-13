@@ -17,12 +17,11 @@ router.put('/:id/avataradmin',middlewares.verifyToken ,upload.single("avatar"), 
 router.put('/:id/avataruser',middlewares.verifyToken ,upload.single("avatar"), userController.updateImageUser);
 router.put('/:id/infor',middlewares.verifyToken , userController.updateinfor);
 
-// router.put('/:id/password', userController.updatePassword);
+
+router.post('/:id/modules', userController.addModule);
 
 
-// router.post('/registerUser', uploadUser_clinet.single('image'), UserControllers.registerUser);
-// router.post('/registerAdmin' ,uploadUser.single('image'), UserControllers.registerAdmin);
-// router.post('/registerUser', UserControllers.registerUser);
-// router.post('/registerAdmin' , UserControllers.registerAdmin);
+// sửa/ghi đè danh sách quyền
+router.put('/:id/modules', userController.updateModules);
 
 module.exports = router;

@@ -6,10 +6,25 @@ const { toSlug } = require('../utils/slugify');
 
 const getall = async (req, res) => {
   try {
-    const products = await Product.find({ is_hidden: false }).populate("category_id");
-    res.json({ success: true, products });
+    const docs = await Product.find({})
+      .populate('category_id')
+      .populate({
+        path: 'variantsDoc',
+        select: 'Variation', // chỉ cần mảng Variation
+      })
+      .lean();
 
-   
+    // Chuẩn hóa: thêm field products[i].variants = mảng các biến thể
+    const products = docs.map(p => {
+      const variants = p?.variantsDoc?.Variation || [];
+      return {
+        ...p,
+        variants,                       // FE dùng p.variants là xong
+        variants_count: variants.length // tiện cho hiển thị
+      };
+    });
+
+    res.json({ success: true, products });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
@@ -109,7 +124,6 @@ const addProduct = async (req , res) => {
                 uploadedImages.push({
                     url: results.secure_url,
                     public_id: results.public_id,
-                    localPath: localPath,
                     is_main: i === 0
                 });
             }
@@ -131,58 +145,119 @@ const addProduct = async (req , res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({
-            error : 'Internal server error'
+          error : 'Internal server error'
         })
     }
 }
 
-const updateProduct = async (req , res) => {
-    try {
-        const { name, category_id } = req.body;
-        const slug = toSlug(name);
-        const category = await Category.findOne({ _id:category_id , status: "active"});
-        if(!category) return res.status(400).json({ error: "name and slug requied"})
+const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const files = req.files || [];
 
-        // Kiểm tra trùng name
-        if (name) {
-            const nameExists = await Category.findOne({ name, _id: { $ne: category_id } });
-            if (nameExists) return res.status(400).json({ error: "Category name already exists" });
-            category.name = name;
-        }
+    // 1) Build $set từ body
+    const {
+      name,
+      price,
+      description,
+      quantity,
+      colspan,
+      category_id,
+    } = req.body;
 
-        
-
-        
-        res.status(200).json({
-            success: true,
-            categories : updateCategory
-        })
-    } catch (error) {
-        res.status(500).json({
-            error : 'Internal server error'
-        })
+    const $set = {};
+    if (name !== undefined && name !== "") {
+      $set.name = name;
+      $set.slug = toSlug(name);
     }
+    if (price !== undefined)      $set.price = Number(price);
+    if (description !== undefined) $set.description = description;
+    if (quantity !== undefined)    $set.quantity = Number(quantity);
+    if (colspan !== undefined)     $set.colspan = Number(colspan) === 2 ? 2 : 1;
+
+    if (category_id) {
+      const ok = await Category.exists({ _id: category_id, status: "active" });
+      if (!ok) return res.status(400).json({ success: false, message: "Invalid category" });
+      $set.category_id = category_id;
+    }
+
+    // 2) Nếu có files -> replace toàn bộ ảnh
+    if (files.length > 0) {
+      const current = await Product.findById(id).lean();
+      if (!current) return res.status(404).json({ success: false, message: "Product not found" });
+
+      const oldPids = (current.images || []).map(i => i.public_id).filter(Boolean);
+      await Promise.all(oldPids.map(pid => cloudinary.uploader.destroy(pid).catch(() => null)));
+
+      const uploadedImages = [];
+      for (let i = 0; i < files.length; i++) {
+        const up = await cloudinary.uploader.upload(files[i].path, {
+          folder: `AetherHouse/products/${name || current.name}`,
+        });
+        uploadedImages.push({
+          url: up.secure_url,
+          public_id: up.public_id,
+          is_main: i === 0,
+        });
+      }
+      $set.images = uploadedImages;
+    }
+
+    // 3) Update
+    const updated = await Product.findByIdAndUpdate(
+      id,
+      { $set },
+      { new: true, runValidators: true }
+    ).populate("category_id");
+
+    if (!updated) return res.status(404).json({ success: false, message: "Product not found" });
+
+    return res.status(200).json({ success: true, product: updated });
+  } catch (error) {
+    console.error("updateProduct error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+
+const hideProduct  = async (req , res) => {
+    try {
+    const { id } = req.params; // /products/:id
+    const updated = await Product.findByIdAndUpdate(
+      id,
+      { $set: { is_hidden: true } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    return res.status(200).json({ success: true, product: updated });
+  } catch (err) {
+    console.error("hideProduct error:", err);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
 }
-const deleteProduct  = async (req , res) => {
+const unhideProduct  = async (req , res) => {
     try {
-        const category_id = req.params.id;
+    const { id } = req.params; // /products/:id
+    const updated = await Product.findByIdAndUpdate(
+      id,
+      { $set: { is_hidden: false } },
+      { new: true }
+    );
 
-        const category = await Category.findById(category_id);
-        if(!category) return res.status(400).json({ error: " requied"})
-
-        category.status = (category.status == "active") ? 'inactive' : 'active';
-
-        await category.save();
-        await Product.updateMany({ category: category_id }, { is_hidden: category.status === 'inactive' });
-        res.status(200).json({
-            success: true,
-            categories : updateCategory
-        })
-    } catch (error) {
-        res.status(500).json({
-            error : 'Internal server error'
-        })
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Product not found" });
     }
+
+    return res.status(200).json({ success: true, product: updated });
+  } catch (err) {
+    console.error("hideProduct error:", err);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
 }
 
 
@@ -195,5 +270,6 @@ module.exports = {
     getByIDpro,
     addProduct,
     updateProduct,
-    deleteProduct
+    hideProduct,
+    unhideProduct
 }

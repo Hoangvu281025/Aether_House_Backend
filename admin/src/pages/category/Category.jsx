@@ -7,7 +7,7 @@ import CategoryForm from "./CategoryForm";
 const Category = () => {
   const [cates, setCates] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit] = useState(5);
+  const [limit] = useState(8);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
 

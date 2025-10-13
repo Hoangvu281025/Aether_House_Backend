@@ -9,71 +9,96 @@ const Users = () => {
   const [limit] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [targetUser, setTargetUser] = useState(true);
-  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  // ==== Module popup state ====
+  const [moduleOpen, setModuleOpen] = useState(false);
+  const [targetUser, setTargetUser] = useState(null);
+  const [modulesLoading, setModulesLoading] = useState(false);
+  const [savingModules, setSavingModules] = useState(false);
+
+  // 3 quyền chuẩn hoá chữ thường: 'all' | 'store' | 'product'
+  const [modAll, setModAll] = useState(false);
+  const [modStore, setModStore] = useState(false);
+  const [modProduct, setModProduct] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
-    const fetchUsers = async () => {
+    let alive = true;
+    (async () => {
       try {
         setLoading(true);
         const { data } = await api.get(`/users/admins/?page=${page}&limit=${limit}`);
-        if (!isMounted) return;
+        if (!alive) return;
         setUsers(data?.users || []);
         setTotalPages(data?.totalPages || 1);
       } catch (err) {
-        console.error("Lỗi khi lấy user:", err);
-        if (isMounted) {
+        console.error("Fetch users error:", err);
+        if (alive) {
           setUsers([]);
           setTotalPages(1);
         }
       } finally {
-        if (isMounted) setLoading(false);
+        if (alive) setLoading(false);
       }
-    };
-    fetchUsers();
-    return () => {
-      isMounted = false;
-    };
+    })();
+    return () => (alive = false);
   }, [page, limit]);
 
-  const openConfirm = (user) => {
-    setTargetUser(user); // gán user cần duyệt
-    setConfirmOpen(true); // mở modal
-  };
-
-  const closeConfirm = () => {
-    setConfirmOpen(false);
-    setTargetUser(null);
-  };
-
-  const hanldeConfirm = async () => {
-    if (!targetUser) return;
-
+  // ===== Open/Close Module Popup =====
+  const openModulePopup = async (user) => {
+    setTargetUser(user);
+    setModuleOpen(true);
+    setModulesLoading(true);
     try {
-      setConfirmLoading(true);
+      // lấy modules “đúng route”
+      const { data } = await api.get(`/users/${user._id}`);
+      const mods = Array.isArray(data?.user?.modules) ? data.user.modules.map(String) : [];
 
-      await api.put(`/users/${targetUser._id}/disabled`);
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user._id === targetUser._id
-            ? {
-                ...user,
-                isActive: !user.isActive,
-              }
-            : user
-        )
-      );
-      await new Promise((r) => setTimeout(r, 2000));
-
-      setTargetUser(null);
-      setConfirmOpen(false);
-    } catch (error) {
-      console.log(error);
+      setModAll(mods.includes("all"));
+      setModStore(mods.includes("store"));
+      setModProduct(mods.includes("product"));
+    } catch (e) {
+      console.error("Load modules error:", e);
+      setModAll(false);
+      setModStore(false);
+      setModProduct(false);
     } finally {
-      setConfirmOpen(false);
-      setConfirmLoading(false);
+      setModulesLoading(false);
+    }
+  };
+
+  const closeModulePopup = () => {
+    setModuleOpen(false);
+    setTargetUser(null);
+    setModAll(false);
+    setModStore(false);
+    setModProduct(false);
+  };
+
+  // ===== Save modules (PUT ghi đè) =====
+  const handleSaveModules = async () => {
+    if (!targetUser) return;
+    try {
+      setSavingModules(true);
+      const modules = [];
+      if (modAll) modules.push("all");
+      if (modStore) modules.push("store");
+      if (modProduct) modules.push("product");
+
+      const { data } = await api.put(`/users/${targetUser._id}/modules`, { modules });
+
+      // cập nhật list users để reflect nhanh (nếu BE trả user đã update)
+      if (data?.user) {
+        setUsers((prev) =>
+          prev.map((u) => (u._id === data.user._id ? { ...u, modules: data.user.modules } : u))
+        );
+      }
+      alert("Cập nhật module thành công!");
+      closeModulePopup();
+    } catch (e) {
+      console.error("Save modules error:", e);
+      alert("Lưu module thất bại!");
+    } finally {
+      setSavingModules(false);
     }
   };
 
@@ -107,7 +132,6 @@ const Users = () => {
                       <td colSpan={5}>
                         <div className="table-loading">
                           <span className="spinner" />
-                          {/* <span>Đang tải danh sách người dùng...</span> */}
                         </div>
                       </td>
                     </tr>
@@ -122,28 +146,26 @@ const Users = () => {
                       <tr key={user._id}>
                         <td>
                           <div className="user">
-                            <img
-                              className="avatar"
-                              src={user.avatar.url}
-                              alt=""
-                            />
+                            <img className="avatar" src={user.avatar?.url} alt="" />
                             <div>
                               <div className="u-name">{user.name}</div>
-                              <div className="u-role">{user.role_id.name}</div>
+                              <div className="u-role">{user.role_id?.name}</div>
+                              <div className="u-role">
+                                {Array.isArray(user.modules) ? user.modules.join(", ") : ""}
+                              </div>
                             </div>
                           </div>
                         </td>
                         <td>{user.email}</td>
                         <td>
-                          <span className={`chip ${user.isActive ? 'active' : 'inactive'}`}>
-                            {user.isActive ? 'Active' : 'Disabled'}
+                          <span className={`chip ${user.isActive ? "active" : "inactive"}`}>
+                            {user.isActive ? "Active" : "Disabled"}
                           </span>
                         </td>
-                        <td>
-                          {dayjs(user.createdAt).format("DD/MM/YYYY HH:mm")}
-                        </td>
+                        <td>{dayjs(user.createdAt).format("DD/MM/YYYY HH:mm")}</td>
                         <td className="budget">
-                          <button onClick={() => openConfirm(user)}>
+                          {/* mở popup Add Module */}
+                          <button onClick={() => openModulePopup(user)} title="Add Module">
                             <svg
                               className="fill-current"
                               width="24"
@@ -168,11 +190,7 @@ const Users = () => {
             </div>
 
             <div className="pagination">
-              <button
-                className="nav prev"
-                onClick={() => setPage((p) => p - 1)}
-                disabled={page === 1}
-              >
+              <button className="nav prev" onClick={() => setPage((p) => p - 1)} disabled={page === 1}>
                 Previous
               </button>
 
@@ -200,38 +218,78 @@ const Users = () => {
               </button>
             </div>
 
-            {confirmOpen && (
-              <div className="pop-up">
-                <div className="pop-up-content">
-                  {/* Khi chưa loading thì hiện nội dung bình thường */}
-                  {!confirmLoading ? (
+            {/* ===== POPUP: ADD MODULE ===== */}
+            {moduleOpen && (
+              <div className="pop-up" onClick={closeModulePopup}>
+                <div className="pop-up-content" onClick={(e) => e.stopPropagation()}>
+                  <div className="pop-up-content-header">
+                    <h2>Thêm Module cho {targetUser?.name || targetUser?.email}</h2>
+                    <p>Tick quyền cần cấp rồi bấm Save.</p>
+                  </div>
+
+                  {modulesLoading ? (
+                    <div className="popup-loading-state">
+                      <div className="spinner big" />
+                      <p>Đang tải module…</p>
+                    </div>
+                  ) : (
                     <>
-                      <div className="pop-up-content-header">
-                        <h2>Xác nhận duyệt người dùng {targetUser?.name}</h2>
-                        <p>
-                          Bạn có chắc chắn muốn duyệt người dùng này không? Hành
-                          động này sẽ cho phép họ đăng nhập và sử dụng hệ thống.
-                        </p>
+                      <div className="mod-grid">
+                        <label className="mod-item">
+                          <input
+                            type="checkbox"
+                            checked={modAll}
+                            onChange={(e) => setModAll(e.target.checked)}
+                          />
+                          <div className="mod-info">
+                            <div className="mod-name">ALL</div>
+                            <div className="mod-desc">Quản lý tất cả</div>
+                          </div>
+                        </label>
+
+                        <label className="mod-item">
+                          <input
+                            type="checkbox"
+                            checked={modStore}
+                            onChange={(e) => setModStore(e.target.checked)}
+                          />
+                          <div className="mod-info">
+                            <div className="mod-name">STORE</div>
+                            <div className="mod-desc">Quản lý cửa hàng</div>
+                          </div>
+                        </label>
+
+                        <label className="mod-item">
+                          <input
+                            type="checkbox"
+                            checked={modProduct}
+                            onChange={(e) => setModProduct(e.target.checked)}
+                          />
+                          <div className="mod-info">
+                            <div className="mod-name">PRODUCT</div>
+                            <div className="mod-desc">Quản lý sản phẩm</div>
+                          </div>
+                        </label>
                       </div>
 
                       <div className="pop-up-content-actions">
-                        <button className="btn cancel" onClick={closeConfirm}>
+                        <button className="btn cancel" onClick={closeModulePopup}>
                           Huỷ
                         </button>
-                        <button className="btn confirm" onClick={hanldeConfirm}>
-                          Xác nhận
+                        <button
+                          className="btn confirm"
+                          onClick={handleSaveModules}
+                          disabled={savingModules}
+                        >
+                          {savingModules ? "Saving…" : "Save"}
                         </button>
                       </div>
                     </>
-                  ) : (
-                    <div className="popup-loading-state">
-                      <div className="spinner big" />
-                      <p>Cập nhật thành công</p>
-                    </div>
                   )}
                 </div>
               </div>
             )}
+            {/* ===== /POPUP ===== */}
           </div>
         </div>
       </div>
