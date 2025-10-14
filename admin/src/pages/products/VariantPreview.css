@@ -1,0 +1,193 @@
+.variant-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-update,
+.btn-delete {
+  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.25s, transform 0.1s;
+}
+
+/* Nút Update */
+.btn-update {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.btn-update:hover {
+  background-color: #0062cc;
+  transform: translateY(-1px);
+}
+
+/* Nút Delete */
+.btn-delete {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.btn-delete:hover {
+  background-color: #b51d2a;
+  transform: translateY(-1px);
+}
+.vp-grid {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* Cột trái – ảnh sản phẩm chính */
+.product-column {
+  flex: 1;
+  text-align: center;
+  border-right: 1px solid #ddd;
+  padding-right: 20px;
+}
+
+.product-column h4 {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.main-prod-img {
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+}
+
+/* Cột phải – danh sách variants */
+.variants-column {
+  flex: 2;
+}
+
+.variants-column h4 {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.variant-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.card_variant {
+  width: 150px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.prod-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.variant-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-update,
+.btn-delete {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+}
+
+.btn-update {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-update:hover {
+  background-color: #0062cc;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #b51d2a;
+}
+
+.add-variant {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.btn-plus {
+  font-size: 24px;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: #28a745;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-plus:hover {
+  background: #218838;
+}
+
+
+.variant-images-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.variant-img-card {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.variant-img-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.variant-img-card .update-btn {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  padding: 4px;
+  cursor: pointer;
+}
