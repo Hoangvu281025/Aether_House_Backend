@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const cloudinary = require("../config/cloudinary");
 const ProductVariant = require("../Models/product_variantModel");
 const Product = require("../Models/productModel");
-const fs = require("fs");
+const fs = require("fs/promises");   // để await unlink
+const path = require("path");
 
 // const ensureVariantDoc = async (req, res) => {
 //   try {
@@ -109,14 +110,31 @@ const addVariant = async (req, res) => {
     }
 
     const uploaded = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const localPath = file.path;
-      const results = await cloudinary.uploader.upload(localPath, {
-        folder: `AetherHouse/products/${product.name}/${color}`,
-      });
-      uploaded.push({ url: results.secure_url, public_id: results.public_id });
+    for (const file of files) {
+      const localPath = path.resolve(file.path);
+      try {
+        const results = await cloudinary.uploader.upload(localPath, {
+          folder: `AetherHouse/products/${product.name}/${color}`,
+        });
+
+        uploaded.push({
+          url: results.secure_url,
+          public_id: results.public_id,
+        });
+
+        // ✅ Kiểm tra file tồn tại trước khi xóa
+        try {
+          await new Promise((r) => setTimeout(r, 150));
+            await fs.unlink(localPath);
+        } catch {
+          console.warn("File tạm không tồn tại:", localPath);
+        }
+      } catch (err) {
+        console.warn("Upload thất bại:", err.message);
+      }
     }
+    // fs.unlink(file.path, () => {});
+
     variant.Variation.push({
       color,
       images: uploaded,               
@@ -185,44 +203,56 @@ const updateSingleImage = async (req, res) => {
   try {
     const { productId, colorId, imageId } = req.params;
     const file = req.file;
-    if (!file) return res.status(400).json({ message: 'Image file is required' });
+    if (!file) return res.status(400).json({ message: "Image file is required" });
 
     const doc = await ProductVariant.findOne({ product_id: productId });
-    if (!doc) return res.status(404).json({ message: 'Variant not found' });
+    if (!doc) return res.status(404).json({ message: "Variant not found" });
 
-
-    const product = await Product.findById(productId).select('name slug');
-    if (!product) return res.status(404).json({ message: 'Product not found' });
-    
+    const product = await Product.findById(productId).select("name slug");
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
     const item = doc.Variation.id(colorId);
-    if (!item) return res.status(404).json({ message: 'Color not found' });
+    if (!item) return res.status(404).json({ message: "Color not found" });
 
-    
     const imgItem = item.images.id(imageId);
-    if (!imgItem) return res.status(404).json({ message: 'Image not found' });
+    if (!imgItem) return res.status(404).json({ message: "Image not found" });
 
-    const r = await cloudinary.uploader.upload(file.path, {
-      folder: `AetherHouse/products/${product.name}/${item.color || item.name || colorId}`
-    });
+    // chuẩn hoá đường dẫn file tạm
+    const localPath = path.resolve(file.path);
 
-    if (imgItem.public_id) {
-      try { await cloudinary.uploader.destroy(imgItem.public_id); } catch (_) {}
+    let r;
+    try {
+      // Upload ảnh mới
+      r = await cloudinary.uploader.upload(localPath, {
+        folder: `AetherHouse/products/${product.name}/${item.color || item.name || colorId}`,
+      });
+
+      // Xoá ảnh cũ trên Cloudinary (nếu có)
+      if (imgItem.public_id) {
+        try { await cloudinary.uploader.destroy(imgItem.public_id); } catch (_) {}
+      }
+
+      // Cập nhật doc
+      imgItem.url = r.secure_url;
+      imgItem.public_id = r.public_id;
+      await doc.save();
+    } finally {
+      // Luôn cố xoá file tạm, kể cả upload fail
+      try {
+        await new Promise((resv) => setTimeout(resv, 150)); // tránh file bị lock (Windows)
+        await fs.unlink(localPath);
+        // console.log("Deleted temp:", localPath);
+      } catch (e) {
+        console.error("❌ Unlink failed:", localPath, e);
+      }
     }
-
-    imgItem.url = r.secure_url;
-    imgItem.public_id = r.public_id;
-    await doc.save();
-
-    fs.unlink(file.path, () => {});
 
     return res.json({ success: true, updatedImage: imgItem });
   } catch (err) {
     console.error("[updateSingleImage]", err);
-    return res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ message: "Server error" });
   }
 };
-
 
 
 
@@ -230,25 +260,50 @@ const updateSingleImage = async (req, res) => {
 
 const deleteVariant = async (req, res) => {
   try {
-    const {productId , colorId} = req.params;
+    const { productId, colorId } = req.params;
+
     const variant = await ProductVariant.findOne({ product_id: productId });
-    if(!variant){
+    if (!variant) {
       return res.status(404).json({ success: false, message: "Variant not found" });
     }
 
     const item = variant.Variation.id(colorId);
-    if(!item){
+    if (!item) {
       return res.status(404).json({ success: false, message: "Color not found" });
     }
 
+    // 🟩 Lấy thông tin để biết thư mục Cloudinary cần xoá
+    const product = await Product.findById(productId);
+    const folderPath = `AetherHouse/products/${product.name}/${item.color}`;
+
+    // ✅ Xóa toàn bộ ảnh theo prefix (thư mục)
+    try {
+      await cloudinary.api.delete_resources_by_prefix(folderPath);
+      console.log("Đã xoá toàn bộ ảnh trong:", folderPath);
+    } catch (err) {
+      console.warn("Không thể xóa resources by prefix:", err.message);
+    }
+
+    // ✅ Sau đó xóa luôn folder
+    try {
+      await cloudinary.api.delete_folder(folderPath);
+      console.log("Đã xoá folder:", folderPath);
+    } catch (err) {
+      console.warn("Không thể xoá folder:", err.message);
+    }
+
+    // ✅ Xóa variant trong MongoDB
     variant.Variation.pull(colorId);
     await variant.save();
-    return res.json({ success: true, message: "Color deleted successfully" });
+
+    return res.json({ success: true, message: "Color and folder deleted successfully" });
   } catch (err) {
     console.error("[deleteVariant]", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
 
 
 

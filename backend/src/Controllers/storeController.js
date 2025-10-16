@@ -122,8 +122,7 @@ const updateStore = async (req, res) => {
       }
     }
     
-    let slug = store.slug;
-    slug = toSlug(store.city);
+    const slug = toSlug(city || store.city);
     const updatedStore = await storeModel.findByIdAndUpdate(id, { name, slug, phone, email, city, address, information, description , images }, {
       new: true,
       runValidators: true,

@@ -3,6 +3,8 @@ const Category = require('../Models/categoryModel');
 const Product = require('../Models/productModel');
 const ProductVariant = require("../Models/product_variantModel");
 const { toSlug } = require('../utils/slugify');
+const fs = require("fs/promises");   // ⬅️ thêm
+const path = require("path"); 
 
 const getall = async (req, res) => {
   try {
@@ -120,44 +122,54 @@ const getByIDpro = async (req , res) => {
 
 
 const addProduct = async (req , res) => {
-    try {
-        const { name,  price, description, quantity, colspan , category_id } = req.body;
-        const slug = toSlug(name);
-        const files = req.files || [];
-        if (files.length === 0) return res.status(400).json({ error: 'No files uploaded' });
-        const uploadedImages = [];
-            for (let i= 0; i < files.length; i++) {
-                const file = files[i];
-                const localPath = file.path;
-                const results = await cloudinary.uploader.upload(localPath, { folder: `AetherHouse/products/${name}` });
-                uploadedImages.push({
-                    url: results.secure_url,
-                    public_id: results.public_id,
-                    is_main: i === 0
-                });
-            }
-        const newProduct = await Product.create({ 
-            name, 
-            slug, 
-            price, 
-            description, 
-            quantity, 
-            colspan ,
-            images: uploadedImages,
-            category_id: category_id,
-        })
-        res.status(200).json({
-            success_true: true,
-            id: newProduct._id,
-            products: newProduct
-        })
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({
-          error : 'Internal server error'
-        })
+  try {
+    const { name, price, description, quantity, colspan, category_id } = req.body;
+    const slug = toSlug(name);
+    const files = req.files || [];
+    if (files.length === 0) return res.status(400).json({ error: 'No files uploaded' });
+
+    const uploadedImages = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const localPath = path.resolve(file.path); // ⬅️ chuẩn hoá đường dẫn
+
+      try {
+        const results = await cloudinary.uploader.upload(localPath, {
+          folder: `AetherHouse/products/${name}`
+        });
+
+        uploadedImages.push({
+          url: results.secure_url,
+          public_id: results.public_id,
+          is_main: i === 0
+        });
+      } finally {
+        try {
+          await new Promise(r => setTimeout(r, 200)); // ⬅️ tránh file lock
+          await fs.unlink(localPath);                  // ⬅️ chờ xoá thật
+          console.log("Deleted temp:", localPath);
+        } catch (e) {
+          console.error("❌ Unlink failed:", localPath, e);
+        }
+      }
     }
-}
+
+    const newProduct = await Product.create({ 
+      name, slug, price, description, quantity, colspan,
+      images: uploadedImages,
+      category_id
+    });
+
+    res.status(200).json({
+      success_true: true,
+      id: newProduct._id,
+      products: newProduct
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error : 'Internal server error' });
+  }
+};
 
 const updateProduct = async (req, res) => {
   try {

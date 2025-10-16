@@ -319,7 +319,7 @@ const closeVariantPreview = () => {
 
                 <div className="form-column">
                   <div className="form-group">
-                    <label>Colspan</label>
+                    <label>Colspan - (số 1 để hình ảnh hiển thị nhỏ số 2 để hình ảnh hiển thị lớn)</label>
                     <select value={colspan} onChange={(e) => setColspan(e.target.value)}>
                       <option value="1">1</option><option value="2">2</option>
                     </select>
