@@ -6,22 +6,22 @@ const { toSlug } = require('../utils/slugify');
 
 const getall = async (req, res) => {
   try {
-    const docs = await Product.find({})
+    const { is_hidden } = req.query;
+
+    const filter = {};
+    if (typeof is_hidden !== 'undefined') {
+      const toBool = (v) => ['1','true','yes','on'].includes(String(v).toLowerCase());
+      filter.is_hidden = toBool(is_hidden); // true/false theo query
+    }
+
+    const docs = await Product.find(filter)
       .populate('category_id')
-      .populate({
-        path: 'variantsDoc',
-        select: 'Variation', // chỉ cần mảng Variation
-      })
+      .populate({ path: 'variantsDoc', select: 'Variation' })
       .lean();
 
-    // Chuẩn hóa: thêm field products[i].variants = mảng các biến thể
     const products = docs.map(p => {
       const variants = p?.variantsDoc?.Variation || [];
-      return {
-        ...p,
-        variants,                       // FE dùng p.variants là xong
-        variants_count: variants.length // tiện cho hiển thị
-      };
+      return { ...p, variants, variants_count: variants.length };
     });
 
     res.json({ success: true, products });
@@ -33,20 +33,29 @@ const getall = async (req, res) => {
 const getProductsByParentSlug = async (req, res) => {
   try {
     const { parentSlug } = req.params;
+    const { sort } = req.query; // price_asc | price_desc
 
-    // Tìm category cha theo slug
+    // 1) Tìm category cha
     const parent = await Category.findOne({ slug: parentSlug });
     if (!parent) {
       return res.status(404).json({ success: false, message: "Parent category not found" });
     }
 
-    // Lấy con trực tiếp của cha
-    const children = await Category.find({ parentId: parent._id });
+    // 2) Lấy con trực tiếp của cha
+    const children = await Category.find({ parentId: parent._id }).select('_id');
     const categoryIds = [parent._id, ...children.map(c => c._id)];
 
-    // Query sản phẩm thuộc cha + con
+    // 3) Xác định sort
+    let sortObj = {};
+    if (sort === 'price_asc')      sortObj = { price: 1 };
+    else if (sort === 'price_desc') sortObj = { price: -1 };
+    // (tuỳ chọn) default sort: mới nhất trước
+    else                            sortObj = { createdAt: -1 };
+
+    // 4) Query sản phẩm
     const products = await Product.find({ category_id: { $in: categoryIds } })
-      .populate("category_id")
+      .populate('category_id')
+      .sort(sortObj); // <— áp dụng sort ở đây
 
     res.json({ success: true, products });
   } catch (err) {

@@ -3,8 +3,9 @@ import api from "../../lib/axios";
 import "./Products.css";
 import Spinner from "../../components/spinner/spinner";
 import VariantPreview from "./VariantPreview";
-import VariantForm from "./VariantForm";
+// import VariantForm from "./VariantForm";
 import { getMainImage } from "./products.helpers";
+import { Editor } from "@tinymce/tinymce-react";
 
 export default function Products() {
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -23,13 +24,15 @@ export default function Products() {
   const [colspan, setColspan] = useState(1);
   const [category_id, setCategory_id] = useState("");
   const [images, setImages] = useState([]);
-
+  const [isHidden, setIsHidden] = useState("false");
   
   // ===== API =====
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/products");
+      const res = await api.get("/products",{
+      params: { is_hidden: isHidden }, // ✅ truyền theo giá trị state
+    });
       setProducts(res.data.products);
     } finally {
       setLoading(false);
@@ -44,7 +47,7 @@ export default function Products() {
   useEffect(() => {
     fetchProducts();
     fetchCate();
-  }, []);
+  }, [isHidden]);
 
   // ===== Product add/update modal =====
   const openConfirm = (mode, id = null) => {
@@ -192,7 +195,10 @@ const closeVariantPreview = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className="btn-group">
-          <button className="btn export">Export ⬇</button>
+          <select className="btn export" value={isHidden} onChange={(e) => setIsHidden(e.target.value)}>
+            <option value="true">sp không còn còn bán</option>
+            <option value="false">sp còn bán</option>
+          </select>
           <button className="btn add" onClick={() => openConfirm("add")}>
             + Add Product
           </button>
@@ -327,7 +333,18 @@ const closeVariantPreview = () => {
                   </div>
                   <div className="form-group">
                     <label>Description</label>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Product description" />
+                      <Editor
+                        apiKey="uodw68skaz2xswpym1ldcnxa9v7bjdsrgw8on3jsu4ynmvah" // để trống chạy local được
+                        value={description}
+                        init={{
+                          height: 300,
+                          menubar: false,
+                          plugins: "lists link code",
+                          toolbar: "undo redo | bold italic underline | bullist numlist | link | code",
+                        }}
+                        onEditorChange={(content) => setDescription(content)}
+                      />
+                    {/* <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Product description" /> */}
                   </div>
                 </div>
               </div>
