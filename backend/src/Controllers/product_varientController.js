@@ -191,6 +191,10 @@ const updateSingleImage = async (req, res) => {
     if (!doc) return res.status(404).json({ message: 'Variant not found' });
 
 
+    const product = await Product.findById(productId).select('name slug');
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    
+
     const item = doc.Variation.id(colorId);
     if (!item) return res.status(404).json({ message: 'Color not found' });
 
@@ -198,9 +202,8 @@ const updateSingleImage = async (req, res) => {
     const imgItem = item.images.id(imageId);
     if (!imgItem) return res.status(404).json({ message: 'Image not found' });
 
-    // upload ảnh mới
     const r = await cloudinary.uploader.upload(file.path, {
-      folder: `AetherHouse/products/${item.color || 'Variant'}`
+      folder: `AetherHouse/products/${product.name}/${item.color || item.name || colorId}`
     });
 
     if (imgItem.public_id) {
@@ -219,7 +222,6 @@ const updateSingleImage = async (req, res) => {
     return res.status(500).json({ message: 'Server error' });
   }
 };
-
 
 
 
@@ -250,6 +252,32 @@ const deleteVariant = async (req, res) => {
 
 
 
+const getAllColors = async (req, res) => {
+  try {
+    const docs = await ProductVariant.find({}).select('product_id Variation').lean();
+
+    const colorMap = new Map(); 
+    docs.forEach(v => {
+      const pid = String(v.product_id);
+      (v.Variation || []).forEach(vi => {
+        const label = (vi.color || '').trim();
+        if (!label) return;
+        const key = label.toLowerCase();
+        if (!colorMap.has(key)) colorMap.set(key, { label, productIds: new Set() });
+        colorMap.get(key).productIds.add(pid);
+      });
+    });
+
+    const colors = [...colorMap.values()]
+      .map(x => ({ label: x.label, value: x.label, count: x.productIds.size }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    res.json({ success: true, colors });
+  } catch (err) {
+    console.error('[getAllColors]', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
 
 
 module.exports = {
@@ -258,4 +286,6 @@ module.exports = {
   updateVariant,
   updateSingleImage,
   deleteVariant,
+  getAllColors,
+
 };

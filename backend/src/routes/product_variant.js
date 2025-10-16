@@ -7,5 +7,6 @@ router.post('/add',upload.array('images', 10), ProductVariantControllers.addVari
 router.put("/by-product/:productId/colors/:colorId", ProductVariantControllers.updateVariant);
 router.put('/:productId/colors/:colorId/image/:imageId',upload.single('image'),ProductVariantControllers.updateSingleImage);
 router.get('/by-product/:productId', ProductVariantControllers.getVariantByProductId);
+router.get('/colors', ProductVariantControllers.getAllColors);
 router.delete("/by-product/:productId/colors/:colorId", ProductVariantControllers.deleteVariant);
 module.exports = router;

@@ -14,6 +14,7 @@ router.post('/',upload.array('images', 2), ProductControllers.addProduct);
 router.put('/:id',upload.array('images', 2), ProductControllers.updateProduct);
 router.patch('/:id/hide', ProductControllers.hideProduct);
 router.patch('/:id/unhide', ProductControllers.unhideProduct);
+router.get('/by-color/:color', ProductControllers.getProductsByColor);
 
 
 

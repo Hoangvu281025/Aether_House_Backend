@@ -270,7 +270,26 @@ const unhideProduct  = async (req , res) => {
 }
 
 
+const getProductsByColor = async (req, res) => {
+  try {
+    const { color } = req.params;
 
+    const variants = await ProductVariant.find({
+      "Variation.color": { $regex: new RegExp(`^${color}$`, "i") },
+    }).lean();
+
+    const productIds = variants.map(v => v.product_id);
+
+    const products = await Product.find({ _id: { $in: productIds } })
+      .populate("category_id")
+      .lean();
+
+    res.json({ success: true, color, products });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 module.exports = {
     getall,
@@ -280,5 +299,7 @@ module.exports = {
     addProduct,
     updateProduct,
     hideProduct,
-    unhideProduct
+    unhideProduct,
+    getProductsByColor,
+
 }
