@@ -19,6 +19,9 @@ import Profile from "./pages/Profile/Profile";
 import RequireSuperAdmin from "./components/RequireSuperAdmin";
 import { Logout } from "./pages/Auth/logout";
 import Category from "./pages/category/Category";
+import Voucher from "./pages/Voucher/Voucher";
+import Orders from "./pages/Orders/Orders";
+import OrderDetail from "./pages/Orders/OrderDetail";
 
 function App() {
   return (
@@ -34,6 +37,9 @@ function App() {
             <Route path="/forms/add-store/" element={<AddStore />} /> 
             <Route path="/user" element={<Users />} />
             <Route path="/category" element={<Category />} />
+            <Route path="/voucher" element={<Voucher />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/:id" element={<OrderDetail />} />
            <Route element={<RequireSuperAdmin />}>
               <Route path="/admin" element={<Admins />} />
             </Route>

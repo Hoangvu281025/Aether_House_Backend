@@ -1,6 +1,9 @@
+const mongoose = require("mongoose");
+
 const Order = require("../Models/orderModel");
 const OrderDetail = require("../Models/order_detailModel");
-const Voucher = require("../Models/voucherModel");
+require("../Models/addressModel");
+require("../Models/voucherModel"); 
 
 // 📌 Tạo Order + OrderDetail
 exports.createOrder = async (req, res) => {
@@ -70,21 +73,28 @@ exports.getOrders = async (req, res) => {
 
 // 📌 Lấy chi tiết 1 Order
 exports.getOrderById = async (req, res) => {
-    try {
-        const order = await Order.findById(req.params.id)
-            .populate("address_id")
-            .populate("voucher_id");
-
-        if (!order) return res.status(404).json({ message: "Order not found" });
-
-        const details = await OrderDetail.find({ order_id: order._id })
-            .populate("product_id")
-            .populate("productvariant_id");
-
-        res.status(200).json({ order, orderDetails: details });
-    } catch (err) {
-        res.status(500).json({ message: "Server error", error: err.message });
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid order id" });
     }
+
+    const order = await Order.findById(id)
+      .populate("address_id")
+      .populate("voucher_id");
+
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    const details = await OrderDetail.find({ order_id: order._id })
+      .populate({ path: "product_id", select: "name images price" })
+      // ❗ Đừng populate("productvariant_id") vì nó là subdocument id
+      .lean();
+
+    return res.status(200).json({ order, orderDetails: details });
+  } catch (err) {
+    console.error("[getOrderById] error:", err);
+    return res.status(500).json({ message: "Server error", error: err.message });
+  }
 };
 
 // 📌 Cập nhật trạng thái Order

@@ -139,6 +139,16 @@ const Sidebar = () => {
               <FaFile /> <span>Manage Store</span>
             </NavLink>
           </li>
+          <li>
+            <NavLink to="/orders">
+              <FaFile /> <span>Manage Order</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/voucher">
+              <FaFile /> <span>Manage Voucher</span>
+            </NavLink>
+          </li>
         </ul>
       </div>
    </>
