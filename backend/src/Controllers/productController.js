@@ -32,13 +32,18 @@ const getall = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+// GET /api/products/by-parent/:parentSlug?sort=price_asc|price_desc&page=1&limit=12
 const getProductsByParentSlug = async (req, res) => {
   try {
     const { parentSlug } = req.params;
     const { sort } = req.query; // price_asc | price_desc
+    const page  = Math.max(parseInt(req.query.page ?? '1', 10), 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit ?? '12', 10), 1), 60); // chặn 1..60
+    const skip  = (page - 1) * limit;
 
     // 1) Tìm category cha
-    const parent = await Category.findOne({ slug: parentSlug });
+    const parent = await Category.findOne({ slug: parentSlug }).select('_id');
     if (!parent) {
       return res.status(404).json({ success: false, message: "Parent category not found" });
     }
@@ -49,49 +54,127 @@ const getProductsByParentSlug = async (req, res) => {
 
     // 3) Xác định sort
     let sortObj = {};
-    if (sort === 'price_asc')      sortObj = { price: 1 };
-    else if (sort === 'price_desc') sortObj = { price: -1 };
-    // (tuỳ chọn) default sort: mới nhất trước
-    else                            sortObj = { createdAt: -1 };
+    if (sort === 'price_asc') sortObj = { price: 1, _id: 1 };
+    else if (sort === 'price_desc') sortObj = { price: -1, _id: 1 };
+    else sortObj = { createdAt: -1, _id: 1 }; // default mới nhất
 
-    // 4) Query sản phẩm
-    const products = await Product.find({ category_id: { $in: categoryIds } })
+    // 4) Query filter dùng chung cho count + list
+    const filter = { category_id: { $in: categoryIds } };
+
+    // 5) Đếm tổng
+    const total = await Product.countDocuments(filter);
+
+    // 6) Lấy trang hiện tại
+    const products = await Product.find(filter)
       .populate('category_id')
-      .sort(sortObj); // <— áp dụng sort ở đây
+      .sort(sortObj)
+      .skip(skip)
+      .limit(limit)
+      .lean(); // nhanh hơn
 
-    res.json({ success: true, products });
+    const totalPages = Math.max(Math.ceil(total / limit), 1);
+
+    return res.json({
+      success: true,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasPrev: page > 1,
+        hasNext: page < totalPages,
+        prevPage: page > 1 ? page - 1 : null,
+        nextPage: page < totalPages ? page + 1 : null,
+        sort: sort || 'createdAt_desc'
+      },
+      products
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
+
+// GET /api/products/by-cate/:parentSlug/:childSlug?sort=price_asc|price_desc&page=1&limit=12
 const getProductsByChildSlug = async (req, res) => {
   try {
     const { parentSlug, childSlug } = req.params;
+    const { sort } = req.query;
 
-    // Tìm cha
-    const parent = await Category.findOne({ slug: parentSlug });
+    const page  = Math.max(parseInt(req.query.page ?? '1', 10), 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit ?? '12', 10), 1), 60);
+    const skip  = (page - 1) * limit;
+
+    // 1) Tìm cha
+    const parent = await Category.findOne({ slug: parentSlug }).select('_id name slug');
     if (!parent) {
       return res.status(404).json({ success: false, message: "Parent category not found" });
     }
 
-    // Tìm con trực tiếp thuộc cha
-    const child = await Category.findOne({ slug: childSlug, parentId: parent._id });
+    // 2) Tìm con trực tiếp thuộc cha
+    const child = await Category.findOne({ slug: childSlug, parentId: parent._id }).select('_id name slug');
     if (!child) {
       return res.status(404).json({ success: false, message: "Child category not found under this parent" });
     }
 
-    // Query sản phẩm theo con
-    const products = await Product.find({ category_id: child._id })
-      .populate("category_id")
+    // 3) Sort
+    let sortObj = {};
+    if (sort === 'price_asc')      sortObj = { price: 1, _id: 1 };
+    else if (sort === 'price_desc') sortObj = { price: -1, _id: 1 };
+    else                            sortObj = { createdAt: -1, _id: 1 }; // default
 
-    res.json({ success: true, parent, child, products });
+    // (tuỳ chọn) filter thêm theo nhu cầu
+    const filter = { category_id: child._id };
+    // ví dụ hỗ trợ ẩn/hiện:
+    // if (typeof req.query.is_hidden !== 'undefined') {
+    //   const toBool = v => ['1','true','yes','on'].includes(String(v).toLowerCase());
+    //   filter.is_hidden = toBool(req.query.is_hidden);
+    // }
+    // ví dụ hỗ trợ min/max price:
+    // const min = Number(req.query.min ?? 0), max = Number(req.query.max ?? 0);
+    // if (!Number.isNaN(min) || !Number.isNaN(max)) {
+    //   filter.price = {};
+    //   if (!Number.isNaN(min)) filter.price.$gte = min;
+    //   if (!Number.isNaN(max) && max > 0) filter.price.$lte = max;
+    // }
+
+    // 4) Đếm tổng
+    const total = await Product.countDocuments(filter);
+
+    // 5) Trang hiện tại
+    const products = await Product.find(filter)
+      .populate('category_id')
+      .sort(sortObj)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const totalPages = Math.max(Math.ceil(total / limit), 1);
+
+    return res.json({
+      success: true,
+      parent,
+      child,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasPrev: page > 1,
+        hasNext: page < totalPages,
+        prevPage: page > 1 ? page - 1 : null,
+        nextPage: page < totalPages ? page + 1 : null,
+        sort: sort || 'createdAt_desc'
+      },
+      products
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 const getByIDpro = async (req , res) => {
     try {

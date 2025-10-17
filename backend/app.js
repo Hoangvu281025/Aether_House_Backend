@@ -20,6 +20,7 @@ var productsRouter = require('./src/routes/product');
 var storeRouter = require('./src/routes/store');
 var addressRouter = require('./src/routes/address');
 var variantRouter = require('./src/routes/product_variant');
+var oderRouter = require('./src/routes/order');
 
 
 var app = express();
@@ -44,6 +45,8 @@ app.use('/api/products', productsRouter);
 app.use('/api/stores', storeRouter);
 app.use('/api/address', addressRouter);
 app.use('/api/variants', variantRouter);
+app.use('/api/orders', oderRouter);
+
 
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 

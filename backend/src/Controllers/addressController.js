@@ -11,10 +11,6 @@ const addressController = {
     addAddress: async(req,res) =>{
         try {
            const {name , address, city , phone , ward , country , user_id } = req.body;
-
-           
-
-
             const newAddress = await AddressModel.create({
                 name,
                 address,
