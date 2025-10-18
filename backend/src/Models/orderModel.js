@@ -12,6 +12,7 @@ const orderSchema = new Schema({
         enum: ["pending", "prepare", "shipping", "completed", "canceled"], 
         default: "pending" 
     },
+    payment_method: {type: String ,enum: ["COD", "BANK_TRANSFER"], required:true}
 },{
     timestamps: true
 })

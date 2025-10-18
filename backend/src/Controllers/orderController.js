@@ -9,7 +9,7 @@ require("../Models/userModel");
 // 📌 Tạo Order + OrderDetail
 exports.createOrder = async (req, res) => {
     try {
-        const { total_amount, address_id, voucher_id, status, orderDetails , user_id } = req.body;
+        const { total_amount, address_id, voucher_id, status, orderDetails , user_id , payment_method } = req.body;
 
         // Tạo Order
         const order = await Order.create({
@@ -17,7 +17,8 @@ exports.createOrder = async (req, res) => {
             address_id,
             user_id,
             voucher_id: voucher_id || null,
-            status: status || "pending"
+            status: status || "pending",
+            payment_method
         });
 
         // Nếu có orderDetails thì lưu
@@ -55,8 +56,9 @@ exports.createOrder = async (req, res) => {
             orderDetails: details
         });
     } catch (err) {
-        res.status(500).json({ message: "Server error", error: err.message });
-    }
+  console.error("[createOrder] ERROR:", err?.name, err?.message, err?.stack);
+  return res.status(500).json({ message: "Server error", error: err?.message });
+}
 };
 
 // 📌 Lấy tất cả Orders
