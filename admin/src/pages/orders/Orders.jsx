@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Order.css";
 import api from "../../lib/axios";
@@ -6,19 +6,19 @@ import api from "../../lib/axios";
 export default function Orders() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  console.log(orders);
+  const [loadingId, setLoadingId] = useState(null); // id của order đang cập nhật
 
-  const getorder = async () => {
+  const getOrders = async () => {
     try {
       const { data } = await api.get("/orders");
       setOrders(data);
     } catch (error) {
-      console.log(error);
+      console.error("Lỗi lấy danh sách đơn hàng:", error);
     }
   };
 
   useEffect(() => {
-    getorder();
+    getOrders();
   }, []);
 
   const statusClass = (s) =>
@@ -30,13 +30,28 @@ export default function Orders() {
       canceled: "ord-badge ord-badge-canceled",
     }[s] || "ord-badge");
 
-  const updateStatus = (id, newStatus) => {
-    setOrders((prev) =>
-      prev.map((o) => (o._id === id ? { ...o, status: newStatus } : o))
-    );
-  };
-
   const statusOptions = ["pending", "prepare", "shipping", "completed", "canceled"];
+
+  // 🌀 Hàm gọi API cập nhật trạng thái
+  const handleStatusChange = async (orderId, newStatus) => {
+    setLoadingId(orderId);
+    try {
+      const res = await api.patch(`/orders/${orderId}/status`, { status: newStatus });
+      if (res.data?.order) {
+        // Cập nhật trong state
+        setOrders((prev) =>
+          prev.map((o) =>
+            o._id === orderId ? { ...o, status: res.data.order.status } : o
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Lỗi cập nhật trạng thái:", error);
+      alert("Không thể cập nhật trạng thái. Vui lòng thử lại!");
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
   return (
     <div className="ord-page">
@@ -59,11 +74,11 @@ export default function Orders() {
             {orders.map((o) => (
               <tr key={o._id}>
                 <td>{o._id}</td>
-                <td>{o.total_amount.toLocaleString("vi-VN")}</td>
+                <td>$ {Number(o.total_amount).toLocaleString("en-US")}</td>
                 <td>
                   <span className={statusClass(o.status)}>{o.status}</span>
                 </td>
-                <td>{new Date(o.createdAt).toLocaleString()}</td>
+                <td>{new Date(o.createdAt).toLocaleString("vi-VN")}</td>
                 <td className="ord-center ord-flex ord-gap-2">
                   <button
                     className="ord-btn ord-btn-view"
@@ -75,7 +90,8 @@ export default function Orders() {
                   <select
                     className="ord-select-status"
                     value={o.status}
-                    onChange={(e) => updateStatus(o._id, e.target.value)}
+                    disabled={loadingId === o._id}
+                    onChange={(e) => handleStatusChange(o._id, e.target.value)}
                   >
                     {statusOptions.map((st) => (
                       <option key={st} value={st}>
@@ -86,6 +102,7 @@ export default function Orders() {
                 </td>
               </tr>
             ))}
+
             {orders.length === 0 && (
               <tr>
                 <td colSpan="5" className="ord-empty">

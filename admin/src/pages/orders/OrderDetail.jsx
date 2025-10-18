@@ -14,6 +14,7 @@ export default function OrderDetail() {
   const [orderDetails, setOrderDetails] = useState([]);
   const [address, setAddress] = useState(null);
   const [voucher, setVoucher] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -25,6 +26,7 @@ export default function OrderDetail() {
         setOrderDetails(details);
         setAddress(data?.address ?? o?.address_id ?? null);
         setVoucher(data?.voucher ?? o?.voucher_id ?? null);
+        setUser(data?.user ?? o?.voucher_id ?? null);
       } catch (err) {
         console.error(err);
         setOrder(null);
@@ -49,7 +51,7 @@ export default function OrderDetail() {
     0
   );
 
-  // Giả định total_amount là số phải trả sau giảm.
+  // Assume total_amount is the final payable after discount
   const payable = Number(order?.total_amount ?? 0);
   const discount = Math.max(0, subtotal - payable);
 
@@ -58,11 +60,11 @@ export default function OrderDetail() {
       <div className="ordd-page">
         <div className="ordd-header">
           <button className="ordd-btn ordd-btn-light" onClick={() => navigate("/orders")}>
-            ← Quay lại
+            ← Back
           </button>
           <h1 className="ordd-title">Order Detail</h1>
         </div>
-        <div className="ordd-card">Đang tải…</div>
+        <div className="ordd-card">Loading…</div>
       </div>
     );
   }
@@ -71,15 +73,15 @@ export default function OrderDetail() {
     <div className="ordd-page">
       <div className="ordd-header">
         <button className="ordd-btn ordd-btn-light" onClick={() => navigate("/orders")}>
-          ← Quay lại
+          ← Back
         </button>
         <h1 className="ordd-title">Order Detail</h1>
       </div>
 
       <div className="ordd-grid-2">
-        {/* Card: Thông tin đơn hàng */}
+        {/* Card: Order Info */}
         <div className="ordd-card">
-          <h3 className="ordd-card-title">Thông tin đơn hàng</h3>
+          <h3 className="ordd-card-title">Order Information</h3>
 
           <div className="ordd-kv">
             <span>ID</span>
@@ -90,6 +92,10 @@ export default function OrderDetail() {
             <span>Status</span>
             <span className={statusClass(order?.status)}>{order?.status}</span>
           </div>
+          <div className="ordd-kv">
+            <span>Payment Method</span>
+            <span className="ordd-mono">{order?.payment_method}</span>
+          </div>
 
           <div className="ordd-kv">
             <span>Created</span>
@@ -99,58 +105,59 @@ export default function OrderDetail() {
           </div>
 
           {/* Address */}
-          <div className="ordd-subtitle">Địa chỉ giao hàng</div>
+          <div className="ordd-subtitle">Shipping Address</div>
           {address ? (
             <div className="ordd-address">
-              <div><b>{address?.name}</b> {address?.phone ? `• ${address.phone}` : ""}</div>
-              <div>{address?.address}</div>
-              <div>
-                {[address?.ward, address?.city, address?.country].filter(Boolean).join(", ")}
+              <div className="ordd-address-row">
+                <span className="ordd-label">Name:</span>{address?.name}
+              </div>
+              <div className="ordd-address-row">
+                <span className="ordd-label">Email:</span>{user?.email}
+              </div>
+              <div className="ordd-address-row">
+                <span className="ordd-label">Phone:</span>{address?.phone}
+              </div>
+              <div className="ordd-address-row">
+                <span className="ordd-label">Address:</span>{address?.address}
+              </div>
+              <div className="ordd-address-row">
+                <span className="ordd-label">Region:</span> {[address?.ward, address?.city, address?.country].filter(Boolean).join(", ")}
               </div>
               {address?._id && (
                 <div className="ordd-fine">ID: <span className="ordd-mono">{address._id}</span></div>
               )}
             </div>
           ) : (
-            <div className="ordd-fine">Không có địa chỉ</div>
+            <div className="ordd-fine">No address</div>
           )}
 
           {/* Voucher */}
           <div className="ordd-subtitle">Voucher</div>
           {voucher ? (
             <div className="ordd-voucher">
-              <div>
-                <b className="ordd-mono">{voucher?.voucher_code || voucher?._id}</b>
-                {typeof voucher?.value === "number" && (
-                  <> — giảm {fmtUSD(voucher.value)}</>
-                )}
+              <div className="ordd-address-row">
+                <span className="ordd-label">Code:</span>
+                <span className="ordd-mono">{voucher?.voucher_code || voucher?._id}</span>
               </div>
+              {typeof voucher?.value === "number" && (
+                <div className="ordd-address-row">
+                  <span className="ordd-label">Discount:</span>
+                  <span>{fmtUSD(voucher.value)}</span>
+                </div>
+              )}
               {voucher?.description && <div className="ordd-fine">{voucher.description}</div>}
             </div>
           ) : (
             <div className="ordd-fine">—</div>
           )}
 
-          {/* Tổng tiền */}
-          <div className="ordd-totals">
-            <div className="ordd-kv">
-              <span>Subtotal</span>
-              <span>{fmtUSD(subtotal)}</span>
-            </div>
-            <div className="ordd-kv">
-              <span>Discount</span>
-              <span>- {fmtUSD(discount)}</span>
-            </div>
-            <div className="ordd-kv ordd-kv-strong">
-              <span>Phải trả</span>
-              <span>{fmtUSD(payable)}</span>
-            </div>
-          </div>
+          {/* Totals */}
+          
         </div>
 
-        {/* Card: Sản phẩm */}
+        {/* Card: Products */}
         <div className="ordd-card">
-          <h3 className="ordd-card-title">Sản phẩm</h3>
+          <h3 className="ordd-card-title">Products</h3>
           <table className="ordd-table">
             <thead>
               <tr>
@@ -158,7 +165,7 @@ export default function OrderDetail() {
                 <th>Variant</th>
                 <th className="ordd-right">Qty</th>
                 <th className="ordd-right">Price</th>
-                <th className="ordd-right">Line Total</th>
+                {/* <th className="ordd-right">Line Total</th> */}
               </tr>
             </thead>
             <tbody>
@@ -188,18 +195,27 @@ export default function OrderDetail() {
               })}
               {orderDetails.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="ordd-empty">Không có sản phẩm</td>
+                  <td colSpan={5} className="ordd-empty">No products</td>
                 </tr>
               )}
             </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan={4} className="ordd-right"><b>Subtotal</b></td>
-                <td className="ordd-right"><b>{subtotal.toLocaleString("en-US")}</b></td>
-              </tr>
-            </tfoot>
           </table>
+          <div className="ordd-totals">
+            <div className="ordd-kv">
+              <span>Total</span>
+              <span>{fmtUSD(subtotal)}</span>
+            </div>
+            <div className="ordd-kv">
+              <span>Discount</span>
+              <span>- {fmtUSD(discount)}</span>
+            </div>
+            <div className="ordd-kv ordd-kv-strong">
+              <span>Payable</span>
+              <span>{fmtUSD(payable)}</span>
+            </div>
+          </div>
         </div>
+        
       </div>
     </div>
   );
