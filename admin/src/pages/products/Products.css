@@ -69,6 +69,11 @@
 .btn.add {
   background: #4f46e5;
   color: #fff;
+  box-shadow: 0 4px 14px rgba(76, 111, 255, 0.4);
+}
+.btn.add:hover {
+  background-color: #3f5fe2;
+  color: #fff;
 }
 
 /* optional: row action buttons */

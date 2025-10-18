@@ -1,4 +1,4 @@
-import React, {  useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Order.css";
 import api from "../../lib/axios";
@@ -6,30 +6,30 @@ import api from "../../lib/axios";
 export default function Orders() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  console.log(orders)
+  console.log(orders);
+
   const getorder = async () => {
     try {
       const { data } = await api.get("/orders");
-      setOrders(data)
+      setOrders(data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  useEffect(()=>{
-    getorder()
-  },[])
+  useEffect(() => {
+    getorder();
+  }, []);
 
   const statusClass = (s) =>
     ({
-      pending: "badge badge-pending",
-      prepare: "badge badge-prepare",
-      shipping: "badge badge-shipping",
-      completed: "badge badge-completed",
-      canceled: "badge badge-canceled",
-    }[s] || "badge");
+      pending: "ord-badge ord-badge-pending",
+      prepare: "ord-badge ord-badge-prepare",
+      shipping: "ord-badge ord-badge-shipping",
+      completed: "ord-badge ord-badge-completed",
+      canceled: "ord-badge ord-badge-canceled",
+    }[s] || "ord-badge");
 
-  // fake update trạng thái (sau này sẽ gọi API PATCH)
   const updateStatus = (id, newStatus) => {
     setOrders((prev) =>
       prev.map((o) => (o._id === id ? { ...o, status: newStatus } : o))
@@ -39,20 +39,20 @@ export default function Orders() {
   const statusOptions = ["pending", "prepare", "shipping", "completed", "canceled"];
 
   return (
-    <div className="page">
-      <div className="page-header">
-        <h1 className="page-title">Orders</h1>
+    <div className="ord-page">
+      <div className="ord-header">
+        <h1 className="ord-title">Orders</h1>
       </div>
 
-      <div className="card">
-        <table className="table">
+      <div className="ord-card">
+        <table className="ord-table">
           <thead>
             <tr>
               <th>Order ID</th>
               <th>Total</th>
               <th>Status</th>
               <th>Created At</th>
-              <th className="center">Action</th>
+              <th className="ord-center">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -64,17 +64,16 @@ export default function Orders() {
                   <span className={statusClass(o.status)}>{o.status}</span>
                 </td>
                 <td>{new Date(o.createdAt).toLocaleString()}</td>
-                <td className="center flex gap-2">
+                <td className="ord-center ord-flex ord-gap-2">
                   <button
-                    className="btn btn-view"
+                    className="ord-btn ord-btn-view"
                     onClick={() => navigate(`/orders/${o._id}`)}
                   >
                     Xem chi tiết
                   </button>
 
-                  {/* Select để đổi trạng thái */}
                   <select
-                    className="select-status"
+                    className="ord-select-status"
                     value={o.status}
                     onChange={(e) => updateStatus(o._id, e.target.value)}
                   >
@@ -89,7 +88,7 @@ export default function Orders() {
             ))}
             {orders.length === 0 && (
               <tr>
-                <td colSpan="5" className="empty">
+                <td colSpan="5" className="ord-empty">
                   Chưa có đơn hàng
                 </td>
               </tr>
@@ -100,4 +99,3 @@ export default function Orders() {
     </div>
   );
 }
-

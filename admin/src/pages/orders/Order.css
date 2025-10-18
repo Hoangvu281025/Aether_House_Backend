@@ -1,25 +1,25 @@
 /* ===== Layout & Page ===== */
-.page {
+.ord-page {
   padding: 24px;
   max-width: 1100px;
   margin: 0 auto;
 }
 
-.page-header {
+.ord-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
 
-.page-title {
+.ord-title {
   font-size: 22px;
   font-weight: 700;
   color: white;
 }
 
 /* ===== Card ===== */
-.card {
+.ord-card {
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
@@ -29,44 +29,44 @@
 }
 
 /* ===== Table ===== */
-.table {
+.ord-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.table th,
-.table td {
+.ord-table th,
+.ord-table td {
   border: 1px solid #e5e7eb;
   padding: 10px 12px;
   vertical-align: middle;
 }
 
-.table th {
+.ord-table th {
   background: #f9fafb;
   font-weight: 600;
   text-align: left;
 }
 
-.table tbody tr:hover {
+.ord-table tbody tr:hover {
   background: #f3f4f6;
 }
 
-.center {
+.ord-center {
   text-align: center;
 }
 
-.right {
+.ord-right {
   text-align: right;
 }
 
-.empty {
+.ord-empty {
   text-align: center;
   color: #6b7280;
   padding: 20px;
 }
 
 /* ===== Badge status ===== */
-.badge {
+.ord-badge {
   display: inline-block;
   padding: 4px 8px;
   border-radius: 999px;
@@ -75,38 +75,38 @@
   text-transform: capitalize;
 }
 
-.badge-pending {
+.ord-badge-pending {
   background: #fff7ed;
   color: #9a3412;
   border: 1px solid #fdba74;
 }
 
-.badge-prepare {
+.ord-badge-prepare {
   background: #eef2ff;
   color: #3730a3;
   border: 1px solid #c7d2fe;
 }
 
-.badge-shipping {
+.ord-badge-shipping {
   background: #ecfeff;
   color: #155e75;
   border: 1px solid #a5f3fc;
 }
 
-.badge-completed {
+.ord-badge-completed {
   background: #ecfdf5;
   color: #065f46;
   border: 1px solid #6ee7b7;
 }
 
-.badge-canceled {
+.ord-badge-canceled {
   background: #fef2f2;
   color: #991b1b;
   border: 1px solid #fecaca;
 }
 
 /* ===== Buttons ===== */
-.btn {
+.ord-btn {
   border: 1px solid #d1d5db;
   background: #f9fafb;
   padding: 6px 12px;
@@ -116,67 +116,39 @@
   transition: background 0.2s;
 }
 
-.btn:hover {
+.ord-btn:hover {
   background: #f3f4f6;
 }
 
-.btn:disabled {
+.ord-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.btn-view {
+.ord-btn-view {
   background: #16a34a;
   border-color: #16a34a;
   color: #fff;
 }
 
-.btn-view:hover {
+.ord-btn-view:hover {
   background: #15803d;
 }
 
-/* ===== Pagination ===== */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.pagination button {
-  border: 1px solid #d1d5db;
-  background: #fff;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.pagination button:hover:not(:disabled) {
-  background: #f3f4f6;
-}
-
-.pagination button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 /* nút số trang */
-.page-dot {
+.ord-page-dot {
   min-width: 32px;
   text-align: center;
 }
 
-.page-dot.active {
+.ord-page-dot.active {
   background: #111827;
   color: #fff;
   border-color: #111827;
 }
 
-.select-status {
+/* Select status */
+.ord-select-status {
   border: 1px solid #d1d5db;
   border-radius: 6px;
   padding: 6px 8px;
@@ -185,7 +157,6 @@
   cursor: pointer;
 }
 
-.select-status:focus {
+.ord-select-status:focus {
   outline: none;
 }
-

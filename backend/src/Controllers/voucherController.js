@@ -31,6 +31,27 @@ exports.getVouchers = async (req, res) => {
     }
 };
 
+exports.getEligibleVouchers = async (req, res) => {
+  try {
+    const total = Number(req.query.total || 0);
+
+    const filter = {
+      isActive: true,
+      quantity: { $gt: 0 },
+      min_total: { $lte: total },
+      max_total: { $gte: total },
+    };
+
+    const vouchers = await Voucher.find(filter)
+      .sort({ value: -1, createdAt: -1 })
+      .lean();
+
+    res.status(200).json({ total, count: vouchers.length, vouchers });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
 // 📌 Lấy voucher theo ID
 exports.getVoucherById = async (req, res) => {
     try {

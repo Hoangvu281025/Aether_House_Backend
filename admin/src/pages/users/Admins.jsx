@@ -105,11 +105,11 @@ const Users = () => {
   return (
     <div className="user-table-wrapper">
       <div className="user-title">
-        <h2>User List</h2>
+        <h2>Admin List</h2>
       </div>
 
       <div className="table_user">
-        <h3 className="table_user-title">User</h3>
+        <h3 className="table_user-title">Admin</h3>
         <hr />
 
         <div className="table_users">
