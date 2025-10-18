@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import api from "../../lib/axios";
-import "../users/Users.css"; // Dùng lại style của User
+import "../users/Users.css";
+import Success from "../../components/Success/Success";
 
 const CategoryForm = ({ onClose, refreshList, editingCate }) => {
   const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
   const [parentId, setParentId] = useState(null);
   const [parents, setParents] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
-  // 🌀 Lấy danh sách Category cha để đưa vào select
+  // 🌀 Lấy danh sách Category cha
   useEffect(() => {
     const fetchParentCates = async () => {
       try {
@@ -22,73 +23,46 @@ const CategoryForm = ({ onClose, refreshList, editingCate }) => {
     fetchParentCates();
   }, []);
 
-  // 🌀 Khi mở form để sửa → tự điền dữ liệu cũ
+  // 🌀 Khi mở form sửa → tự điền dữ liệu
   useEffect(() => {
     if (editingCate) {
       setName(editingCate.name || "");
       setParentId(editingCate.parentId || null);
-      // tạo slug từ tên cũ
-      const slugValue = (editingCate.name || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9\s-]/g, "")
-        .trim()
-        .replace(/\s+/g, "-");
-      setSlug(slugValue);
     } else {
-      // reset nếu là form thêm mới
       setName("");
       setParentId(null);
-      setSlug("");
     }
   }, [editingCate]);
 
-  // 🌀 Khi user nhập tên → tự sinh slug
-  const handleNameChange = (e) => {
-    const newName = e.target.value;
-    setName(newName);
-    const slugValue = newName
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, "-");
-    setSlug(slugValue);
-  };
-
-  // 🌀 Submit form (thêm hoặc cập nhật)
+  // 🌀 Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name) return alert("Vui lòng nhập tên danh mục");
     setLoading(true);
 
     try {
+      let res;
       if (editingCate) {
-        // 🔁 CẬP NHẬT CATEGORY
-        const res = await api.put(`/categories/${editingCate._id}`, {
+        res = await api.put(`/categories/${editingCate._id}`, {
           name,
           parentId: parentId || null,
         });
-
-        if (res.data.success) {
-          alert("Cập nhật Category thành công!");
-          refreshList();
-          onClose();
-        }
+        if (res.data.success) setSuccessMsg("Cập nhật Category thành công!");
       } else {
-        // 🆕 THÊM MỚI CATEGORY
-        const res = await api.post("/categories/", {
+        res = await api.post("/categories/", {
           name,
           parentId: parentId || null,
         });
+        if (res.data.success) setSuccessMsg("Thêm Category thành công!");
+      }
 
-        if (res.data.success) {
-          alert("Thêm Category thành công!");
-          refreshList();
+      if (res.data.success) {
+        refreshList();
+        // Sau 1.5s tự đóng popup và tắt success
+        setTimeout(() => {
+          setSuccessMsg("");
           onClose();
-        }
+        }, 1500);
       }
     } catch (err) {
       console.error("Lỗi khi thêm / cập nhật category:", err);
@@ -103,7 +77,11 @@ const CategoryForm = ({ onClose, refreshList, editingCate }) => {
       <div className="pop-up-content">
         <div className="pop-up-content-header">
           <h2>{editingCate ? "Cập nhật Category" : "Thêm Category mới"}</h2>
-          <p>{editingCate ? "Chỉnh sửa thông tin danh mục" : "Nhập thông tin danh mục bên dưới"}</p>
+          <p>
+            {editingCate
+              ? "Chỉnh sửa thông tin danh mục"
+              : "Nhập thông tin danh mục bên dưới"}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -113,7 +91,7 @@ const CategoryForm = ({ onClose, refreshList, editingCate }) => {
             <input
               type="text"
               value={name}
-              onChange={handleNameChange}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Nhập tên danh mục..."
               className="input"
               required
@@ -165,11 +143,7 @@ const CategoryForm = ({ onClose, refreshList, editingCate }) => {
               Hủy
             </button>
 
-            <button
-              type="submit"
-              className="btn confirm"
-              disabled={loading}
-            >
+            <button type="submit" className="btn confirm" disabled={loading}>
               {loading
                 ? "Đang lưu..."
                 : editingCate
@@ -179,6 +153,11 @@ const CategoryForm = ({ onClose, refreshList, editingCate }) => {
           </div>
         </form>
       </div>
+
+      {/* ✅ Hiển thị popup thành công */}
+      {successMsg && (
+        <Success message={successMsg} onClose={() => setSuccessMsg("")} />
+      )}
     </div>
   );
 };

@@ -22,6 +22,7 @@ import Category from "./pages/category/Category";
 import Voucher from "./pages/Voucher/Voucher";
 import Orders from "./pages/Orders/Orders";
 import OrderDetail from "./pages/Orders/OrderDetail";
+import Success from "./components/Success/Success";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path="/voucher" element={<Voucher />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/orders/:id" element={<OrderDetail />} />
+            <Route path="/success" element={<Success />} />
            <Route element={<RequireSuperAdmin />}>
               <Route path="/admin" element={<Admins />} />
             </Route>
